@@ -1,30 +1,41 @@
 import {createSlice} from '@reduxjs/toolkit';
-import type {PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
+import {slicesNames} from '../../store/constants';
+import {fetchChapters} from './chaptersAction';
+import {Chapter} from '../../types/chapters.types';
 
 // Define a type for the slice state
 interface ChaptersState {
-  list: [];
+  loading: boolean;
+  list: Chapter[];
 }
 
 // Define the initial state using that type
 const initialState: ChaptersState = {
+  loading: false,
   list: [],
 };
 
 export const chaptersSlice = createSlice({
-  name: 'chapters',
+  name: slicesNames.chapters,
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
-  reducers: {
-    // Use the PayloadAction type to declare the contents of `action.payload`
-    fetchChapters: (state, action: PayloadAction<[]>) => {
-      state.list = action.payload;
-    },
+  reducers: {},
+  extraReducers: builder => {
+    builder.addCase(fetchChapters.pending, (state, action) => {
+      state.loading = true;
+    });
+
+    builder.addCase(fetchChapters.fulfilled, (state, action) => {
+      state.list = action.payload as Chapter[];
+      state.loading = false;
+    });
+
+    builder.addCase(fetchChapters.rejected, (state, action) => {
+      state.loading = false;
+    });
   },
 });
-
-export const {fetchChapters} = chaptersSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.chapters.list;
