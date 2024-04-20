@@ -1,14 +1,14 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Chapters from '../components/Chapters';
 import {BottomTabsScreenOptionsType} from '../types/react-navigation.types';
+import ChaptersStack from './ChaptersStack';
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
-      <Tab.Screen name="Chapters" component={Chapters} />
+      <Tab.Screen name="ChaptersStack" component={ChaptersStack} />
     </Tab.Navigator>
   );
 }

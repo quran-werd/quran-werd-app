@@ -1,9 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 import chaptersSlice from '../features/Chapters/chaptersSlice';
+import chapterSlice from '../features/Chapter/chapterSlice';
 
 export const store = configureStore({
   reducer: {
     chapters: chaptersSlice,
+    chapter: chapterSlice,
   },
 });
 

@@ -38,6 +38,6 @@ export const chaptersSlice = createSlice({
 });
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCount = (state: RootState) => state.chapters.list;
+export const selectChapters = (state: RootState) => state.chapters.list;
 
 export default chaptersSlice.reducer;

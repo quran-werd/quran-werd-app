@@ -3,6 +3,8 @@ import React from 'react';
 import {Chapter} from '../../types/chapters.types';
 import {TOUCHABLE_OPACITY} from '../../utils/constants';
 import {SHADOWS} from '../../styles/shadow.style';
+import {useNavigation} from '@react-navigation/native';
+import {ChaptesrProps} from '../../routes/ChaptersStack';
 
 interface IProps {
   chapter: Chapter;
@@ -19,7 +21,12 @@ export default function ChapterListItem({chapter}: IProps) {
   } = chapter;
   const [startPage] = pages;
 
-  const handleChapterPress = () => {};
+  const navigation = useNavigation<ChaptesrProps['navigation']>();
+
+  const handleChapterPress = () =>
+    navigation.navigate('Chapter', {
+      chapterNumber,
+    });
 
   return (
     <TouchableOpacity
