@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {fetchVersesFullInfo} from '../../features/Chapter/chapterAction';
 import {ChapterProps} from '../../routes/ChaptersStack';
+import {PagerView} from '../../components/PagerView';
 
 export default function Chapter({route}: ChapterProps) {
   const {verses, versesInfo} = useAppSelector(state => state.chapter);
@@ -14,15 +15,18 @@ export default function Chapter({route}: ChapterProps) {
   console.log(1111, {verses, versesInfo, chapterNumber});
 
   useEffect(() => {
-    dispatch(fetchVersesFullInfo(chapterNumber));
+    dispatch(fetchVersesFullInfo(602));
   }, []);
 
   return (
-    <View>
-      {verses.map(verse => (
-        <Text>{verse.text_uthmani}</Text>
-      ))}
-    </View>
+    <PagerView>
+      <View key="1">
+        <Text>1111</Text>
+      </View>
+      <View key="2">
+        <Text>2222</Text>
+      </View>
+    </PagerView>
   );
 }
 

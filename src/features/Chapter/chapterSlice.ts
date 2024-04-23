@@ -5,20 +5,19 @@ import {
   FetchVersesFullInfoPayloadAction,
   fetchVersesFullInfo,
 } from './chapterAction';
-import {Verse, VerseInfo} from '../../types/verses.types';
+import {Verse} from '../../types/verses.types';
+import {addOthmaniTextToVersesInfo} from './utils';
 
 // Define a type for the slice state
 interface ChapterState {
   loading: boolean;
   verses: Verse[];
-  versesInfo: VerseInfo[];
 }
 
 // Define the initial state using that type
 const initialState: ChapterState = {
   loading: false,
   verses: [],
-  versesInfo: [],
 };
 
 export const chapterSlice = createSlice({
@@ -31,8 +30,10 @@ export const chapterSlice = createSlice({
     });
     builder.addCase(fetchVersesFullInfo.fulfilled, (state, action) => {
       const action2 = action as FetchVersesFullInfoPayloadAction;
-      state.verses = action2.payload.verses;
-      state.versesInfo = action2.payload.versesInfo;
+      state.verses = addOthmaniTextToVersesInfo(
+        action2.payload.verses,
+        action2.payload.versesInfo,
+      );
       state.loading = false;
     });
     builder.addCase(fetchVersesFullInfo.rejected, state => {

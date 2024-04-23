@@ -1,6 +1,6 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import Chapters from '../components/Chapters';
-import Chapter from '../components/Chapter';
+import Chapters from '../screens/Chapters';
+import Chapter from '../screens/Chapter';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 type RootStackParamList = {

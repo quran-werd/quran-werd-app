@@ -2,7 +2,7 @@ import {StyleSheet, ScrollView} from 'react-native';
 import React, {useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {fetchChapters} from '../../features/Chapters/chaptersAction';
-import ChapterListItem from '../ChapterListItem';
+import ChapterListItem from '../../components/ChapterListItem';
 
 export default function Chapters() {
   const {list} = useAppSelector(state => state.chapters);

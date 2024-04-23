@@ -6,23 +6,23 @@ import {
 } from '@reduxjs/toolkit';
 import {quranAxios} from '../../utils/axios';
 import {slicesNames} from '../../store/constants';
-import {Verse, VerseInfo} from '../../types/verses.types';
+import {VerseAPI, VerseInfoAPI} from '../../types/verses.types';
 
-const _fetchVersesInfo = (chapterNumber: number) =>
-  quranAxios.get<{verses: VerseInfo[]}>(
-    `/verses/by_chapter/${chapterNumber}?words=true`,
+const _fetchVersesInfo = (pageNumber: number) =>
+  quranAxios.get<{verses: VerseInfoAPI[]}>(
+    `/verses/by_page/${pageNumber}?words=true`,
   );
 
-const _fetchVerses = (chapterNumber: number) =>
-  quranAxios.get<{verses: Verse[]}>(
-    `/quran/verses/uthmani?chapter_number=${chapterNumber}`,
+const _fetchVerses = (pageNumber: number) =>
+  quranAxios.get<{verses: VerseAPI[]}>(
+    `/quran/verses/uthmani?page_number=${pageNumber}`,
   );
 
 export const fetchVersesFullInfo = createAsyncThunk(
   `${slicesNames.chapter}/verses`,
   async (
     chapterNumber: number,
-  ): Promise<{verses: Verse[]; versesInfo: VerseInfo[]} | boolean> => {
+  ): Promise<{verses: VerseAPI[]; versesInfo: VerseInfoAPI[]} | boolean> => {
     try {
       const [verses, versesInfo] = await Promise.all([
         _fetchVerses(chapterNumber),
@@ -40,6 +40,6 @@ export const fetchVersesFullInfo = createAsyncThunk(
 );
 
 export type FetchVersesFullInfoPayloadAction = PayloadAction<{
-  verses: Verse[];
-  versesInfo: VerseInfo[];
+  verses: VerseAPI[];
+  versesInfo: VerseInfoAPI[];
 }>;
