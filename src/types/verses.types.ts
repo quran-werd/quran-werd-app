@@ -24,7 +24,7 @@ export interface VerseInfoAPI {
 export interface Verse extends VerseInfoAPI {}
 
 export interface Word {
-  char_type_name: string;
+  char_type_name: 'word' | 'end';
   code_v1: string;
   text: string;
   id: number;
