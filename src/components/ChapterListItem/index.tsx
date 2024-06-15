@@ -1,13 +1,13 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
-import {Chapter} from '../../types/chapters.types';
+import {APITypes} from '../../types/api.types';
 import {TOUCHABLE_OPACITY} from '../../utils/constants';
 import {SHADOWS} from '../../styles/shadow.style';
 import {useNavigation} from '@react-navigation/native';
 import {ChaptesrProps} from '../../routes/ChaptersStack';
 
 interface IProps {
-  chapter: Chapter;
+  chapter: APITypes.Chapter;
 }
 
 export default function ChapterListItem({chapter}: IProps) {
@@ -24,7 +24,7 @@ export default function ChapterListItem({chapter}: IProps) {
   const navigation = useNavigation<ChaptesrProps['navigation']>();
 
   const handleChapterPress = () =>
-    navigation.navigate('Chapter', {
+    navigation.navigate('Page', {
       chapterNumber,
     });
 

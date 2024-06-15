@@ -3,23 +3,25 @@ import type {RootState} from '../../store';
 import {slicesNames} from '../../store/constants';
 import {
   FetchVersesFullInfoPayloadAction,
+  fetchChapterInfo,
   fetchVersesFullInfo,
 } from './chapterAction';
-import {Verse} from '../../types/verses.types';
-import {PageLines, addUthmaniTextToVersesInfo, preparePageLines} from './utils';
+import {Verse} from '../../types/api.types';
+import {addUthmaniTextToVersesInfo, getPageContent} from './utils';
+import {PageTypes} from '../../types/page.types';
 
 // Define a type for the slice state
 interface ChapterState {
   loading: boolean;
   verses: Verse[];
-  lines: PageLines;
+  content: PageTypes.Page;
 }
 
 // Define the initial state using that type
 const initialState: ChapterState = {
   loading: false,
   verses: [],
-  lines: {},
+  content: [],
 };
 
 export const chapterSlice = createSlice({
@@ -36,7 +38,7 @@ export const chapterSlice = createSlice({
         action2.payload.verses,
         action2.payload.versesInfo,
       );
-      state.lines = preparePageLines(state.verses);
+      state.content = getPageContent(state.verses);
       state.loading = false;
     });
     builder.addCase(fetchVersesFullInfo.rejected, state => {
