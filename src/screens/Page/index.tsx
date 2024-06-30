@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#333',
+    paddingHorizontal: 16,
   },
   line: {
     flexDirection: 'row',

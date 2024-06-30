@@ -20,13 +20,17 @@ export default function Chapter({chapter}: IProps) {
 
   useEffect(() => {
     getChapterInfo();
+
+    console.log(1111, {lines});
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.chapterName}>{info.name_arabic}</Text>
       {info.bismillah_pre && (
-        <Text style={styles.basmala}>{`بسم الله الرحمن الرحيم`}</Text>
+        <Text style={styles.basmala}>
+          بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ
+        </Text>
       )}
       {lines.map(line => (
         <Line key={line.lineNumber} line={line} />
@@ -36,13 +40,18 @@ export default function Chapter({chapter}: IProps) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
   chapterName: {
-    fontSize: 32,
+    fontSize: 24,
     textAlign: 'center',
     backgroundColor: '#aaa',
+    fontFamily: 'ScheherazadeNew-Regular',
   },
   basmala: {
-    fontSize: 32,
+    fontSize: 24,
     textAlign: 'center',
+    fontFamily: 'ScheherazadeNew-Regular',
   },
 });

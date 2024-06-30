@@ -8,15 +8,17 @@ interface IProps {
 export default function Word({word}: IProps) {
   const {text, isVerseEnd, verseNumber} = word;
 
-  if (isVerseEnd) {
-    return <Text>({verseNumber})</Text>;
-  }
-
-  return <Text style={styles.word}>{text}</Text>;
+  return (
+    <>
+      {isVerseEnd && <Text>({verseNumber})</Text>}
+      <Text style={styles.word}>{text}</Text>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
   word: {
-    fontSize: 24,
+    fontSize: 20,
+    fontFamily: 'ScheherazadeNew-Regular',
   },
 });

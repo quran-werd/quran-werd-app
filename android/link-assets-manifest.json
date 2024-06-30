@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/ScheherazadeNew-Bold.ttf",
+      "sha1": "07c0f7fea8fe9a1870810056badee9f4227ab095"
+    },
+    {
+      "path": "assets/fonts/ScheherazadeNew-Medium.ttf",
+      "sha1": "c1fe9fff02860d06b10dcbd32606167a9d7b3e5f"
+    },
+    {
+      "path": "assets/fonts/ScheherazadeNew-Regular.ttf",
+      "sha1": "f1c4f5dc9e2e88d6280ca2b85caa8ec8b80d2352"
+    },
+    {
+      "path": "assets/fonts/ScheherazadeNew-SemiBold.ttf",
+      "sha1": "93ed338235148068d696a8c5126d4f36b5f1025c"
+    }
+  ]
+}
