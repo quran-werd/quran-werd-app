@@ -11,12 +11,17 @@ import Routes from './src/routes';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
 
+import * as eva from '@eva-design/eva';
+import {ApplicationProvider} from '@ui-kitten/components';
+
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Routes />
-      </NavigationContainer>
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <NavigationContainer>
+          <Routes />
+        </NavigationContainer>
+      </ApplicationProvider>
     </Provider>
   );
 }

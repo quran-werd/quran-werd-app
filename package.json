@@ -11,12 +11,15 @@
     "build": "react-scripts build"
   },
   "dependencies": {
+    "@eva-design/eva": "^2.2.0",
     "@react-native-masked-view/masked-view": "^0.3.1",
+    "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "@react-navigation/stack": "^6.3.29",
     "@reduxjs/toolkit": "^2.2.2",
+    "@ui-kitten/components": "^5.3.1",
     "axios": "^1.6.8",
     "react": "18.2.0",
     "react-native": "0.73.6",
@@ -34,6 +37,7 @@
     "@react-native/eslint-config": "0.73.2",
     "@react-native/metro-config": "0.73.5",
     "@react-native/typescript-config": "0.73.1",
+    "@types/jest": "^29.5.14",
     "@types/react": "^18.2.6",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
