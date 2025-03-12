@@ -53,7 +53,7 @@ export function getPageContent(verses: Verse[]): PageTypes.Page {
         verseNumber: verse.verse_number,
       };
 
-      linesObjets[word.line_number]?.words.unshift(_word);
+      linesObjets[word.line_number]?.words.push(_word);
     });
 
     chaptersObj[chapterNumber] = {

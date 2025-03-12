@@ -11,8 +11,8 @@ export default function Line({line}: IProps) {
 
   return (
     <View style={styles.container}>
-      {words.map(word => (
-        <Word key={word.id} word={word} />
+      {words.map((word, idx) => (
+        <Word key={word.id} word={word} isLastWord={idx === words.length - 1} />
       ))}
     </View>
   );
@@ -23,6 +23,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignContent: 'center',
-    gap: 8,
   },
 });

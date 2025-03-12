@@ -20,8 +20,6 @@ export default function Chapter({chapter}: IProps) {
 
   useEffect(() => {
     getChapterInfo();
-
-    console.log(1111, {lines});
   }, []);
 
   return (

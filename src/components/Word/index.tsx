@@ -1,17 +1,19 @@
 import React from 'react';
 import {PageTypes} from '../../types/page.types';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 interface IProps {
   word: PageTypes.Word;
+  isLastWord: boolean;
 }
-export default function Word({word}: IProps) {
+export default function Word({word, isLastWord}: IProps) {
   const {text, isVerseEnd, verseNumber} = word;
 
   return (
     <>
-      {isVerseEnd && <Text>({verseNumber})</Text>}
-      <Text style={styles.word}>{text}</Text>
+      {!!text && <Text style={styles.word}>{` ${text}`}</Text>}
+      {isVerseEnd && <Text style={styles.word}>({verseNumber}) </Text>}
+      {isLastWord && <Text>{` `}</Text>}
     </>
   );
 }
