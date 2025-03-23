@@ -54,6 +54,7 @@ export const fetchChapterInfo = async (
 };
 
 export type FetchVersesFullInfoPayloadAction = PayloadAction<{
+  pageNumber: number;
   verses: APITypes.Verse[];
   versesInfo: APITypes.VerseInfo[];
 }>;

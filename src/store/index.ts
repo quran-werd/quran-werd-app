@@ -1,11 +1,15 @@
 import {configureStore} from '@reduxjs/toolkit';
-import chaptersSlice from '../features/Chapters/chaptersSlice';
+import pageSlice from '../features/Page/pageSlice';
+import pagerSlice from '../features/Pager/pagerSlice';
 import chapterSlice from '../features/Chapter/chapterSlice';
+import chaptersSlice from '../features/Chapters/chaptersSlice';
 
 export const store = configureStore({
   reducer: {
-    chapters: chaptersSlice,
+    page: pageSlice,
+    pager: pagerSlice,
     chapter: chapterSlice,
+    chapters: chaptersSlice,
   },
 });
 
