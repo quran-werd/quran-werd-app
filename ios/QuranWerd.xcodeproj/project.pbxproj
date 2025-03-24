@@ -14,10 +14,10 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-QuranWerd-QuranWerdTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-QuranWerd-QuranWerdTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		F8DA33BD9C234D7290F0A847 /* ScheherazadeNew-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */; };
-		D38A5BE77766406BB61BB0A3 /* ScheherazadeNew-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */; };
 		9A0E177089CD46BA8F24055C /* ScheherazadeNew-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */; };
+		D38A5BE77766406BB61BB0A3 /* ScheherazadeNew-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */; };
 		F44D1C1FB9A24747A8BA3285 /* ScheherazadeNew-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */; };
+		F8DA33BD9C234D7290F0A847 /* ScheherazadeNew-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,17 +41,17 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = QuranWerd/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = QuranWerd/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-QuranWerd-QuranWerdTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QuranWerd-QuranWerdTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-Bold.ttf"; path = "../assets/fonts/ScheherazadeNew-Bold.ttf"; sourceTree = "<group>"; };
+		3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-Medium.ttf"; path = "../assets/fonts/ScheherazadeNew-Medium.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-QuranWerd.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuranWerd.debug.xcconfig"; path = "Target Support Files/Pods-QuranWerd/Pods-QuranWerd.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-QuranWerd.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuranWerd.release.xcconfig"; path = "Target Support Files/Pods-QuranWerd/Pods-QuranWerd.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-QuranWerd-QuranWerdTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuranWerd-QuranWerdTests.debug.xcconfig"; path = "Target Support Files/Pods-QuranWerd-QuranWerdTests/Pods-QuranWerd-QuranWerdTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-QuranWerd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QuranWerd.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = QuranWerd/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-QuranWerd-QuranWerdTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuranWerd-QuranWerdTests.release.xcconfig"; path = "Target Support Files/Pods-QuranWerd-QuranWerdTests/Pods-QuranWerd-QuranWerdTests.release.xcconfig"; sourceTree = "<group>"; };
+		952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-Regular.ttf"; path = "../assets/fonts/ScheherazadeNew-Regular.ttf"; sourceTree = "<group>"; };
+		C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-SemiBold.ttf"; path = "../assets/fonts/ScheherazadeNew-SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */ = {isa = PBXFileReference; name = "ScheherazadeNew-Bold.ttf"; path = "../assets/fonts/ScheherazadeNew-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */ = {isa = PBXFileReference; name = "ScheherazadeNew-Medium.ttf"; path = "../assets/fonts/ScheherazadeNew-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */ = {isa = PBXFileReference; name = "ScheherazadeNew-Regular.ttf"; path = "../assets/fonts/ScheherazadeNew-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */ = {isa = PBXFileReference; name = "ScheherazadeNew-SemiBold.ttf"; path = "../assets/fonts/ScheherazadeNew-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +114,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		7E648908E1124C50A2DE7701 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */,
+				3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */,
+				952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */,
+				C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,18 +168,6 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
-		};
-		7E648908E1124C50A2DE7701 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */,
-				3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */,
-				952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */,
-				C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 

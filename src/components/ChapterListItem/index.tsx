@@ -24,8 +24,8 @@ export default function ChapterListItem({chapter}: IProps) {
   const navigation = useNavigation<ChaptesrProps['navigation']>();
 
   const handleChapterPress = () =>
-    navigation.navigate('Page', {
-      chapterNumber,
+    navigation.push('Mushaf', {
+      pageNumber: startPage,
     });
 
   return (

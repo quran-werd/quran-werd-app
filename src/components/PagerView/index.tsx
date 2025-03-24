@@ -1,14 +1,29 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import PagerViewer from 'react-native-pager-view';
-import {useAppSelector} from '../../store/hooks';
-import {RootState} from '../../store';
+import {StyleSheet, View, Text, NativeSyntheticEvent} from 'react-native';
+import PagerViewer, {
+  PagerViewOnPageSelectedEventData,
+} from 'react-native-pager-view';
 
-export default function PagerView({children}: {children: React.ReactNode}) {
-  const {currentPage} = useAppSelector((state: RootState) => state.pager);
+type Props = {
+  initialPage: number;
+  onPageSelected: (pageNumber: number) => void;
+  children: React.ReactNode;
+};
+
+export default function PagerView({
+  children,
+  initialPage,
+  onPageSelected,
+}: Props) {
+  const handlePageChange = (
+    e: NativeSyntheticEvent<PagerViewOnPageSelectedEventData>,
+  ) => onPageSelected(e.nativeEvent.position + 1);
 
   return (
-    <PagerViewer style={styles.container} initialPage={currentPage}>
+    <PagerViewer
+      style={styles.container}
+      onPageSelected={handlePageChange}
+      initialPage={initialPage - 1}>
       {children}
     </PagerViewer>
   );

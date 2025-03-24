@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {RootState} from '../../store';
 import {PageTypes} from '../../types/page.types';
-import {addUthmaniTextToVersesInfo, getPageContent} from '../Chapter/utils';
+import {addUthmaniTextToVersesInfo, getPageContent} from './utils';
 import {FetchVersesFullInfoPayloadAction} from '../Chapter/chapterAction';
 
 interface PagesState {

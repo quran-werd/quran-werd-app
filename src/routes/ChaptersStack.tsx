@@ -1,14 +1,17 @@
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import Chapters from '../screens/Chapters';
-import Page from '../screens/Page';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Mushaf} from '../screens/Mushaf';
+import Chapters from '../screens/Chapters';
 
 type RootStackParamList = {
   Chapters: undefined;
-  Page: {chapterNumber: number};
+  Mushaf: {pageNumber: number};
 };
 
-export type ChapterProps = NativeStackScreenProps<RootStackParamList, 'Page'>;
+export type ChapterProps = NativeStackScreenProps<RootStackParamList, 'Mushaf'>;
+
+export type MushafProps = NativeStackScreenProps<RootStackParamList, 'Mushaf'>;
 
 export type ChaptesrProps = NativeStackScreenProps<
   RootStackParamList,
@@ -21,7 +24,7 @@ function ChaptersStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Chapters" component={Chapters} />
-      <Stack.Screen name="Page" component={Page} />
+      <Stack.Screen name="Mushaf" component={Mushaf} />
     </Stack.Navigator>
   );
 }

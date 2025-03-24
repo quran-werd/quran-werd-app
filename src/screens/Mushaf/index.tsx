@@ -1,23 +1,46 @@
-import React, {useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import PagerView from '../../components/PagerView';
-import {useAppSelector} from '../../store/hooks';
+import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import Page from '../../components/Page';
+import {MushafProps} from '../../routes/ChaptersStack';
+import {setCurrentPage} from '../../features/Pager/pagerSlice';
 
-export const Mushaf = () => {
+const PAGES_COUNT = 604;
+
+const QURAN_PAGES = [...Array(PAGES_COUNT)];
+
+export const Mushaf = ({route}: MushafProps) => {
+  const [pages, setPages] = useState<number[]>([]);
   const {currentPage} = useAppSelector((state: RootState) => state.pager);
 
-  // Ensuring keys are unique and stable
-  const pages = useMemo(
-    () => Array.from({length: 5}, (_, i) => currentPage + i - 2),
-    [currentPage],
-  );
+  const {pageNumber} = route.params;
+
+  const dispatch = useAppDispatch();
+
+  const handlePageChange = (pageNumber: number) => {
+    setPages(_getSroundingPages(pageNumber));
+
+    dispatch(setCurrentPage(pageNumber));
+  };
+
+  useEffect(() => {
+    pageNumber && setPages(_getSroundingPages(pageNumber));
+  }, [pageNumber]);
+
+  useEffect(() => {
+    console.log(1111, {currentPage});
+  }, [currentPage]);
 
   return (
-    <PagerView>
-      {pages.map((pageNumber, index) => (
-        <Page key={`${pageNumber}-${index}`} pageNumber={pageNumber} />
+    <PagerView initialPage={pageNumber} onPageSelected={handlePageChange}>
+      {QURAN_PAGES.map((_, index) => (
+        <View key={`${index}`} style={styles.page}>
+          {index + 1 >= currentPage - 2 && index + 1 <= currentPage + 2 && (
+            <Page pageNumber={index + 1} />
+          )}
+        </View>
       ))}
     </PagerView>
   );
@@ -26,6 +49,10 @@ export const Mushaf = () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#222',
+    backgroundColor: '#eee',
   },
 });
+
+function _getSroundingPages(currentPage: number) {
+  return Array.from({length: 5}, (_, i) => currentPage + i - 2);
+}

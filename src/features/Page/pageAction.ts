@@ -1,5 +1,4 @@
 import {
-  AsyncThunk,
   PayloadAction,
   createAsyncThunk,
   isRejectedWithValue,
@@ -7,6 +6,7 @@ import {
 import {quranAxios} from '../../utils/axios';
 import {slicesNames} from '../../store/constants';
 import {APITypes} from '../../types/api.types';
+import {setPageVerses} from './pageSlice';
 
 const _fetchVersesInfo = (pageNumber: number) =>
   quranAxios.get<{verses: APITypes.VerseInfo[]}>(
@@ -25,6 +25,7 @@ export const fetchVersesFullInfo = createAsyncThunk(
   `${slicesNames.chapter}/verses`,
   async (
     chapterNumber: number,
+    {dispatch},
   ): Promise<
     {verses: APITypes.Verse[]; versesInfo: APITypes.VerseInfo[]} | boolean
   > => {
@@ -34,9 +35,20 @@ export const fetchVersesFullInfo = createAsyncThunk(
         _fetchVersesInfo(chapterNumber),
       ]);
 
+      const _verses = verses.data.verses;
+      const _versesInfo = versesInfo.data.verses;
+
+      dispatch(
+        setPageVerses({
+          verses: _verses,
+          versesInfo: _versesInfo,
+          pageNumber: chapterNumber,
+        }),
+      );
+
       return {
-        verses: verses.data.verses,
-        versesInfo: versesInfo.data.verses,
+        verses: _verses,
+        versesInfo: _versesInfo,
       };
     } catch (error) {
       return isRejectedWithValue(error);

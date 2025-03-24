@@ -20,7 +20,7 @@ export default function Word({word, isLastWord}: IProps) {
 
 const styles = StyleSheet.create({
   word: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'ScheherazadeNew-Regular',
   },
 });
