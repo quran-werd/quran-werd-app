@@ -22,7 +22,7 @@ const _fetchChapterInfo = (chapterNumber: number) =>
   quranAxios.get<{chapter: APITypes.Chapter}>(`/chapters/${chapterNumber}`);
 
 export const fetchVersesFullInfo = createAsyncThunk(
-  `${slicesNames.chapter}/verses`,
+  `${slicesNames.page}/verses`,
   async (
     chapterNumber: number,
     {dispatch},
