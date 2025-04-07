@@ -18,6 +18,7 @@
 		D38A5BE77766406BB61BB0A3 /* ScheherazadeNew-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */; };
 		F44D1C1FB9A24747A8BA3285 /* ScheherazadeNew-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */; };
 		F8DA33BD9C234D7290F0A847 /* ScheherazadeNew-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2FF47A15C6334AEBA4F2B857 /* ScheherazadeNew-Bold.ttf */; };
+		F293089FE1FF418A94449DB4 /* UthmanicHafs.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E398BE57B4F3410AA93347EB /* UthmanicHafs.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-Regular.ttf"; path = "../assets/fonts/ScheherazadeNew-Regular.ttf"; sourceTree = "<group>"; };
 		C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "ScheherazadeNew-SemiBold.ttf"; path = "../assets/fonts/ScheherazadeNew-SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		E398BE57B4F3410AA93347EB /* UthmanicHafs.ttf */ = {isa = PBXFileReference; name = "UthmanicHafs.ttf"; path = "../assets/fonts/UthmanicHafs.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 				3AB87FB200AE4020A38EBCF2 /* ScheherazadeNew-Medium.ttf */,
 				952A8ACBBB9D4BFE965BEFA1 /* ScheherazadeNew-Regular.ttf */,
 				C94F890A67F4441A91007C00 /* ScheherazadeNew-SemiBold.ttf */,
+				E398BE57B4F3410AA93347EB /* UthmanicHafs.ttf */,
 			);
 			name = Resources;
 			path = "";
@@ -268,6 +271,7 @@
 				D38A5BE77766406BB61BB0A3 /* ScheherazadeNew-Medium.ttf in Resources */,
 				9A0E177089CD46BA8F24055C /* ScheherazadeNew-Regular.ttf in Resources */,
 				F44D1C1FB9A24747A8BA3285 /* ScheherazadeNew-SemiBold.ttf in Resources */,
+				F293089FE1FF418A94449DB4 /* UthmanicHafs.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

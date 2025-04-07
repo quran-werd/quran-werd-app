@@ -49,7 +49,7 @@ export const Mushaf = ({route}: MushafProps) => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#444',
   },
 });
 

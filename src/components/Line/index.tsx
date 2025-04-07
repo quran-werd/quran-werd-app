@@ -21,7 +21,8 @@ export default function Line({line}: IProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignContent: 'center',
+    width: '100%',
   },
 });

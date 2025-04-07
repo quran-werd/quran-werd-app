@@ -1,9 +1,10 @@
 import React, {useEffect, useMemo} from 'react';
-import {View} from 'react-native';
+import {ImageBackground, StyleSheet, View} from 'react-native';
 import Line from '../Line';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {RootState} from '../../store';
 import {fetchVersesFullInfo} from '../../features/Page/pageAction';
+import {IMAGES} from '../../common';
 
 const Page: React.FC<{pageNumber: number}> = ({pageNumber}) => {
   const {pages} = useAppSelector((state: RootState) => state.page);
@@ -18,22 +19,30 @@ const Page: React.FC<{pageNumber: number}> = ({pageNumber}) => {
   }, [pageNumber]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        direction: 'rtl',
-      }}>
+    <ImageBackground
+      style={styles.container}
+      source={IMAGES.mushafFrame}
+      resizeMode="cover">
       {pages[pageNumber]?.map((chapter, index) => (
-        <View key={`${chapter.chapterNumber}-${index}`}>
+        <View style={styles.page} key={`${chapter.chapterNumber}-${index}`}>
           {chapter.lines.map((line, lineIndex) => (
             <Line key={`${line.lineNumber}-${lineIndex}`} line={line} />
           ))}
         </View>
       ))}
-    </View>
+    </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+  },
+  page: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+});
 
 export default Page;

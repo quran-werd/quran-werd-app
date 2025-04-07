@@ -16,6 +16,10 @@
     {
       "path": "assets/fonts/ScheherazadeNew-SemiBold.ttf",
       "sha1": "93ed338235148068d696a8c5126d4f36b5f1025c"
+    },
+    {
+      "path": "assets/fonts/UthmanicHafs.ttf",
+      "sha1": "672e441d0f956bee65d6f87d9aa08b676d5300aa"
     }
   ]
 }
