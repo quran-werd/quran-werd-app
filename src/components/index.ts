@@ -12,3 +12,10 @@ export {default as Word} from './Word';
 export {PagerView} from './PagerView';
 export {default as QuranRecitationChecker} from './QuranRecitationChecker';
 export {LanguageSwitcher} from './LanguageSwitcher';
+
+// Memorization components
+export {MemorizationHeader} from './MemorizationHeader';
+export {MemorizationSummary} from './MemorizationSummary';
+export {RecentActivity} from './RecentActivity';
+export {SurahDetailsList} from './SurahDetailsList';
+export {SectionHeader} from './SectionHeader';

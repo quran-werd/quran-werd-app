@@ -1,4 +1,4 @@
-import {I18nManager} from 'react-native';
+import {I18nManager, Alert} from 'react-native';
 import i18n from '../i18n';
 
 /**
@@ -21,15 +21,20 @@ export const forceRTL = (): void => {
  * Enable RTL for Arabic language
  */
 export const configureRTL = (): void => {
-  const currentLang = i18n.language;
-  
-  if (currentLang === 'ar') {
-    forceRTL();
-  } else {
-    // For non-RTL languages, we could disable RTL if needed
-    // but since we're defaulting to Arabic, we'll keep RTL enabled
-    if (!I18nManager.isRTL) {
-      I18nManager.forceRTL(true);
-    }
+  const wasRTL = I18nManager.isRTL;
+
+  // Force RTL to true since we default to Arabic
+  I18nManager.forceRTL(true);
+  I18nManager.allowRTL(true);
+
+  console.log('RTL configured - was:', wasRTL, 'now:', I18nManager.isRTL);
+
+  // If RTL wasn't enabled before, show restart message
+  if (!wasRTL && __DEV__) {
+    Alert.alert(
+      'RTL Enabled',
+      'Please restart the app to apply RTL layout changes',
+      [{text: 'OK'}],
+    );
   }
 };
