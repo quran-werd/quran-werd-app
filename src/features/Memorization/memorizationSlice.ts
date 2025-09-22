@@ -2,7 +2,6 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {
   MemorizationState,
   MemorizationProgress,
-  SurahProgress,
 } from '../../types/memorization.types';
 
 const initialState: MemorizationState = {
@@ -37,8 +36,9 @@ const initialState: MemorizationState = {
             id: 'range-1',
             startVerse: 1,
             endVerse: 5,
-            startText: 'الم... :من',
-            endText: 'أُولئِكَ عَلَى هُدًى مِّن رَّبِّهِمْ... إلى .',
+            startText: 'الم ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ',
+            endText:
+              'أُولَـٰئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ وَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ',
             wordCount: 36,
             verseCount: 5,
           },
@@ -46,8 +46,9 @@ const initialState: MemorizationState = {
             id: 'range-2',
             startVerse: 12,
             endVerse: 14,
-            startText: 'أَلَا إِنَّهُمْ هُمُ الْمُفْسِدُونَ وَلكِن.... : من .',
-            endText: 'وَإِذَا لَقُوا الَّذِينَ آمَنُوا قَالُوا... إلى .',
+            startText:
+              'أَلَا إِنَّهُمْ هُمُ الْمُفْسِدُونَ وَلَـٰكِن لَّا يَشْعُرُونَ',
+            endText: 'وَإِذَا لَقُوا الَّذِينَ آمَنُوا قَالُوا آمَنَّا',
             wordCount: 42,
             verseCount: 3,
           },
@@ -58,71 +59,72 @@ const initialState: MemorizationState = {
         id: '3',
         number: 3,
         nameArabic: 'آل عمران',
-        nameEnglish: 'Ali Imran',
+        nameEnglish: 'Ali-Imran',
         type: 'Madaniyah',
         totalVerses: 200,
         memorizedVerses: 2,
         memorizedRanges: [],
         isExpanded: false,
       },
-      {
-        id: '4',
-        number: 4,
-        nameArabic: 'النساء',
-        nameEnglish: 'An-Nisa',
-        type: 'Madaniyah',
-        totalVerses: 176,
-        memorizedVerses: 0,
-        memorizedRanges: [],
-        isExpanded: false,
-      },
     ],
-    lastReviewDate: new Date().toISOString(),
+    lastReviewDate: '2024-03-15',
   },
   isLoading: false,
   error: null,
 };
 
-const memorizationSlice = createSlice({
+export const memorizationSlice = createSlice({
   name: 'memorization',
   initialState,
   reducers: {
+    setProgress: (state, action: PayloadAction<MemorizationProgress>) => {
+      state.progress = action.payload;
+    },
     toggleSurahExpansion: (state, action: PayloadAction<string>) => {
       const surah = state.progress.surahs.find(s => s.id === action.payload);
       if (surah) {
         surah.isExpanded = !surah.isExpanded;
       }
     },
-    updateMemorizedVerses: (
+    updateSurahProgress: (
       state,
-      action: PayloadAction<{surahId: string; memorizedVerses: number}>,
+      action: PayloadAction<{
+        surahId: string;
+        memorizedVerses: number;
+        memorizedRanges: any[];
+      }>,
     ) => {
       const surah = state.progress.surahs.find(
         s => s.id === action.payload.surahId,
       );
       if (surah) {
         surah.memorizedVerses = action.payload.memorizedVerses;
-        // Recalculate overall progress
-        const totalMemorized = state.progress.surahs.reduce(
-          (sum, s) => sum + s.memorizedVerses,
-          0,
-        );
-        state.progress.totalMemorizedVerses = totalMemorized;
-        state.progress.overallProgress = Math.round(
-          (totalMemorized / state.progress.totalVerses) * 100,
-        );
+        surah.memorizedRanges = action.payload.memorizedRanges;
       }
-    },
-    addMemorizedRange: (
-      state,
-      action: PayloadAction<{surahId: string; range: any}>,
-    ) => {
-      const surah = state.progress.surahs.find(
-        s => s.id === action.payload.surahId,
+
+      // Recalculate overall progress
+      const totalMemorized = state.progress.surahs.reduce(
+        (acc, s) => acc + s.memorizedVerses,
+        0,
       );
-      if (surah) {
-        surah.memorizedRanges.push(action.payload.range);
-      }
+      const totalVerses = state.progress.surahs.reduce(
+        (acc, s) => acc + s.totalVerses,
+        0,
+      );
+
+      state.progress.totalMemorizedVerses = totalMemorized;
+      state.progress.totalVerses = totalVerses;
+      state.progress.overallProgress = Math.round(
+        (totalMemorized / totalVerses) * 100,
+      );
+
+      // Update completed and in-progress counts
+      state.progress.completedSurahs = state.progress.surahs.filter(
+        s => s.memorizedVerses === s.totalVerses,
+      ).length;
+      state.progress.inProgressSurahs = state.progress.surahs.filter(
+        s => s.memorizedVerses > 0 && s.memorizedVerses < s.totalVerses,
+      ).length;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -134,9 +136,9 @@ const memorizationSlice = createSlice({
 });
 
 export const {
+  setProgress,
   toggleSurahExpansion,
-  updateMemorizedVerses,
-  addMemorizedRange,
+  updateSurahProgress,
   setLoading,
   setError,
 } = memorizationSlice.actions;

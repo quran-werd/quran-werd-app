@@ -15,6 +15,20 @@
       "lastReviewToday": "آخر مراجعة اليوم",
       "tapForDetails": "انقر على السور لرؤية التفاصيل",
       "surahDetails": "تفصيل السور"
+    },
+    "surah": {
+      "verseCount": "آية {{memorized}} / {{total}}",
+      "memorizedVerses": "{{count}} آية محفوظة",
+      "makkiyah": "مكية",
+      "madaniyah": "مدنية",
+      "memorizedRanges": "النطاقات المحفوظة",
+      "rangesSummary": "مجموع النطاقات : {{rangeCount}} • آيات محفوظة {{memorized}} من {{total}}",
+      "verseRange": "آية {{startVerse}}-{{endVerse}}",
+      "wordCount": "{{count}} كلمة",
+      "verseCountShort": "{{count}} آية",
+      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+      "from": "من",
+      "to": "إلى"
     }
   },
   "common": {

@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {colors} from '../../styles/colors';
 import {MemorizedRange} from '../../types/memorization.types';
 import Card from '../shared/Card';
@@ -11,12 +12,17 @@ interface MemorizedRangeItemProps {
 }
 
 export default function MemorizedRangeItem({range}: MemorizedRangeItemProps) {
+  const {t} = useTranslation();
+
   return (
     <Card style={styles.container} padding={12} margin={8} shadow={false}>
       <View style={styles.rangeHeader}>
         <Badge variant="light" size="medium" style={styles.rangeBadge}>
           <Typography variant="small" weight="bold" color="primary">
-            آية {range.startVerse}-{range.endVerse}
+            {t('memorization.surah.verseRange', {
+              startVerse: range.startVerse,
+              endVerse: range.endVerse,
+            })}
           </Typography>
         </Badge>
         <View style={styles.stats}>
@@ -24,21 +30,37 @@ export default function MemorizedRangeItem({range}: MemorizedRangeItemProps) {
             variant="small"
             color="secondary"
             style={styles.wordCount}>
-            ك {range.wordCount}
+            {t('memorization.surah.wordCount', {count: range.wordCount})}
           </Typography>
           <Typography
             variant="small"
             color="secondary"
             style={styles.verseCount}>
-            آ {range.verseCount}
+            {t('memorization.surah.verseCountShort', {count: range.verseCount})}
           </Typography>
         </View>
       </View>
       <View style={styles.textContainer}>
-        <Typography variant="body" style={styles.startText}>
+        <Typography
+          variant="caption"
+          style={styles.startText}
+          numberOfLines={1}
+          ellipsizeMode="tail">
+          <Text style={styles.prefixText}>
+            {t('memorization.surah.from')}
+            {': '}
+          </Text>
           {range.startText}
         </Typography>
-        <Typography variant="body" style={styles.endText}>
+        <Typography
+          variant="caption"
+          style={styles.endText}
+          numberOfLines={1}
+          ellipsizeMode="tail">
+          <Text style={styles.prefixText}>
+            {t('memorization.surah.to')}
+            {': '}
+          </Text>
           {range.endText}
         </Typography>
       </View>
@@ -78,5 +100,8 @@ const styles = StyleSheet.create({
   },
   endText: {
     // Typography component handles styling
+  },
+  prefixText: {
+    color: colors.text.light,
   },
 });

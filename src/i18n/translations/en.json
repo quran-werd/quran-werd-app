@@ -15,6 +15,20 @@
       "lastReviewToday": "Last review today",
       "tapForDetails": "Tap on surahs to see details",
       "surahDetails": "Surah Details"
+    },
+    "surah": {
+      "verseCount": "{{memorized}} / {{total}} verses",
+      "memorizedVerses": "{{count}} verses memorized",
+      "makkiyah": "Meccan",
+      "madaniyah": "Medinan",
+      "memorizedRanges": "Memorized Ranges",
+      "rangesSummary": "Total ranges: {{rangeCount}} • Memorized {{memorized}} of {{total}} verses",
+      "verseRange": "Verses {{startVerse}}-{{endVerse}}",
+      "wordCount": "{{count}} words",
+      "verseCountShort": "{{count}} verses",
+      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
+      "from": "From",
+      "to": "To"
     }
   },
   "common": {

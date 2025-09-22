@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import Card from '../shared/Card';
 import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
@@ -16,10 +17,14 @@ export default function SurahProgressCard({
   surah,
   onToggleExpansion,
 }: SurahProgressCardProps) {
+  const {t} = useTranslation();
   const progressPercentage = Math.round(
     (surah.memorizedVerses / surah.totalVerses) * 100,
   );
-  const arabicType = surah.type === 'Makkiyah' ? 'مكية' : 'مدنية';
+  const surahType =
+    surah.type === 'Makkiyah'
+      ? t('memorization.surah.makkiyah')
+      : t('memorization.surah.madaniyah');
 
   return (
     <Card style={styles.container} margin={8}>
@@ -38,15 +43,17 @@ export default function SurahProgressCard({
           <Typography variant="h3" style={styles.surahNameArabic}>
             {surah.nameArabic}
           </Typography>
-          <Typography variant="small" color="light" style={styles.surahType}>
-            {arabicType}
-          </Typography>
-          <Typography
-            variant="caption"
-            color="secondary"
-            style={styles.verseCount}>
-            آية {surah.memorizedVerses} / {surah.totalVerses}
-          </Typography>
+          <View style={styles.surahTypeContainer}>
+            <Typography variant="small" color="light" style={styles.surahType}>
+              {surahType}
+            </Typography>
+            <Typography variant="small" color="light" style={styles.surahType}>
+              {t('memorization.surah.verseCount', {
+                memorized: surah.memorizedVerses,
+                total: surah.totalVerses,
+              })}
+            </Typography>
+          </View>
         </View>
         <View style={styles.progressInfo}>
           <Typography
@@ -59,7 +66,9 @@ export default function SurahProgressCard({
             variant="small"
             color="secondary"
             style={styles.memorizedVerses}>
-            آية محفوظة {surah.memorizedVerses}
+            {t('memorization.surah.memorizedVerses', {
+              count: surah.memorizedVerses,
+            })}
           </Typography>
           <Typography variant="small" color="light" style={styles.expandIcon}>
             {surah.isExpanded ? '▲' : '▼'}
@@ -70,7 +79,7 @@ export default function SurahProgressCard({
       {surah.isExpanded && surah.memorizedRanges.length > 0 && (
         <View style={styles.expandedContent}>
           <Typography variant="h3" style={styles.rangesTitle}>
-            النطاقات المحفوظة
+            {t('memorization.surah.memorizedRanges')}
           </Typography>
           {surah.memorizedRanges.map(range => (
             <MemorizedRangeItem key={range.id} range={range} />
@@ -82,8 +91,11 @@ export default function SurahProgressCard({
               color="primary"
               align="center"
               style={styles.summaryText}>
-              مجموع النطاقات : {surah.memorizedRanges.length} • آيات محفوظة{' '}
-              {surah.memorizedVerses} من {surah.totalVerses}
+              {t('memorization.surah.rangesSummary', {
+                rangeCount: surah.memorizedRanges.length,
+                memorized: surah.memorizedVerses,
+                total: surah.totalVerses,
+              })}
             </Typography>
           </View>
         </View>
@@ -95,10 +107,16 @@ export default function SurahProgressCard({
 const styles = StyleSheet.create({
   container: {
     // Card component handles styling
+    padding: 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  surahTypeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   surahNumber: {
     marginRight: 12,

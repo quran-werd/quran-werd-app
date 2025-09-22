@@ -10,6 +10,7 @@ interface TypographyProps {
   align?: 'left' | 'center' | 'right';
   style?: TextStyle;
   numberOfLines?: number;
+  ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
 }
 
 export default function Typography({
@@ -20,6 +21,7 @@ export default function Typography({
   align = 'left',
   style,
   numberOfLines,
+  ellipsizeMode,
 }: TypographyProps) {
   const getVariantStyles = () => {
     switch (variant) {
@@ -115,7 +117,8 @@ export default function Typography({
         },
         style,
       ]}
-      numberOfLines={numberOfLines}>
+      numberOfLines={numberOfLines}
+      ellipsizeMode={ellipsizeMode}>
       {children}
     </Text>
   );
