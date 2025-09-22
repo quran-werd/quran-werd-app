@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
 import {toggleSurahExpansion} from '../../features/Memorization/memorizationSlice';
 import {colors} from '../../styles/colors';
@@ -21,6 +22,7 @@ import {
 export default function MemorizationProgress() {
   const {progress} = useAppSelector(state => state.memorization);
   const dispatch = useAppDispatch();
+  const {t} = useTranslation();
 
   const handleToggleSurah = (surahId: string) => {
     dispatch(toggleSurahExpansion(surahId));
@@ -44,13 +46,13 @@ export default function MemorizationProgress() {
             </Icon>
             <View style={styles.headerText}>
               <Typography variant="h2" weight="bold" style={styles.headerTitle}>
-                تقدم الحفظ
+                {t('memorization.progress.title')}
               </Typography>
               <Typography
                 variant="caption"
                 color="secondary"
                 style={styles.headerSubtitle}>
-                رحلة حفظ القرآن الكريم
+                {t('memorization.progress.subtitle')}
               </Typography>
             </View>
           </View>
@@ -63,10 +65,15 @@ export default function MemorizationProgress() {
 
         {/* Main Progress Card */}
         <ProgressCard
-          title="تقدم الحفظ"
-          subtitle={`من ${progress.totalVerses} آية محفوظة ${progress.totalMemorizedVerses}`}
+          title={t('memorization.progress.title')}
+          subtitle={t('memorization.progress.totalMemorizedVerses', {
+            memorized: progress.totalMemorizedVerses,
+            total: progress.totalVerses,
+          })}
           percentage={progress.overallProgress}
-          value={`${progress.totalMemorizedVerses} آية محفوظة`}
+          value={t('memorization.progress.memorizedVersesValue', {
+            count: progress.totalMemorizedVerses,
+          })}
           icon={<Text style={styles.progressIcon}>📈</Text>}
           style={styles.mainProgressCard}
         />
@@ -74,14 +81,14 @@ export default function MemorizationProgress() {
         {/* Summary Cards */}
         <View style={styles.summaryContainer}>
           <ProgressCard
-            title="سورة مكتملة"
+            title={t('memorization.progress.completedSurahs')}
             percentage={progress.completedSurahs}
             value={`${progress.completedSurahs}`}
             icon={<Text style={styles.summaryIcon}>📖</Text>}
             style={styles.summaryCard}
           />
           <ProgressCard
-            title="قيد الحفظ"
+            title={t('memorization.progress.inProgressSurahs')}
             percentage={progress.inProgressSurahs}
             value={`${progress.inProgressSurahs}`}
             icon={<Text style={styles.summaryIcon}>🎯</Text>}
@@ -99,7 +106,7 @@ export default function MemorizationProgress() {
               variant="h3"
               weight="semibold"
               style={styles.sectionTitle}>
-              النشاط الأخير
+              {t('memorization.progress.recentActivity')}
             </Typography>
           </View>
           <Card
@@ -111,13 +118,13 @@ export default function MemorizationProgress() {
               variant="body"
               weight="medium"
               style={styles.recentActivityText}>
-              آخر مراجعة اليوم
+              {t('memorization.progress.lastReviewToday')}
             </Typography>
             <Typography
               variant="small"
               color="secondary"
               style={styles.recentActivitySubtext}>
-              انقر على السور لرؤية التفاصيل
+              {t('memorization.progress.tapForDetails')}
             </Typography>
           </Card>
         </View>
@@ -132,7 +139,7 @@ export default function MemorizationProgress() {
               variant="h3"
               weight="semibold"
               style={styles.sectionTitle}>
-              تفصيل السور
+              {t('memorization.progress.surahDetails')}
             </Typography>
           </View>
           {progress.surahs.map(surah => (

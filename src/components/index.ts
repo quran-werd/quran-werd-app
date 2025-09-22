@@ -9,5 +9,6 @@ export {default as ChapterListItem} from './ChapterListItem';
 export {default as Chapter} from './Chapter';
 export {default as Line} from './Line';
 export {default as Word} from './Word';
-export {default as PagerView} from './PagerView';
+export {PagerView} from './PagerView';
 export {default as QuranRecitationChecker} from './QuranRecitationChecker';
+export {LanguageSwitcher} from './LanguageSwitcher';
