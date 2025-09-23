@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {PageTypes} from '../../types/page.types';
 import Line from '../Line';
 import {StyleSheet, Text, View} from 'react-native';
@@ -12,6 +13,7 @@ interface IProps {
 export default function Chapter({chapter}: IProps) {
   const [info, setInfo] = useState<APITypes.Chapter>({} as APITypes.Chapter);
   const {chapterNumber, lines} = chapter;
+  const {t} = useTranslation();
 
   async function getChapterInfo() {
     const chapterInfo = await fetchChapterInfo(chapterNumber);
@@ -26,9 +28,7 @@ export default function Chapter({chapter}: IProps) {
     <View style={styles.container}>
       <Text style={styles.chapterName}>{info.name_arabic}</Text>
       {info.bismillah_pre && (
-        <Text style={styles.basmala}>
-          بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ
-        </Text>
+        <Text style={styles.basmala}>{t('memorization.surah.bismillah')}</Text>
       )}
       {lines.map(line => (
         <Line key={line.lineNumber} line={line} />

@@ -1,0 +1,53 @@
+{
+  "tabs": {
+    "chapters": "Chapters",
+    "progress": "Progress"
+  },
+  "memorization": {
+    "progress": {
+      "title": "Memorization Progress",
+      "subtitle": "Quran Memorization Journey",
+      "totalMemorizedVerses": "{{memorized}} out of {{total}} verses memorized",
+      "memorizedVersesValue": "{{count}} verses memorized",
+      "completedSurahs": "Completed Surahs",
+      "inProgressSurahs": "In Progress",
+      "recentActivity": "Recent Activity",
+      "lastReviewToday": "Last review today",
+      "tapForDetails": "Tap on surahs to see details",
+      "surahDetails": "Surah Details"
+    },
+    "surah": {
+      "verseCount": "{{memorized}} / {{total}} verses",
+      "memorizedVerses": "{{count}} verses memorized",
+      "makkiyah": "Meccan",
+      "madaniyah": "Medinan",
+      "memorizedRanges": "Memorized Ranges",
+      "rangesSummary": "Total ranges: {{rangeCount}} • Memorized {{memorized}} of {{total}} verses",
+      "verseRange": "Verses {{startVerse}}-{{endVerse}}",
+      "wordCount": "{{count}} words",
+      "verseCountShort": "{{count}} verses",
+      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
+      "from": "From",
+      "to": "To"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "languageChanged": "Language Changed",
+    "restartRequired": "Please restart the app to apply changes",
+    "language": "Language",
+    "arabic": "العربية",
+    "english": "English"
+  }
+}
