@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {APITypes} from '../../types/api.types';
 import {useNavigation} from '@react-navigation/native';
-import {ChaptesrProps} from '../../routes/ChaptersStack';
+import {ChaptersProps} from '../../routes/ChaptersStack';
 import Card from '../shared/Card';
 import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
@@ -19,7 +19,7 @@ export default function ChapterListItem({chapter}: IProps) {
     revelation_place,
   } = chapter;
 
-  const navigation = useNavigation<ChaptesrProps['navigation']>();
+  const navigation = useNavigation<ChaptersProps['navigation']>();
 
   const handleChapterPress = () =>
     navigation.navigate('Page', {
