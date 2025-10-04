@@ -1,10 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
+import {View, StyleSheet} from 'react-native';
 import {APITypes} from '../../types/api.types';
-import {TOUCHABLE_OPACITY} from '../../utils/constants';
-import {SHADOWS} from '../../styles/shadow.style';
 import {useNavigation} from '@react-navigation/native';
 import {ChaptesrProps} from '../../routes/ChaptersStack';
+import Card from '../shared/Card';
+import Typography from '../shared/Typography';
+import Badge from '../shared/Badge';
 
 interface IProps {
   chapter: APITypes.Chapter;
@@ -13,13 +14,10 @@ interface IProps {
 export default function ChapterListItem({chapter}: IProps) {
   const {
     id: chapterNumber,
-    name_simple,
     name_arabic,
     verses_count,
-    pages,
     revelation_place,
   } = chapter;
-  const [startPage] = pages;
 
   const navigation = useNavigation<ChaptesrProps['navigation']>();
 
@@ -29,58 +27,50 @@ export default function ChapterListItem({chapter}: IProps) {
     });
 
   return (
-    <TouchableOpacity
-      style={[styles.container]}
-      activeOpacity={TOUCHABLE_OPACITY}
-      onPress={handleChapterPress}>
-      <View style={styles.row}>
-        <Text style={styles.chapterNumber}>{chapterNumber}</Text>
-        <Text style={styles.name}>{name_simple}</Text>
-        <Text style={[styles.name, styles.arabicName]}>{name_arabic}</Text>
+    <Card
+      onPress={handleChapterPress}
+      padding={16}
+      margin={4}
+      borderRadius={12}>
+      <View style={styles.content}>
+        <Badge variant="light" size="medium">
+          <Typography variant="small" weight="semibold" color="primary">
+            {chapterNumber}
+          </Typography>
+        </Badge>
+
+        <View style={styles.mainInfo}>
+          <Typography variant="h3" color="primary" weight="semibold">
+            {name_arabic}
+          </Typography>
+          <View style={styles.detailsRow}>
+            <Typography variant="small" color="secondary">
+              {revelation_place === 'makkah' ? 'مكية' : 'مدنية'}
+            </Typography>
+            <Typography variant="small" color="secondary">
+              {verses_count} آية
+            </Typography>
+          </View>
+        </View>
       </View>
-      <View style={styles.row}>
-        <Text style={styles.info}>Ayat: {verses_count}</Text>
-        <Text style={styles.info}>Page: {startPage}</Text>
-        <Text style={styles.info}>{revelation_place}</Text>
-      </View>
-    </TouchableOpacity>
+    </Card>
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    backgroundColor: '#343a40',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    gap: 4,
-    ...SHADOWS.regular,
-  },
-  row: {
-    width: '100%',
+  content: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
     alignItems: 'center',
-    gap: 16,
+    gap: 12,
   },
-  chapterNumber: {
-    color: '#ddd',
-    fontSize: 14,
+  mainInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  name: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#ddd',
-  },
-  arabicName: {
-    flexGrow: 1,
-    textAlign: 'right',
-  },
-  info: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: '#ddd',
+  detailsRow: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
 });
