@@ -5,7 +5,7 @@ import {fetchVersesFullInfo} from '../../features/Chapter/chapterAction';
 import {ChapterProps} from '../../routes/ChaptersStack';
 import Chapter from '../../components/Chapter';
 
-const PAGE_NUMBER = 602;
+const PAGE_NUMBER = 5;
 
 export default function Page({route}: ChapterProps) {
   const {content: page} = useAppSelector(state => state.chapter);
