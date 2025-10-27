@@ -263,6 +263,22 @@ export function getVerseQCF(
   return verse + (verseEndSymbol ? getVerseEndSymbol(verseNumber) : '');
 }
 
+export function getPageQCFontName(pageNumber: number): string {
+  // Properly generate QCF font name for verse numbers
+  // QCF2001 for 1-9, QCF2013 for 10-99, QCF22xx for 100-199, QCF2285 for >=200, etc.
+  if (pageNumber < 10) {
+    // 1-9: QCF2001, QCF2002, ...
+    return `QCF200${pageNumber}`;
+  } else if (pageNumber < 100) {
+    // 10-99: QCF20xx
+    return `QCF20${pageNumber}`;
+  } else {
+    // 100+: hundreds digit after "QCF2", then rest: e.g., 285 -> QCF2285, 113 -> QCF2113
+    const hundreds = Math.floor(pageNumber / 100);
+    return `QCF2${hundreds}${pageNumber}`;
+  }
+}
+
 /**
  * Takes [verseNumber], [arabicNumeral] (optional) and returns '۝' symbol with verse number
  */
