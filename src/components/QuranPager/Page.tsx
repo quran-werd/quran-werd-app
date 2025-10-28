@@ -23,7 +23,7 @@ const Page: React.FC<PageProps> = ({
   verses,
   pageNumber,
   fontFamily,
-  fontSize = 18,
+  fontSize = 26,
   showPageFooter = true,
 }) => {
   // Group verses into lines for proper Mushaf layout
@@ -31,8 +31,6 @@ const Page: React.FC<PageProps> = ({
     () => (verses.length > 0 ? getLineDataFromVerses(verses) : []),
     [verses],
   );
-
-  console.log(1111, {lines});
 
   return (
     <View style={styles.container}>
@@ -62,9 +60,10 @@ const Page: React.FC<PageProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#FFFCE7',
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    gap: 8,
   },
   linesContainer: {
     flex: 1,
