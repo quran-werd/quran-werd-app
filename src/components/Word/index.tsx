@@ -1,6 +1,7 @@
 import React from 'react';
 import {PageTypes} from '../../types/page.types';
 import {StyleSheet, Text} from 'react-native';
+import {getPageQCFontName} from '../../content';
 
 interface IProps {
   word: PageTypes.Word;
@@ -22,6 +23,6 @@ const styles = StyleSheet.create({
   word: {
     fontSize: 20,
     color: 'white',
-    fontFamily: 'ScheherazadeNew-Regular',
+    fontFamily: getPageQCFontName(5),
   },
 });

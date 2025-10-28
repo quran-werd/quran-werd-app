@@ -1,33 +1,50 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView, SafeAreaView} from 'react-native';
-import {getPageQCFontName, getVerseQCF} from '../../content';
+import {
+  getPageData,
+  getPageQCFontName,
+  getVerseQCF,
+  getJuzNumber,
+  getSurahName,
+} from '../../content';
 
 export default function QuranPager() {
-  // Render first chapter (Al-Fatiha) - 7 verses
-  const surahNumber = 2;
-  const verseCount = 286;
+  // Render page 1 of the Quran
+  const pageNumber = 3;
+  const pageData = getPageData(pageNumber);
+  const fontName = getPageQCFontName(pageNumber);
+
+  // Build all verses as a single string
+  const allVerses = pageData
+    .map((section, sectionIndex) => {
+      const {surah, start, end} = section;
+
+      // Add surah separator if not first section
+      const surahSeparator = sectionIndex > 0 ? `${getSurahName(surah)}\n` : '';
+
+      // Get all verses in this section
+      const verses = Array.from({length: end - start + 1}, (_, i) => {
+        const verseNumber = start + i;
+        return getVerseQCF(surah, verseNumber);
+      }).join(' '); // Join with space so verses flow naturally
+
+      return surahSeparator + verses;
+    })
+    .join(' '); // Join all sections with space
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Surah Al-Fatiha</Text>
+        <Text style={styles.headerText}>
+          Page {pageNumber} | Juz{' '}
+          {getJuzNumber(pageData[0].surah, pageData[0].start)}
+        </Text>
       </View>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}>
-        {Array.from({length: verseCount}, (_, i) => {
-          const verseNumber = i + 1;
-          const verseText = getVerseQCF(surahNumber, verseNumber);
-
-          return (
-            <View key={`verse-${verseNumber}`} style={styles.verseContainer}>
-              <Text style={[styles.verse, {fontFamily: getPageQCFontName(3)}]}>
-                {verseText}
-              </Text>
-            </View>
-          );
-        })}
+        <Text style={[styles.verse, {fontFamily: fontName}]}>{allVerses}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -45,8 +62,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
   },
   headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#333',
     textAlign: 'center',
   },
@@ -56,25 +73,12 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  verseContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    paddingVertical: 8,
-  },
-  verseNumber: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
-    marginRight: 12,
-    width: 30,
-    textAlign: 'center',
-  },
   verse: {
-    flex: 1,
-    fontSize: 24,
-    lineHeight: 36,
-    textAlign: 'right',
+    fontSize: 22, // Slightly smaller
+    textAlign: 'center', // RIGHT, not center!
+    direction: 'rtl', // Explicit RTL
     color: '#1a1a1a',
-    fontFamily: 'ScheherazadeNew-Regular',
+    lineHeight: 40, // More spacing
+    width: '100%',
   },
 });
