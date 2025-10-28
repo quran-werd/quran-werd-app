@@ -24,7 +24,7 @@ interface PageContainerProps {
  */
 const PageContainer: React.FC<PageContainerProps> = ({
   pageNumber,
-  fontSize = 18,
+  fontSize = 26,
   showPageFooter = true,
 }) => {
   const [verses, setVerses] = useState<Verse[]>([]);

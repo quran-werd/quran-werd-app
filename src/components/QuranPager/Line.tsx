@@ -25,13 +25,13 @@ const Line: React.FC<LineProps> = ({
   pageNumber: _pageNumber,
   lineNumber: _lineNumber,
   fontFamily,
-  fontSize = 18,
+  fontSize = 26,
   isHighlighted = false,
 }) => {
   // Concatenate all words in the line with proper spacing
   // Use textUthmani for QCF fonts, fallback to text
   const lineText = words.map(word => word.codeV1).join(' ');
-  console.log(1111, {lineText});
+
   return (
     <View
       style={[styles.container, isHighlighted && styles.highlighted]}

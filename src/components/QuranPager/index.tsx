@@ -1,68 +1,74 @@
-import React, {useState, useCallback} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import PageContainer from './PageContainer';
-import {totalPagesCount, getJuzNumber, getPageData} from '../../content';
+import {getJuzNumber, getPageData, getSurahNameArabic} from '../../content';
 
 interface QuranPagerProps {
   initialPage?: number;
   fontSize?: number;
-  showPageFooter?: boolean;
   showHeader?: boolean;
-  onPageChange?: (page: number) => void;
 }
 
 /**
- * QuranPager - Static single page display (simplified version)
+ * QuranPager - Static single page display
  * Adapted from quran.com-frontend-next ReadingView structure
  *
  * Features:
  * - Single page rendering with proper line layout
  * - Verse grouping matching physical Mushaf
  * - Page-specific QCF fonts
- * - Header with page and Juz information
- * - Previous/Next navigation buttons
+ * - Clean header with chapter name and Juz information
  */
 const QuranPager: React.FC<QuranPagerProps> = ({
   initialPage = 3,
-  fontSize = 18,
-  showPageFooter = true,
+  fontSize = 26,
   showHeader = true,
-  onPageChange,
 }) => {
-  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentPage] = useState(initialPage);
 
-  const goToPreviousPage = useCallback(() => {
-    if (currentPage > 1) {
-      const newPage = currentPage - 1;
-      setCurrentPage(newPage);
-      onPageChange?.(newPage);
-    }
-  }, [currentPage, onPageChange]);
-
-  const goToNextPage = useCallback(() => {
-    if (currentPage < totalPagesCount) {
-      const newPage = currentPage + 1;
-      setCurrentPage(newPage);
-      onPageChange?.(newPage);
-    }
-  }, [currentPage, onPageChange]);
-
-  // Get Juz information for the current page
+  // Get chapter and Juz information for the current page
   const currentPageData = getPageData(currentPage);
   const firstSurah = currentPageData[0].surah;
   const firstVerse = currentPageData[0].start;
   const juzNumber = getJuzNumber(firstSurah, firstVerse);
+  const surahNameArabic = getSurahNameArabic(firstSurah);
+
+  // Convert Juz number to Arabic numerals
+  const toArabicNumerals = (num: number): string => {
+    const arabicNumbers: Record<string, string> = {
+      '0': '٠',
+      '1': '۱',
+      '2': '۲',
+      '3': '۳',
+      '4': '٤',
+      '5': '٥',
+      '6': '٦',
+      '7': '۷',
+      '8': '۸',
+      '9': '۹',
+    };
+    return num
+      .toString()
+      .split('')
+      .map(digit => arabicNumbers[digit])
+      .join('');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       {showHeader && (
         <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Page {currentPage} | Juz {juzNumber}
-          </Text>
-          <Text style={styles.headerSubText}>
-            {currentPage} / {totalPagesCount}
-          </Text>
+          {/* Left: Chapter name in Arabic */}
+          <View style={styles.headerLeft}>
+            <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
+          </View>
+
+          {/* Right: Juz and page number */}
+          <View style={styles.headerRight}>
+            <Text style={styles.juzText}>
+              الجزء {toArabicNumerals(juzNumber)}
+            </Text>
+          </View>
         </View>
       )}
 
@@ -70,31 +76,8 @@ const QuranPager: React.FC<QuranPagerProps> = ({
         <PageContainer
           pageNumber={currentPage}
           fontSize={fontSize}
-          showPageFooter={showPageFooter}
+          showPageFooter={true}
         />
-      </View>
-
-      {/* Navigation buttons */}
-      <View style={styles.navigationContainer}>
-        <Pressable
-          style={[
-            styles.navButton,
-            currentPage === 1 && styles.navButtonDisabled,
-          ]}
-          onPress={goToPreviousPage}
-          disabled={currentPage === 1}>
-          <Text style={styles.navButtonText}>← Previous</Text>
-        </Pressable>
-
-        <Pressable
-          style={[
-            styles.navButton,
-            currentPage === totalPagesCount && styles.navButtonDisabled,
-          ]}
-          onPress={goToNextPage}
-          disabled={currentPage === totalPagesCount}>
-          <Text style={styles.navButtonText}>Next →</Text>
-        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -104,48 +87,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFCE7',
+    gap: 8,
   },
   header: {
-    padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+    backgroundColor: '#FFFCE7',
   },
-  headerText: {
+  headerLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  headerRight: {
+    alignItems: 'flex-end',
+  },
+  surahNameArabic: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: '400',
+    color: '#1a1a1a',
+    textAlign: 'left',
   },
-  headerSubText: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
+  juzText: {
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#1a1a1a',
+    textAlign: 'right',
   },
   pageWrapper: {
     flex: 1,
-  },
-  navigationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  navButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-  },
-  navButtonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  navButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
 
