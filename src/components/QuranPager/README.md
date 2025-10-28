@@ -1,16 +1,20 @@
 # QuranPager Component
 
-A full-featured Quran page viewer with horizontal swipe navigation, built with React Native and using your converted content files.
+A Quran page viewer with proper Mushaf layout, built with React Native. The architecture is adapted from quran.com-frontend-next's ReadingView component.
 
 ## Features
 
-- ✅ Horizontal swipe navigation through all 604 Quran pages
-- ✅ Page-by-page rendering using `page_data.ts`
-- ✅ Verse text display using `getVerse()` from `quran.ts`
+- ✅ Static single page rendering (simplified version)
+- ✅ Line-by-line rendering matching physical Mushaf layout
+- ✅ Verse text display using `getVerseQCF()` from `quran.ts`
+- ✅ Proper verse and word structure
 - ✅ Juz information in header
-- ✅ Previous/Next controls
+- ✅ Previous/Next button navigation
 - ✅ Page indicator showing current page / total pages
-- 🎨 Supports custom fonts (QCF fonts for authentic Quranic script)
+- 🎨 Page-specific QCF fonts for authentic Quranic script
+- ⚡ Optimized rendering with React.memo
+
+**Note**: Currently implemented as a static single-page view with Previous/Next buttons. Swipe navigation can be added later using PagerView.
 
 ## Usage
 
@@ -146,11 +150,44 @@ The component automatically supports RTL text direction. Make sure:
 
 ## Architecture
 
-The component uses:
+The component architecture is inspired by quran.com-frontend-next's ReadingView:
+
+### Component Hierarchy
+```
+QuranPager (Main)
+  └── PageContainer (Data loader)
+      └── Page (Layout manager)
+          └── Line (Text renderer)
+```
+
+### Files Structure
+```
+QuranPager/
+├── index.tsx                 # Main pager component with navigation
+├── PageContainer.tsx         # Loads and prepares page data
+├── Page.tsx                  # Renders page with lines
+├── Line.tsx                  # Renders individual line
+├── types.ts                  # TypeScript interfaces
+├── utils/
+│   ├── groupLinesByVerses.ts    # Groups verses into lines
+│   ├── groupPagesByVerses.ts    # Groups verses into pages
+│   └── transformPageData.ts     # Transforms content data
+└── README.md
+```
+
+### Key Technologies
 - **`react-native-pager-view`**: Native pager for smooth swiping
 - **`src/content/page_data.ts`**: Page structure data
-- **`src/content/quran.ts`**: `getPageData()` and `getVerse()` functions
+- **`src/content/quran.ts`**: `getPageData()` and `getVerseQCF()` functions
 - **`src/content/surah_data.ts`**: Surah metadata
+
+### Data Flow
+1. **QuranPager** manages page navigation and state
+2. **PageContainer** fetches verses for current page using `getPageVerses()`
+3. **transformPageData** converts content data into Verse/Word structure
+4. **groupLinesByVerses** organizes words into lines (simulating Mushaf layout)
+5. **Page** renders all lines for the page
+6. **Line** renders individual line with proper font and styling
 
 ## Future Enhancements
 
@@ -162,21 +199,19 @@ The component uses:
 - [ ] Font size adjustment
 - [ ] Verse highlighting on tap
 
-## Data Flow
+## Comparison with Web Version
 
-```
-Page Swipe
-  ↓
-handlePageChange(page)
-  ↓
-getPageData(page)
-  ↓
-For each section in page:
-  For each verse in section:
-    getVerse(surah, verseNumber)
-      ↓
-    Render Text with QCF font
-```
+### Similarities
+- **Component structure**: PageContainer → Page → Line hierarchy
+- **Grouping logic**: Lines and pages grouped by verse structure
+- **Memoization**: Uses React.memo for performance optimization
+- **Font handling**: Page-specific fonts for accurate rendering
+
+### Differences
+- **Virtual scrolling**: Web uses Virtuoso, mobile uses PagerView
+- **Data source**: Web fetches from API, mobile uses local content
+- **Line numbers**: Web has real line data from API, mobile simulates based on word count
+- **Navigation**: Mobile has explicit Previous/Next buttons for better touch UI
 
 ## Troubleshooting
 
