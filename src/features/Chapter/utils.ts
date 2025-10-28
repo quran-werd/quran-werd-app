@@ -6,6 +6,7 @@ export function addUthmaniTextToVersesInfo(
   versesInfo: APITypes.VerseInfo[],
 ): Verse[] {
   return versesInfo.map((verse, idx) => {
+    console.log(1111, {verse, original: verses[idx]});
     const splittedUthmani = verses[idx].text_uthmani.split(' ');
 
     const words = verse.words.map((word, idx) => ({

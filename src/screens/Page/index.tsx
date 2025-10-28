@@ -4,6 +4,7 @@ import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {fetchVersesFullInfo} from '../../features/Chapter/chapterAction';
 import {ChapterProps} from '../../routes/ChaptersStack';
 import Chapter from '../../components/Chapter';
+import {getPageQCFontName} from '../../content';
 
 const PAGE_NUMBER = 5;
 
@@ -20,7 +21,7 @@ export default function Page({route}: ChapterProps) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       {page.map(chapter => (
         <Chapter key={chapter.chapterNumber} chapter={chapter} />
       ))}
