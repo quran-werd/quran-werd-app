@@ -1,0 +1,87 @@
+import React, {memo} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {Word} from './types';
+
+interface LineProps {
+  words: Word[];
+  lineKey: string;
+  pageNumber: number;
+  lineNumber: number;
+  fontFamily: string;
+  fontSize?: number;
+  isHighlighted?: boolean;
+}
+
+/**
+ * Line component - Renders a single line of Quranic text
+ * Adapted from quran.com-frontend-next ReadingView/Line.tsx
+ *
+ * Each line contains multiple words that should be displayed together
+ * as they appear in the physical Mushaf layout
+ */
+const Line: React.FC<LineProps> = ({
+  words,
+  lineKey,
+  pageNumber: _pageNumber,
+  lineNumber: _lineNumber,
+  fontFamily,
+  fontSize = 18,
+  isHighlighted = false,
+}) => {
+  // Concatenate all words in the line with proper spacing
+  // Use textUthmani for QCF fonts, fallback to text
+  const lineText = words.map(word => word.codeV1).join(' ');
+  console.log(1111, {lineText});
+  return (
+    <View
+      style={[styles.container, isHighlighted && styles.highlighted]}
+      key={lineKey}>
+      <Text
+        style={[
+          styles.text,
+          {
+            fontFamily,
+            fontSize,
+          },
+        ]}>
+        {lineText}
+      </Text>
+    </View>
+  );
+};
+
+/**
+ * Custom comparison function for memoization
+ * Only re-render if:
+ * 1. lineKey changed
+ * 2. Number of words changed
+ * 3. Font changed
+ * 4. Highlight state changed
+ */
+const arePropsEqual = (prevProps: LineProps, nextProps: LineProps): boolean => {
+  return (
+    prevProps.lineKey === nextProps.lineKey &&
+    prevProps.words.length === nextProps.words.length &&
+    prevProps.fontFamily === nextProps.fontFamily &&
+    prevProps.fontSize === nextProps.fontSize &&
+    prevProps.isHighlighted === nextProps.isHighlighted
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  highlighted: {
+    backgroundColor: '#FFF9E6',
+  },
+  text: {
+    textAlign: 'center',
+    writingDirection: 'rtl',
+    color: '#1a1a1a',
+  },
+});
+
+export default memo(Line, arePropsEqual);
