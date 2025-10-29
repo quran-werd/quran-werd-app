@@ -9,6 +9,13 @@ interface PageContainerProps {
   pageNumber: number;
   fontSize?: number;
   showPageFooter?: boolean;
+  cachedVerses?: Verse[];
+  cachedFontFamily?: string;
+  onDataLoaded?: (
+    pageNumber: number,
+    verses: Verse[],
+    fontFamily: string,
+  ) => void;
 }
 
 /**
@@ -26,12 +33,23 @@ const PageContainer: React.FC<PageContainerProps> = ({
   pageNumber,
   fontSize = 26,
   showPageFooter = true,
+  cachedVerses,
+  cachedFontFamily,
+  onDataLoaded,
 }) => {
-  const [verses, setVerses] = useState<Verse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fontFamily, setFontFamily] = useState<string>('');
+  const [verses, setVerses] = useState<Verse[]>(cachedVerses || []);
+  const [isLoading, setIsLoading] = useState(!cachedVerses);
+  const [fontFamily, setFontFamily] = useState<string>(cachedFontFamily || '');
 
   useEffect(() => {
+    // If we have cached data, use it and don't fetch
+    if (cachedVerses && cachedFontFamily) {
+      setVerses(cachedVerses);
+      setFontFamily(cachedFontFamily);
+      setIsLoading(false);
+      return;
+    }
+
     const loadPageData = async () => {
       try {
         setIsLoading(true);
@@ -43,6 +61,9 @@ const PageContainer: React.FC<PageContainerProps> = ({
         // Fetch verses from API
         const pageVerses = await getPageVerses(pageNumber);
         setVerses(pageVerses);
+
+        // Cache the data for future use
+        onDataLoaded?.(pageNumber, pageVerses, pageFontName);
       } catch (error) {
         console.error(`Failed to load page ${pageNumber}:`, error);
       } finally {
@@ -51,7 +72,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
     };
 
     loadPageData();
-  }, [pageNumber]);
+  }, [pageNumber, cachedVerses, cachedFontFamily, onDataLoaded]);
 
   if (isLoading) {
     return (
