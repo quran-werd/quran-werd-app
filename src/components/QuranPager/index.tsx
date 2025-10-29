@@ -9,6 +9,7 @@ import {
   toArabicNumerals,
   totalPagesCount,
 } from '../../content';
+import {colors} from '../../styles/colors';
 import type {Verse} from './types';
 
 interface QuranPagerProps {
@@ -149,7 +150,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFCE7',
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     paddingVertical: 8,
-    backgroundColor: '#FFFCE7',
+    backgroundColor: colors.background,
   },
   headerLeft: {
     flex: 1,
@@ -169,13 +170,13 @@ const styles = StyleSheet.create({
   surahNameArabic: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#1a1a1a',
+    color: colors.text.primary,
     textAlign: 'left',
   },
   juzText: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#1a1a1a',
+    color: colors.text.primary,
     textAlign: 'right',
   },
   pagerView: {
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     flex: 1,
-    backgroundColor: '#FFFCE7',
+    backgroundColor: colors.white,
   },
 });
 
