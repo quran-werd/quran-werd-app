@@ -127,6 +127,8 @@ export const fetchPageVerses = async (pageNumber: number) => {
     ...DEFAULT_VERSES_PARAMS,
   };
 
+  console.log(1111, path, params);
+
   const response = await apiClient.get(path, {params});
   return response.data;
 };

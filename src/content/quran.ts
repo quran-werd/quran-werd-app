@@ -31,9 +31,32 @@ export function getPageData(pageNumber: number): PageDataItem[] {
 }
 
 /**
+ * Takes [num] and returns the Arabic numerals
+ */
+export const toArabicNumerals = (num: number): string => {
+  const arabicNumbers: Record<string, string> = {
+    '0': '٠',
+    '1': '۱',
+    '2': '۲',
+    '3': '۳',
+    '4': '٤',
+    '5': '٥',
+    '6': '٦',
+    '7': '۷',
+    '8': '۸',
+    '9': '۹',
+  };
+  return num
+    .toString()
+    .split('')
+    .map(digit => arabicNumbers[digit])
+    .join('');
+};
+
+/**
  * The most standard and common copy of Arabic only Quran total pages count
  */
-export const totalPagesCount = 3; //604;
+export const totalPagesCount = 604;
 
 /**
  * The constant total of makki surahs
@@ -264,9 +287,7 @@ export function getVerseQCF(
 }
 
 export function getPageQCFontName(pageNumber: number): string {
-  const fontName = 'QCF_P003'; // `QCF_P${pageNumber.toString().padStart(3, '0')}`;
-  console.log(1111, {fontName});
-  return fontName;
+  return `QCF_P${pageNumber.toString().padStart(3, '0')}`;
 }
 
 /**

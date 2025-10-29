@@ -3,6 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Verse} from './types';
 import {getLineDataFromVerses} from './utils/groupLinesByVerses';
 import Line from './Line';
+import {toArabicNumerals} from '../../content';
 
 interface PageProps {
   verses: Verse[];
@@ -50,7 +51,7 @@ const Page: React.FC<PageProps> = ({
 
       {showPageFooter && (
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{pageNumber}</Text>
+          <Text style={styles.footerText}>{toArabicNumerals(pageNumber)}</Text>
         </View>
       )}
     </View>
