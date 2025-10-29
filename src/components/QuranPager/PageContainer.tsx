@@ -3,6 +3,7 @@ import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {Verse} from './types';
 import {getPageVerses} from './utils/transformPageData';
 import {getPageQCFontName} from '../../content';
+import {colors} from '../../styles/colors';
 import Page from './Page';
 
 interface PageContainerProps {
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFCE7',
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
   },
 });

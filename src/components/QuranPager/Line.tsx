@@ -1,5 +1,6 @@
 import React, {memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {colors} from '../../styles/colors';
 import {Word} from './types';
 
 interface LineProps {
@@ -75,12 +76,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   highlighted: {
-    backgroundColor: '#FFF9E6',
+    backgroundColor: colors.light,
   },
   text: {
     textAlign: 'center',
     writingDirection: 'rtl',
-    color: '#1a1a1a',
+    color: colors.text.primary,
   },
 });
 
