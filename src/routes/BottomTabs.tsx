@@ -5,19 +5,12 @@ import {useTranslation} from 'react-i18next';
 import {BottomTabsScreenOptionsType} from '../types/react-navigation.types';
 import {colors} from '../styles/colors';
 import ChaptersStack from './ChaptersStack';
-import QuranPagerStack from './QuranPagerStack';
 import MemorizationProgress from '../screens/MemorizationProgress';
 
 const Tab = createBottomTabNavigator();
 
 // Icon components
 const ChaptersIcon = ({focused}: {focused: boolean}) => (
-  <Text style={focused ? iconStyles.iconFocused : iconStyles.iconUnfocused}>
-    📖
-  </Text>
-);
-
-const QuranIcon = ({focused}: {focused: boolean}) => (
   <Text style={focused ? iconStyles.iconFocused : iconStyles.iconUnfocused}>
     📖
   </Text>
@@ -40,14 +33,6 @@ export default function BottomTabs() {
         options={{
           title: t('tabs.chapters'),
           tabBarIcon: ChaptersIcon,
-        }}
-      />
-      <Tab.Screen
-        name="QuranPagerStack"
-        component={QuranPagerStack}
-        options={{
-          title: 'Quran',
-          tabBarIcon: QuranIcon,
         }}
       />
       <Tab.Screen

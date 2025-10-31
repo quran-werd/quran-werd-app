@@ -1,7 +1,7 @@
 import React, {useState, useRef, useCallback, useMemo} from 'react';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import PagerView from 'react-native-pager-view';
-import PageContainer from './PageContainer';
+import {PageContainer} from './components';
 import {
   getJuzNumber,
   getPageData,
