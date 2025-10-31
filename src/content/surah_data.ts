@@ -537,7 +537,7 @@ export const surah: Surah[] = [
     aya: 24,
     english: 'The Mustering',
     turkish: 'Haşr',
-    place: 'Manidah',
+    place: 'Madinah',
     arabic: 'الحشر',
   },
   {
@@ -654,7 +654,7 @@ export const surah: Surah[] = [
     aya: 28,
     english: 'The Jinn',
     turkish: 'Cin',
-    place: 'makkah',
+    place: 'Makkah',
     arabic: 'الجن',
   },
   {

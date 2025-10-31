@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {APITypes} from '../../types/api.types';
 import {useNavigation} from '@react-navigation/native';
 import {ChaptersProps} from '../../routes/ChaptersStack';
 import Card from '../shared/Card';
@@ -8,7 +7,12 @@ import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
 
 interface IProps {
-  chapter: APITypes.Chapter;
+  chapter: {
+    id: number;
+    name_arabic: string;
+    verses_count: number;
+    revelation_place: string;
+  };
 }
 
 export default function ChapterListItem({chapter}: IProps) {
