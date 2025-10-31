@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {colors} from '../../styles/colors';
-import {Word} from './types';
+import {colors} from '../../../styles/colors';
+import {Word} from '../types';
 
 interface LineProps {
   words: Word[];

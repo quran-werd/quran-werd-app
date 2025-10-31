@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
-import {Verse} from './types';
-import {getPageVerses} from './utils/transformPageData';
-import {getPageQCFontName} from '../../content';
-import {colors} from '../../styles/colors';
+import {Verse} from '../types';
+import {getPageVerses} from '../utils/transformPageData';
+import {getPageQCFontName} from '../../../content';
+import {colors} from '../../../styles/colors';
 import Page from './Page';
 
 interface PageContainerProps {
@@ -30,7 +30,7 @@ interface PageContainerProps {
  * - Showing loading states
  * - Uses REAL line numbers from API (not simulated)
  */
-const PageContainer: React.FC<PageContainerProps> = ({
+export const PageContainer: React.FC<PageContainerProps> = ({
   pageNumber,
   fontSize = 26,
   showPageFooter = true,
@@ -103,5 +103,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
 });
-
-export default PageContainer;

@@ -1,10 +1,10 @@
 import React, {useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Verse} from './types';
-import {getLineDataFromVerses} from './utils/groupLinesByVerses';
-import {colors} from '../../styles/colors';
+import {Verse} from '../types';
+import {getLineDataFromVerses} from '../utils/groupLinesByVerses';
+import {colors} from '../../../styles/colors';
 import Line from './Line';
-import {toArabicNumerals} from '../../content';
+import {toArabicNumerals} from '../../../content';
 
 const SMALLER_PAGES = [1, 2];
 
