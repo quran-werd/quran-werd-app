@@ -39,7 +39,7 @@ interface PageCache {
  */
 const QuranPager: React.FC<QuranPagerProps> = ({
   initialPage = 1,
-  fontSize = 23,
+  fontSize,
   showHeader = true,
   onPageChange,
 }) => {

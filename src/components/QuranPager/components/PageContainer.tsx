@@ -32,7 +32,7 @@ interface PageContainerProps {
  */
 export const PageContainer: React.FC<PageContainerProps> = ({
   pageNumber,
-  fontSize = 26,
+  fontSize,
   showPageFooter = true,
   cachedVerses,
   cachedFontFamily,

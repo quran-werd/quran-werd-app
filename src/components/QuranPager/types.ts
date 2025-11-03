@@ -13,7 +13,7 @@ export interface Word {
   pageNumber: number;
   lineNumber: number;
   verseNumber?: number;
-  chapterId?: number;
+  chapterId: number;
   charTypeName: 'word' | 'end' | 'pause' | 'sajdah' | 'rub-el-hizb';
   codeV1?: string;
   codeV2?: string;
