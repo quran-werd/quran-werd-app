@@ -11,5 +11,5 @@ export default function Page({route}: ChapterProps) {
     [chapterNumber],
   );
 
-  return <QuranPager initialPage={pageNumber} />;
+  return <QuranPager initialPage={pageNumber} fontSize={22} />;
 }
