@@ -1,6 +1,7 @@
 import React from 'react';
 import {PageTypes} from '../../types/page.types';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import {getPageQCFontName} from '../../content';
 
 interface IProps {
   word: PageTypes.Word;
@@ -13,7 +14,7 @@ export default function Word({word, isLastWord}: IProps) {
     <>
       {!!text && <Text style={styles.word}>{` ${text}`}</Text>}
       {isVerseEnd && <Text style={styles.word}>({verseNumber}) </Text>}
-      {isLastWord && <Text>{` `}</Text>}
+      {isLastWord && <Text> </Text>}
     </>
   );
 }
@@ -21,6 +22,7 @@ export default function Word({word, isLastWord}: IProps) {
 const styles = StyleSheet.create({
   word: {
     fontSize: 20,
-    fontFamily: 'ScheherazadeNew-Regular',
+    color: 'white',
+    fontFamily: getPageQCFontName(5),
   },
 });
