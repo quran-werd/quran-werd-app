@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {Icon, Button} from '@ui-kitten/components';
 import {colors} from '../../styles/colors';
 import {MemorizedRange} from '../../types/memorization.types';
 import Card from '../shared/Card';
@@ -9,36 +10,64 @@ import Badge from '../shared/Badge';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
+  onDelete?: (rangeId: string) => void;
+  showDeleteButton?: boolean;
 }
 
-export default function MemorizedRangeItem({range}: MemorizedRangeItemProps) {
+const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
+
+export default function MemorizedRangeItem({
+  range,
+  onDelete,
+  showDeleteButton = false,
+}: MemorizedRangeItemProps) {
   const {t} = useTranslation();
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(range.id);
+    }
+  };
 
   return (
     <Card style={styles.container} padding={12} margin={8} shadow={false}>
       <View style={styles.rangeHeader}>
-        <Badge variant="light" size="medium" style={styles.rangeBadge}>
-          <Typography variant="small" weight="bold" color="primary">
-            {t('memorization.surah.verseRange', {
-              startVerse: range.startVerse,
-              endVerse: range.endVerse,
-            })}
-          </Typography>
-        </Badge>
-        <View style={styles.stats}>
-          <Typography
-            variant="small"
-            color="secondary"
-            style={styles.wordCount}>
-            {t('memorization.surah.wordCount', {count: range.wordCount})}
-          </Typography>
-          <Typography
-            variant="small"
-            color="secondary"
-            style={styles.verseCount}>
-            {t('memorization.surah.verseCountShort', {count: range.verseCount})}
-          </Typography>
+        <View style={styles.headerLeft}>
+          <Badge variant="light" size="medium" style={styles.rangeBadge}>
+            <Typography variant="small" weight="bold" color="primary">
+              {t('memorization.surah.verseRange', {
+                startVerse: range.startVerse,
+                endVerse: range.endVerse,
+              })}
+            </Typography>
+          </Badge>
+          <View style={styles.stats}>
+            <Typography
+              variant="small"
+              color="secondary"
+              style={styles.wordCount}>
+              {t('memorization.surah.wordCount', {count: range.wordCount})}
+            </Typography>
+            <Typography
+              variant="small"
+              color="secondary"
+              style={styles.verseCount}>
+              {t('memorization.surah.verseCountShort', {
+                count: range.verseCount,
+              })}
+            </Typography>
+          </View>
         </View>
+        {showDeleteButton && onDelete && (
+          <Button
+            appearance="ghost"
+            status="danger"
+            accessoryLeft={CloseIcon}
+            onPress={handleDelete}
+            style={styles.deleteButton}
+            size="small"
+          />
+        )}
       </View>
       <View style={styles.textContainer}>
         <Typography
@@ -78,12 +107,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  headerLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flexWrap: 'wrap',
+  },
   rangeBadge: {
     // Badge component handles styling
   },
   stats: {
     flexDirection: 'row',
     gap: 8,
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    marginLeft: 8,
   },
   wordCount: {
     // Typography component handles styling

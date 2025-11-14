@@ -2,12 +2,14 @@ import {configureStore} from '@reduxjs/toolkit';
 import chaptersSlice from '../features/Chapters/chaptersSlice';
 import chapterSlice from '../features/Chapter/chapterSlice';
 import memorizationSlice from '../features/Memorization/memorizationSlice';
+import verseSelectionSlice from '../features/Memorization/verseSelectionSlice';
 
 export const store = configureStore({
   reducer: {
     chapters: chaptersSlice,
     chapter: chapterSlice,
     memorization: memorizationSlice,
+    verseSelection: verseSelectionSlice,
   },
 });
 

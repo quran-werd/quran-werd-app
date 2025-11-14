@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, StyleSheet, ScrollView, SafeAreaView} from 'react-native';
+import {Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
 import {toggleSurahExpansion} from '../../features/Memorization/memorizationSlice';
 import {colors} from '../../styles/colors';
@@ -11,11 +12,13 @@ import {
   RecentActivity,
   SurahDetailsList,
 } from '../../components';
+import {MemorizationProgressProps} from '../../routes/MemorizationStack';
 
 export default function MemorizationProgress() {
   const {progress} = useAppSelector(state => state.memorization);
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
+  const navigation = useNavigation<MemorizationProgressProps['navigation']>();
 
   const handleToggleSurah = (surahId: string) => {
     dispatch(toggleSurahExpansion(surahId));
@@ -24,6 +27,10 @@ export default function MemorizationProgress() {
   const handleRecentActivityPress = () => {
     // Navigate to detailed review screen
     console.log('Navigate to review details');
+  };
+
+  const handleAddMemorizationPress = () => {
+    navigation.navigate('MemorizationSelection', {initialPage: 1});
   };
 
   return (
@@ -55,6 +62,14 @@ export default function MemorizationProgress() {
 
         <RecentActivity onPress={handleRecentActivityPress} />
 
+        <TouchableOpacity
+          onPress={handleAddMemorizationPress}
+          style={styles.addButton}>
+          <Text style={styles.addButtonText}>
+            {t('memorization.addRange', 'Add Memorization Range')}
+          </Text>
+        </TouchableOpacity>
+
         <SurahDetailsList
           surahs={progress.surahs}
           onToggleExpansion={handleToggleSurah}
@@ -80,5 +95,19 @@ const styles = StyleSheet.create({
   },
   progressIcon: {
     fontSize: 24,
+  },
+  addButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    marginVertical: 16,
+    marginHorizontal: 16,
+  },
+  addButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

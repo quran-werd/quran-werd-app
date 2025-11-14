@@ -5,7 +5,8 @@ import {getLineDataFromVerses} from '../utils/groupLinesByVerses';
 import {colors} from '../../../styles/colors';
 import Line from './Line';
 import {toArabicNumerals} from '../../../content';
-import {useLineSelection} from '../context';
+import {useAppSelector} from '../../../store/hooks';
+import {selectSelectedVerseKeys} from '../../../features/Memorization/verseSelectionSlice';
 
 const SMALLER_PAGES = [1, 2];
 
@@ -16,6 +17,7 @@ interface PageProps {
   fontSize?: number;
   showPageFooter?: boolean;
   highlightedLineKeys?: Set<string>;
+  selectionMode?: boolean;
 }
 
 /**
@@ -32,8 +34,16 @@ const Page: React.FC<PageProps> = ({
   fontSize = 26,
   showPageFooter = true,
   highlightedLineKeys: externalHighlightedLineKeys,
+  selectionMode = false,
 }) => {
-  const {selectedLineKeys} = useLineSelection();
+  // Get selected verse keys from Redux when in selection mode
+  const selectedVerseKeysFromRedux = useAppSelector(selectSelectedVerseKeys);
+  const selectedVerseKeys = useMemo(() => {
+    if (selectionMode) {
+      return selectedVerseKeysFromRedux;
+    }
+    return new Set<string>();
+  }, [selectionMode, selectedVerseKeysFromRedux]);
 
   // Group verses into lines for proper Mushaf layout
   const lines = useMemo(
@@ -46,13 +56,17 @@ const Page: React.FC<PageProps> = ({
     [pageNumber],
   );
 
-  // Merge external highlighted line keys with selected line keys from context
+  // For selection mode, pass selected verse keys; otherwise use line keys for backwards compatibility
   const highlightedLineKeys = useMemo(() => {
-    if (externalHighlightedLineKeys) {
-      return new Set([...selectedLineKeys, ...externalHighlightedLineKeys]);
+    if (selectionMode) {
+      // In selection mode, we don't use line keys
+      return undefined;
     }
-    return selectedLineKeys;
-  }, [selectedLineKeys, externalHighlightedLineKeys]);
+    if (externalHighlightedLineKeys) {
+      return externalHighlightedLineKeys;
+    }
+    return undefined;
+  }, [selectionMode, externalHighlightedLineKeys]);
 
   return (
     <View style={styles.container}>
@@ -70,6 +84,8 @@ const Page: React.FC<PageProps> = ({
               fontFamily={fontFamily}
               fontSize={fontSize}
               highlightedLineKeys={highlightedLineKeys}
+              selectionMode={selectionMode}
+              selectedVerseKeys={selectedVerseKeys}
             />
           ))}
         </View>

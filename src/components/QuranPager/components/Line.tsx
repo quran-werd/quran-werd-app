@@ -7,6 +7,12 @@ import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
 import {useLineSelection} from '../context';
+import {useAppSelector, useAppDispatch} from '../../../store/hooks';
+import {
+  selectPendingStartVerse,
+  setPendingStartVerse,
+  addVerseRange,
+} from '../../../features/Memorization/verseSelectionSlice';
 
 interface LineProps {
   words: Word[];
@@ -18,6 +24,8 @@ interface LineProps {
   isHighlighted?: boolean;
   highlightedWordIds?: Set<number>;
   highlightedLineKeys?: Set<string>;
+  selectionMode?: boolean;
+  selectedVerseKeys?: Set<string>;
 }
 
 /**
@@ -37,9 +45,24 @@ const Line: React.FC<LineProps> = ({
   isHighlighted = false,
   highlightedWordIds,
   highlightedLineKeys,
+  selectionMode = false,
+  selectedVerseKeys = new Set<string>(),
 }) => {
-  const {toggleLineSelection, isLineSelected: isSelectedFromContext} =
-    useLineSelection();
+  // Try to get line selection context (only available when not in selection mode)
+  let toggleLineSelection: (lineKey: string) => void = () => {};
+  let isSelectedFromContext: (lineKey: string) => boolean = () => false;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const lineSelection = useLineSelection();
+    toggleLineSelection = lineSelection.toggleLineSelection;
+    isSelectedFromContext = lineSelection.isLineSelected;
+  } catch (error) {
+    // Context not available - fine
+  }
+
+  // Get verse selection state from Redux when in selection mode
+  const dispatch = useAppDispatch();
+  const pendingStartVerse = useAppSelector(selectPendingStartVerse);
 
   const isShowBismillah = words[0].verseNumber === 1;
 
@@ -48,9 +71,63 @@ const Line: React.FC<LineProps> = ({
     [words],
   );
 
-  // Determine if the entire line should be highlighted
-  // Check context selection first, then external props
+  // Group words by verse for verse-level selection
+  const wordsByVerse = useMemo(() => {
+    const grouped: Record<string, Word[]> = {};
+    words.forEach(word => {
+      const verseKey = word.verseKey;
+      if (!grouped[verseKey]) {
+        grouped[verseKey] = [];
+      }
+      grouped[verseKey].push(word);
+    });
+    return grouped;
+  }, [words]);
+
+  // Handle verse press/tap in selection mode
+  const handleVersePress = (verseKey: string) => {
+    if (!selectionMode) {
+      return;
+    }
+
+    if (!pendingStartVerse) {
+      // First click - set as start
+      dispatch(setPendingStartVerse(verseKey));
+    } else {
+      // Second click - create range
+      dispatch(addVerseRange({startKey: pendingStartVerse, endKey: verseKey}));
+    }
+  };
+
+  // Handle line press (for non-selection mode)
+  const handleLinePress = () => {
+    if (!selectionMode) {
+      toggleLineSelection(lineKey);
+    }
+  };
+
+  // Determine if a verse is selected using Redux selector
+  const isVerseSelected = (verseKey: string): boolean => {
+    if (selectionMode) {
+      return selectedVerseKeys.has(verseKey);
+    }
+    return false;
+  };
+
+  // Determine if a verse is pending (waiting for end selection)
+  const isVersePending = (verseKey: string): boolean => {
+    if (!selectionMode) {
+      return false;
+    }
+    return pendingStartVerse === verseKey;
+  };
+
+  // Determine if the entire line should be highlighted (for non-selection mode)
   const isLineHighlighted = useMemo(() => {
+    if (selectionMode) {
+      return false; // Don't use line highlighting in selection mode
+    }
+
     // Check if selected from context
     const selectedFromContext = isSelectedFromContext(lineKey);
     if (selectedFromContext) {
@@ -64,18 +141,23 @@ const Line: React.FC<LineProps> = ({
 
     // Fallback to isHighlighted prop for backwards compatibility
     return isHighlighted;
-  }, [highlightedLineKeys, lineKey, isHighlighted, isSelectedFromContext]);
-
-  // Handle line press/tap
-  const handleLinePress = () => {
-    toggleLineSelection(lineKey);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    highlightedLineKeys,
+    lineKey,
+    isHighlighted,
+    selectionMode,
+    // isSelectedFromContext is from context and stable, but linter doesn't know that
+  ]);
 
   // Determine if a word should be highlighted
-  // Word highlighting takes precedence over line highlighting
   const isWordHighlighted = (word: Word): boolean => {
     if (highlightedWordIds) {
       return highlightedWordIds.has(word.id);
+    }
+    if (selectionMode) {
+      // In selection mode, highlight based on verse selection
+      return isVerseSelected(word.verseKey);
     }
     // If no specific word IDs provided, use line highlighting for words
     return isLineHighlighted;
@@ -89,26 +171,76 @@ const Line: React.FC<LineProps> = ({
           <Basmalah />
         </View>
       )}
-      <Pressable
-        onPress={handleLinePress}
-        style={[styles.container, isLineHighlighted && styles.lineHighlighted]}>
-        <View style={styles.wordsContainer}>
-          {words.map((word, index) => {
-            const shouldHighlight = isWordHighlighted(word);
+      {selectionMode ? (
+        // In selection mode: render verses separately, each clickable
+        <View style={styles.container}>
+          <View style={styles.wordsContainer}>
+            {Object.entries(wordsByVerse).map(
+              ([verseKey, verseWords], verseIndex) => {
+                const verseSelected = isVerseSelected(verseKey);
+                const versePending = isVersePending(verseKey);
 
-            return (
-              <WordComponent
-                key={`${word.id}-${index}`}
-                word={word}
-                fontFamily={fontFamily}
-                fontSize={fontSize}
-                isHighlighted={shouldHighlight}
-                showSpaceBefore={index > 0}
-              />
-            );
-          })}
+                return (
+                  <Pressable
+                    key={verseKey}
+                    onPress={() => handleVersePress(verseKey)}
+                    style={[
+                      styles.verseContainer,
+                      verseSelected && styles.verseHighlighted,
+                      versePending && styles.versePending,
+                    ]}>
+                    {verseWords.map((word, wordIndex) => {
+                      const shouldHighlight = isWordHighlighted(word);
+                      const isFirstWordInVerse = wordIndex === 0;
+                      const isFirstVerse = verseIndex === 0;
+
+                      return (
+                        <WordComponent
+                          key={`${word.id}-${wordIndex}`}
+                          word={word}
+                          fontFamily={fontFamily}
+                          fontSize={fontSize}
+                          isHighlighted={shouldHighlight}
+                          showSpaceBefore={
+                            isFirstWordInVerse
+                              ? isFirstVerse === false
+                              : wordIndex > 0
+                          }
+                        />
+                      );
+                    })}
+                  </Pressable>
+                );
+              },
+            )}
+          </View>
         </View>
-      </Pressable>
+      ) : (
+        // Normal mode: render line as before
+        <Pressable
+          onPress={handleLinePress}
+          style={[
+            styles.container,
+            isLineHighlighted && styles.lineHighlighted,
+          ]}>
+          <View style={styles.wordsContainer}>
+            {words.map((word, index) => {
+              const shouldHighlight = isWordHighlighted(word);
+
+              return (
+                <WordComponent
+                  key={`${word.id}-${index}`}
+                  word={word}
+                  fontFamily={fontFamily}
+                  fontSize={fontSize}
+                  isHighlighted={shouldHighlight}
+                  showSpaceBefore={index > 0}
+                />
+              );
+            })}
+          </View>
+        </Pressable>
+      )}
     </React.Fragment>
   );
 };
@@ -144,14 +276,27 @@ const arePropsEqual = (prevProps: LineProps, nextProps: LineProps): boolean => {
       [...prevLineKeys].every(key => nextLineKeys.has(key))) ||
     (!prevLineKeys && !nextLineKeys);
 
+  // Compare selectedVerseKeys Sets (for selection mode)
+  const prevVerseKeys = prevProps.selectedVerseKeys;
+  const nextVerseKeys = nextProps.selectedVerseKeys;
+  const verseKeysEqual: boolean =
+    prevVerseKeys === nextVerseKeys ||
+    (prevVerseKeys &&
+      nextVerseKeys &&
+      prevVerseKeys.size === nextVerseKeys.size &&
+      [...prevVerseKeys].every(key => nextVerseKeys.has(key))) ||
+    (!prevVerseKeys && !nextVerseKeys);
+
   return (
     prevProps.lineKey === nextProps.lineKey &&
     prevProps.words.length === nextProps.words.length &&
     prevProps.fontFamily === nextProps.fontFamily &&
     prevProps.fontSize === nextProps.fontSize &&
     prevProps.isHighlighted === nextProps.isHighlighted &&
+    prevProps.selectionMode === nextProps.selectionMode &&
     wordIdsEqual &&
-    lineKeysEqual
+    lineKeysEqual &&
+    verseKeysEqual
   );
 };
 
@@ -162,6 +307,20 @@ const styles = StyleSheet.create({
   },
   lineHighlighted: {
     backgroundColor: colors.light,
+  },
+  verseContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingVertical: 2,
+    paddingHorizontal: 2,
+    borderRadius: 4,
+  },
+  verseHighlighted: {
+    backgroundColor: colors.light,
+  },
+  versePending: {
+    backgroundColor: colors.secondary,
+    opacity: 0.5,
   },
   wordsContainer: {
     flexDirection: 'row',

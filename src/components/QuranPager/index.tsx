@@ -1,5 +1,5 @@
 import React, {useState, useRef, useCallback, useMemo} from 'react';
-import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
 import {
@@ -12,12 +12,16 @@ import {
 import {colors} from '../../styles/colors';
 import type {Verse} from './types';
 import {LineSelectionProvider} from './context';
+import {MemorizationSelectionSheet} from './components/MemorizationSelectionSheet';
+import {MemorizedRange} from '../../types/memorization.types';
 
 interface QuranPagerProps {
   initialPage?: number;
   fontSize?: number;
   showHeader?: boolean;
   onPageChange?: (page: number) => void;
+  selectionMode?: boolean;
+  onSave?: (ranges: MemorizedRange[]) => void;
 }
 
 interface PageCache {
@@ -43,8 +47,11 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   fontSize,
   showHeader = true,
   onPageChange,
+  selectionMode = false,
+  onSave,
 }) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const pagerRef = useRef<PagerView>(null);
 
   // Cache for storing fetched page data
@@ -86,6 +93,20 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     [currentPage],
   );
 
+  // Collect all verses from cached pages for bottom sheet
+  // Note: We update this whenever currentPage changes as cache updates
+  const allVerses = useMemo(() => {
+    const verses: Verse[] = [];
+    Object.values(pageCacheRef.current).forEach(pageData => {
+      if (pageData.verses) {
+        verses.push(...pageData.verses);
+      }
+    });
+    return verses;
+    // currentPage is used as a dependency to trigger re-computation when cache might update
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
+
   // Render pages with windowing for performance
   // Only render content for current page +/- WINDOW_SIZE
   // Memoized to avoid re-creating all 604 page elements on every render
@@ -105,6 +126,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
               cachedVerses={cachedData?.verses}
               cachedFontFamily={cachedData?.fontFamily}
               onDataLoaded={handlePageDataLoaded}
+              selectionMode={selectionMode}
             />
           ) : (
             // Placeholder for pages outside window
@@ -114,40 +136,81 @@ const QuranPager: React.FC<QuranPagerProps> = ({
       );
     }
     return pagesArray;
-  }, [fontSize, shouldRenderPage, handlePageDataLoaded]);
+  }, [fontSize, shouldRenderPage, handlePageDataLoaded, selectionMode]);
 
-  return (
-    <LineSelectionProvider>
-      <SafeAreaView style={styles.container}>
-        {showHeader && (
-          <View style={styles.header}>
-            {/* Left: Chapter name in Arabic */}
-            <View style={styles.headerLeft}>
-              <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
-            </View>
-
-            {/* Right: Juz and page number */}
-            <View style={styles.headerRight}>
-              <Text style={styles.juzText}>
-                الجزء {toArabicNumerals(juzNumber)}
-              </Text>
-            </View>
-          </View>
-        )}
-
-        <PagerView
-          ref={pagerRef}
-          style={styles.pagerView}
-          initialPage={initialPage - 1} // Convert 1-based to 0-based
-          onPageSelected={handlePageSelected}
-          orientation="horizontal"
-          overdrag={false}
-          offscreenPageLimit={2}>
-          {pages}
-        </PagerView>
-      </SafeAreaView>
-    </LineSelectionProvider>
+  // Handle save action from bottom sheet
+  const handleSave = useCallback(
+    (ranges: MemorizedRange[]) => {
+      // Call the onSave callback if provided
+      onSave?.(ranges);
+      // TODO: Replace with actual API call when backend is ready
+      console.log('Saving memorization ranges:', ranges);
+      // API call placeholder:
+      // await saveMemorizationRanges(ranges);
+      setBottomSheetVisible(false);
+    },
+    [onSave],
   );
+
+  const content = (
+    <SafeAreaView style={styles.container}>
+      {showHeader && (
+        <View style={styles.header}>
+          {/* Left: Chapter name in Arabic */}
+          <View style={styles.headerLeft}>
+            <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
+          </View>
+
+          {/* Right: Juz and page number */}
+          <View style={styles.headerRight}>
+            <Text style={styles.juzText}>
+              الجزء {toArabicNumerals(juzNumber)}
+            </Text>
+          </View>
+        </View>
+      )}
+
+      <PagerView
+        ref={pagerRef}
+        style={styles.pagerView}
+        initialPage={initialPage - 1} // Convert 1-based to 0-based
+        onPageSelected={handlePageSelected}
+        orientation="horizontal"
+        overdrag={false}
+        offscreenPageLimit={2}>
+        {pages}
+      </PagerView>
+
+      {/* Bottom sheet for selection mode */}
+      {selectionMode && (
+        <MemorizationSelectionSheet
+          visible={bottomSheetVisible}
+          onClose={() => setBottomSheetVisible(false)}
+          onSave={handleSave}
+          verses={allVerses}
+        />
+      )}
+
+      {/* Button to toggle bottom sheet in selection mode */}
+      {selectionMode && (
+        <Pressable
+          style={styles.toggleSheetButton}
+          onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
+          <Text style={styles.toggleSheetButtonText}>
+            {bottomSheetVisible ? 'Hide' : 'Show'} Selection
+          </Text>
+        </Pressable>
+      )}
+    </SafeAreaView>
+  );
+
+  // Wrap with line selection provider (verse selection is handled by Redux)
+  if (!selectionMode) {
+    return <LineSelectionProvider>{content}</LineSelectionProvider>;
+  }
+
+  // In selection mode, no provider needed - using Redux instead
+  return content;
 };
 
 const styles = StyleSheet.create({
@@ -191,6 +254,25 @@ const styles = StyleSheet.create({
   placeholder: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  toggleSheetButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 24,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  toggleSheetButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

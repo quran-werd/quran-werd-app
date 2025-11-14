@@ -66,3 +66,11 @@ export interface LineData {
   lineNumber: number;
 }
 
+export interface VerseRange {
+  id: string;
+  startVerseKey: string;
+  endVerseKey: string;
+  surahId: number;
+  startSurahId?: number; // For ranges that span surahs
+}
+
