@@ -1,11 +1,12 @@
 import React, {memo, useMemo} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
 import {colors} from '../../../styles/colors';
 import {Word} from '../types';
 import Basmalah from './Basmalah';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
+import {useLineSelection} from '../context';
 
 interface LineProps {
   words: Word[];
@@ -16,6 +17,7 @@ interface LineProps {
   fontSize?: number;
   isHighlighted?: boolean;
   highlightedWordIds?: Set<number>;
+  highlightedLineKeys?: Set<string>;
 }
 
 /**
@@ -34,7 +36,11 @@ const Line: React.FC<LineProps> = ({
   fontSize,
   isHighlighted = false,
   highlightedWordIds,
+  highlightedLineKeys,
 }) => {
+  const {toggleLineSelection, isLineSelected: isSelectedFromContext} =
+    useLineSelection();
+
   const isShowBismillah = words[0].verseNumber === 1;
 
   const chapterName = useMemo(
@@ -42,13 +48,37 @@ const Line: React.FC<LineProps> = ({
     [words],
   );
 
+  // Determine if the entire line should be highlighted
+  // Check context selection first, then external props
+  const isLineHighlighted = useMemo(() => {
+    // Check if selected from context
+    const selectedFromContext = isSelectedFromContext(lineKey);
+    if (selectedFromContext) {
+      return true;
+    }
+
+    // Check external highlightedLineKeys prop
+    if (highlightedLineKeys) {
+      return highlightedLineKeys.has(lineKey);
+    }
+
+    // Fallback to isHighlighted prop for backwards compatibility
+    return isHighlighted;
+  }, [highlightedLineKeys, lineKey, isHighlighted, isSelectedFromContext]);
+
+  // Handle line press/tap
+  const handleLinePress = () => {
+    toggleLineSelection(lineKey);
+  };
+
   // Determine if a word should be highlighted
+  // Word highlighting takes precedence over line highlighting
   const isWordHighlighted = (word: Word): boolean => {
     if (highlightedWordIds) {
       return highlightedWordIds.has(word.id);
     }
-    // Fallback to line-level highlighting for backwards compatibility
-    return isHighlighted;
+    // If no specific word IDs provided, use line highlighting for words
+    return isLineHighlighted;
   };
 
   return (
@@ -59,7 +89,9 @@ const Line: React.FC<LineProps> = ({
           <Basmalah />
         </View>
       )}
-      <View style={styles.container}>
+      <Pressable
+        onPress={handleLinePress}
+        style={[styles.container, isLineHighlighted && styles.lineHighlighted]}>
         <View style={styles.wordsContainer}>
           {words.map((word, index) => {
             const shouldHighlight = isWordHighlighted(word);
@@ -76,7 +108,7 @@ const Line: React.FC<LineProps> = ({
             );
           })}
         </View>
-      </View>
+      </Pressable>
     </React.Fragment>
   );
 };
@@ -91,15 +123,26 @@ const Line: React.FC<LineProps> = ({
  */
 const arePropsEqual = (prevProps: LineProps, nextProps: LineProps): boolean => {
   // Compare highlightedWordIds Sets
-  const prevIds = prevProps.highlightedWordIds;
-  const nextIds = nextProps.highlightedWordIds;
-  const idsEqual: boolean =
-    prevIds === nextIds ||
-    (prevIds &&
-      nextIds &&
-      prevIds.size === nextIds.size &&
-      [...prevIds].every(id => nextIds.has(id))) ||
-    (!prevIds && !nextIds);
+  const prevWordIds = prevProps.highlightedWordIds;
+  const nextWordIds = nextProps.highlightedWordIds;
+  const wordIdsEqual: boolean =
+    prevWordIds === nextWordIds ||
+    (prevWordIds &&
+      nextWordIds &&
+      prevWordIds.size === nextWordIds.size &&
+      [...prevWordIds].every(id => nextWordIds.has(id))) ||
+    (!prevWordIds && !nextWordIds);
+
+  // Compare highlightedLineKeys Sets
+  const prevLineKeys = prevProps.highlightedLineKeys;
+  const nextLineKeys = nextProps.highlightedLineKeys;
+  const lineKeysEqual: boolean =
+    prevLineKeys === nextLineKeys ||
+    (prevLineKeys &&
+      nextLineKeys &&
+      prevLineKeys.size === nextLineKeys.size &&
+      [...prevLineKeys].every(key => nextLineKeys.has(key))) ||
+    (!prevLineKeys && !nextLineKeys);
 
   return (
     prevProps.lineKey === nextProps.lineKey &&
@@ -107,7 +150,8 @@ const arePropsEqual = (prevProps: LineProps, nextProps: LineProps): boolean => {
     prevProps.fontFamily === nextProps.fontFamily &&
     prevProps.fontSize === nextProps.fontSize &&
     prevProps.isHighlighted === nextProps.isHighlighted &&
-    idsEqual
+    wordIdsEqual &&
+    lineKeysEqual
   );
 };
 
@@ -115,6 +159,9 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     justifyContent: 'space-between',
+  },
+  lineHighlighted: {
+    backgroundColor: colors.light,
   },
   wordsContainer: {
     flexDirection: 'row',

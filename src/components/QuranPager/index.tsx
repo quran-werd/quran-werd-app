@@ -11,6 +11,7 @@ import {
 } from '../../content';
 import {colors} from '../../styles/colors';
 import type {Verse} from './types';
+import {LineSelectionProvider} from './context';
 
 interface QuranPagerProps {
   initialPage?: number;
@@ -116,34 +117,36 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   }, [fontSize, shouldRenderPage, handlePageDataLoaded]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {showHeader && (
-        <View style={styles.header}>
-          {/* Left: Chapter name in Arabic */}
-          <View style={styles.headerLeft}>
-            <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
-          </View>
+    <LineSelectionProvider>
+      <SafeAreaView style={styles.container}>
+        {showHeader && (
+          <View style={styles.header}>
+            {/* Left: Chapter name in Arabic */}
+            <View style={styles.headerLeft}>
+              <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
+            </View>
 
-          {/* Right: Juz and page number */}
-          <View style={styles.headerRight}>
-            <Text style={styles.juzText}>
-              الجزء {toArabicNumerals(juzNumber)}
-            </Text>
+            {/* Right: Juz and page number */}
+            <View style={styles.headerRight}>
+              <Text style={styles.juzText}>
+                الجزء {toArabicNumerals(juzNumber)}
+              </Text>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      <PagerView
-        ref={pagerRef}
-        style={styles.pagerView}
-        initialPage={initialPage - 1} // Convert 1-based to 0-based
-        onPageSelected={handlePageSelected}
-        orientation="horizontal"
-        overdrag={false}
-        offscreenPageLimit={2}>
-        {pages}
-      </PagerView>
-    </SafeAreaView>
+        <PagerView
+          ref={pagerRef}
+          style={styles.pagerView}
+          initialPage={initialPage - 1} // Convert 1-based to 0-based
+          onPageSelected={handlePageSelected}
+          orientation="horizontal"
+          overdrag={false}
+          offscreenPageLimit={2}>
+          {pages}
+        </PagerView>
+      </SafeAreaView>
+    </LineSelectionProvider>
   );
 };
 

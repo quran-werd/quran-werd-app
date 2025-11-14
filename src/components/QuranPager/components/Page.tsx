@@ -5,6 +5,7 @@ import {getLineDataFromVerses} from '../utils/groupLinesByVerses';
 import {colors} from '../../../styles/colors';
 import Line from './Line';
 import {toArabicNumerals} from '../../../content';
+import {useLineSelection} from '../context';
 
 const SMALLER_PAGES = [1, 2];
 
@@ -14,6 +15,7 @@ interface PageProps {
   fontFamily: string;
   fontSize?: number;
   showPageFooter?: boolean;
+  highlightedLineKeys?: Set<string>;
 }
 
 /**
@@ -29,7 +31,10 @@ const Page: React.FC<PageProps> = ({
   fontFamily,
   fontSize = 26,
   showPageFooter = true,
+  highlightedLineKeys: externalHighlightedLineKeys,
 }) => {
+  const {selectedLineKeys} = useLineSelection();
+
   // Group verses into lines for proper Mushaf layout
   const lines = useMemo(
     () => (verses.length > 0 ? getLineDataFromVerses(verses) : []),
@@ -40,6 +45,14 @@ const Page: React.FC<PageProps> = ({
     () => SMALLER_PAGES.includes(pageNumber),
     [pageNumber],
   );
+
+  // Merge external highlighted line keys with selected line keys from context
+  const highlightedLineKeys = useMemo(() => {
+    if (externalHighlightedLineKeys) {
+      return new Set([...selectedLineKeys, ...externalHighlightedLineKeys]);
+    }
+    return selectedLineKeys;
+  }, [selectedLineKeys, externalHighlightedLineKeys]);
 
   return (
     <View style={styles.container}>
@@ -56,6 +69,7 @@ const Page: React.FC<PageProps> = ({
               lineNumber={line.lineNumber}
               fontFamily={fontFamily}
               fontSize={fontSize}
+              highlightedLineKeys={highlightedLineKeys}
             />
           ))}
         </View>
