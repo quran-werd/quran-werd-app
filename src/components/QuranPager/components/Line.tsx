@@ -1,10 +1,11 @@
 import React, {memo, useMemo} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {colors} from '../../../styles/colors';
 import {Word} from '../types';
 import Basmalah from './Basmalah';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
+import WordComponent from './Word';
 
 interface LineProps {
   words: Word[];
@@ -14,6 +15,7 @@ interface LineProps {
   fontFamily: string;
   fontSize?: number;
   isHighlighted?: boolean;
+  highlightedWordIds?: Set<number>;
 }
 
 /**
@@ -31,17 +33,23 @@ const Line: React.FC<LineProps> = ({
   fontFamily,
   fontSize,
   isHighlighted = false,
+  highlightedWordIds,
 }) => {
-  // Concatenate all words in the line with proper spacing
-  // Use textUthmani for QCF fonts, fallback to text
-  const lineText = words.map(word => word.codeV1).join(' ');
-
   const isShowBismillah = words[0].verseNumber === 1;
 
   const chapterName = useMemo(
     () => getSurahNameArabic(words[0].chapterId),
     [words],
   );
+
+  // Determine if a word should be highlighted
+  const isWordHighlighted = (word: Word): boolean => {
+    if (highlightedWordIds) {
+      return highlightedWordIds.has(word.id);
+    }
+    // Fallback to line-level highlighting for backwards compatibility
+    return isHighlighted;
+  };
 
   return (
     <React.Fragment key={lineKey}>
@@ -51,17 +59,23 @@ const Line: React.FC<LineProps> = ({
           <Basmalah />
         </View>
       )}
-      <View style={[styles.container, isHighlighted && styles.highlighted]}>
-        <Text
-          style={[
-            styles.text,
-            {
-              fontFamily,
-              fontSize,
-            },
-          ]}>
-          {lineText}
-        </Text>
+      <View style={styles.container}>
+        <View style={styles.wordsContainer}>
+          {words.map((word, index) => {
+            const shouldHighlight = isWordHighlighted(word);
+
+            return (
+              <WordComponent
+                key={`${word.id}-${index}`}
+                word={word}
+                fontFamily={fontFamily}
+                fontSize={fontSize}
+                isHighlighted={shouldHighlight}
+                showSpaceBefore={index > 0}
+              />
+            );
+          })}
+        </View>
       </View>
     </React.Fragment>
   );
@@ -76,12 +90,24 @@ const Line: React.FC<LineProps> = ({
  * 4. Highlight state changed
  */
 const arePropsEqual = (prevProps: LineProps, nextProps: LineProps): boolean => {
+  // Compare highlightedWordIds Sets
+  const prevIds = prevProps.highlightedWordIds;
+  const nextIds = nextProps.highlightedWordIds;
+  const idsEqual: boolean =
+    prevIds === nextIds ||
+    (prevIds &&
+      nextIds &&
+      prevIds.size === nextIds.size &&
+      [...prevIds].every(id => nextIds.has(id))) ||
+    (!prevIds && !nextIds);
+
   return (
     prevProps.lineKey === nextProps.lineKey &&
     prevProps.words.length === nextProps.words.length &&
     prevProps.fontFamily === nextProps.fontFamily &&
     prevProps.fontSize === nextProps.fontSize &&
-    prevProps.isHighlighted === nextProps.isHighlighted
+    prevProps.isHighlighted === nextProps.isHighlighted &&
+    idsEqual
   );
 };
 
@@ -89,6 +115,11 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     justifyContent: 'space-between',
+  },
+  wordsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   bismillahContainer: {
     justifyContent: 'center',
@@ -99,14 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.text.primary,
     backgroundColor: colors.border,
-  },
-  highlighted: {
-    backgroundColor: colors.light,
-  },
-  text: {
-    textAlign: 'center',
-    writingDirection: 'rtl',
-    color: colors.text.primary,
   },
 });
 
