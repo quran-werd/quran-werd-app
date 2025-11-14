@@ -13,7 +13,8 @@ import {Provider} from 'react-redux';
 import {store} from './src/store';
 
 import * as eva from '@eva-design/eva';
-import {ApplicationProvider} from '@ui-kitten/components';
+import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
 
 // Initialize i18n
 import './src/i18n';
@@ -27,6 +28,7 @@ function App(): React.JSX.Element {
 
   return (
     <Provider store={store}>
+      <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
         <NavigationContainer>
           <Routes />

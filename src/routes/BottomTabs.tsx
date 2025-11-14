@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {BottomTabsScreenOptionsType} from '../types/react-navigation.types';
 import {colors} from '../styles/colors';
 import ChaptersStack from './ChaptersStack';
-import MemorizationProgress from '../screens/MemorizationProgress';
+import MemorizationStack from './MemorizationStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,8 +36,8 @@ export default function BottomTabs() {
         }}
       />
       <Tab.Screen
-        name="MemorizationProgress"
-        component={MemorizationProgress}
+        name="MemorizationStack"
+        component={MemorizationStack}
         options={{
           title: t('tabs.progress'),
           tabBarIcon: ProgressIcon,
