@@ -88,14 +88,17 @@ export function splitRangeBySurah(
 
 /**
  * Extract verse text from words array
+ * Prioritizes readable Arabic text over QCF font codes
  */
 export function getVerseTextFromWords(words: Word[]): string {
   if (words.length === 0) {
     return '';
   }
-  // Use codeV1 for QCF fonts, fallback to textUthmani or text
+  // Use textUthmani (Uthmani Arabic) first, then plain text, avoid codeV1 (QCF codes)
+  // textUthmani is the standard readable Arabic text format
   return words
-    .map(word => word.codeV1 || word.textUthmani || word.text || '')
+    .map(word => word.textUthmani || word.text || '')
+    .filter(text => text.trim().length > 0) // Filter out empty strings
     .join(' ')
     .trim();
 }
