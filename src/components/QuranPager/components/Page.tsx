@@ -69,7 +69,7 @@ const Page: React.FC<PageProps> = ({
   }, [selectionMode, externalHighlightedLineKeys]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, selectionMode && styles.containerWithSelection]}>
       <View style={styles.versesContainer}>
         <View
           // eslint-disable-next-line react-native/no-inline-styles
@@ -107,6 +107,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingHorizontal: 16,
     gap: 8,
+  },
+  containerWithSelection: {
+    paddingBottom: 80, // Space for action buttons (48px buttons + 20px bottom + 12px gap)
   },
   versesContainer: {
     flex: 1,

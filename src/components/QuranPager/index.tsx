@@ -237,16 +237,18 @@ const QuranPager: React.FC<QuranPagerProps> = ({
         </View>
       )}
 
-      <PagerView
-        ref={pagerRef}
-        style={styles.pagerView}
-        initialPage={initialPage - 1} // Convert 1-based to 0-based
-        onPageSelected={handlePageSelected}
-        orientation="horizontal"
-        overdrag={false}
-        offscreenPageLimit={2}>
-        {pages}
-      </PagerView>
+      <View style={styles.pagerContainer}>
+        <PagerView
+          ref={pagerRef}
+          style={styles.pagerView}
+          initialPage={initialPage - 1} // Convert 1-based to 0-based
+          onPageSelected={handlePageSelected}
+          orientation="horizontal"
+          overdrag={false}
+          offscreenPageLimit={2}>
+          {pages}
+        </PagerView>
+      </View>
 
       {/* Bottom sheet for selection mode */}
       {selectionMode && (
@@ -349,6 +351,9 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     textAlign: 'right',
   },
+  pagerContainer: {
+    flex: 1,
+  },
   pagerView: {
     flex: 1,
   },
@@ -432,6 +437,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   jumpButtonText: {
     color: colors.white,
