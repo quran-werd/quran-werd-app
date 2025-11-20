@@ -14,7 +14,8 @@
       "recentActivity": "Recent Activity",
       "lastReviewToday": "Last review today",
       "tapForDetails": "Tap on surahs to see details",
-      "surahDetails": "Surah Details"
+      "surahDetails": "Surah Details",
+      "addRange": "Add Memorization Range"
     },
     "surah": {
       "verseCount": "{{memorized}} / {{total}} verses",
@@ -29,6 +30,22 @@
       "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
       "from": "From",
       "to": "To"
+    },
+    "selection": {
+      "title": "Memorization Ranges",
+      "emptyState": "No ranges selected. Tap verses to create ranges.",
+      "summary": "{{rangeCount}} range{{rangeCount, plural, one {} other {s}}} • {{verseCount}} verses • {{wordCount}} words",
+      "showSelection": "Show Selection",
+      "hideSelection": "Hide Selection",
+      "jump": "Jump",
+      "jumpTitle": "Jump to Page or Chapter",
+      "jumpToPage": "Jump to Page",
+      "jumpPagePlaceholder": "Enter page number",
+      "selectChapter": "Select Chapter",
+      "searchChapter": "Search chapters...",
+      "go": "Go",
+      "jumpInvalid": "Invalid input",
+      "jumpInvalidMessage": "Please enter a valid page number"
     }
   },
   "common": {

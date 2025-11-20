@@ -5,6 +5,8 @@ import {getLineDataFromVerses} from '../utils/groupLinesByVerses';
 import {colors} from '../../../styles/colors';
 import Line from './Line';
 import {toArabicNumerals} from '../../../content';
+import {useAppSelector} from '../../../store/hooks';
+import {selectSelectedVerseKeys} from '../../../features/Memorization/verseSelectionSlice';
 
 const SMALLER_PAGES = [1, 2];
 
@@ -14,6 +16,8 @@ interface PageProps {
   fontFamily: string;
   fontSize?: number;
   showPageFooter?: boolean;
+  highlightedLineKeys?: Set<string>;
+  selectionMode?: boolean;
 }
 
 /**
@@ -29,7 +33,18 @@ const Page: React.FC<PageProps> = ({
   fontFamily,
   fontSize = 26,
   showPageFooter = true,
+  highlightedLineKeys: externalHighlightedLineKeys,
+  selectionMode = false,
 }) => {
+  // Get selected verse keys from Redux when in selection mode
+  const selectedVerseKeysFromRedux = useAppSelector(selectSelectedVerseKeys);
+  const selectedVerseKeys = useMemo(() => {
+    if (selectionMode) {
+      return selectedVerseKeysFromRedux;
+    }
+    return new Set<string>();
+  }, [selectionMode, selectedVerseKeysFromRedux]);
+
   // Group verses into lines for proper Mushaf layout
   const lines = useMemo(
     () => (verses.length > 0 ? getLineDataFromVerses(verses) : []),
@@ -41,8 +56,20 @@ const Page: React.FC<PageProps> = ({
     [pageNumber],
   );
 
+  // For selection mode, pass selected verse keys; otherwise use line keys for backwards compatibility
+  const highlightedLineKeys = useMemo(() => {
+    if (selectionMode) {
+      // In selection mode, we don't use line keys
+      return undefined;
+    }
+    if (externalHighlightedLineKeys) {
+      return externalHighlightedLineKeys;
+    }
+    return undefined;
+  }, [selectionMode, externalHighlightedLineKeys]);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, selectionMode && styles.containerWithSelection]}>
       <View style={styles.versesContainer}>
         <View
           // eslint-disable-next-line react-native/no-inline-styles
@@ -56,6 +83,9 @@ const Page: React.FC<PageProps> = ({
               lineNumber={line.lineNumber}
               fontFamily={fontFamily}
               fontSize={fontSize}
+              highlightedLineKeys={highlightedLineKeys}
+              selectionMode={selectionMode}
+              selectedVerseKeys={selectedVerseKeys}
             />
           ))}
         </View>
@@ -77,6 +107,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingHorizontal: 16,
     gap: 8,
+  },
+  containerWithSelection: {
+    paddingBottom: 80, // Space for action buttons (48px buttons + 20px bottom + 12px gap)
   },
   versesContainer: {
     flex: 1,

@@ -17,6 +17,7 @@ interface PageContainerProps {
     verses: Verse[],
     fontFamily: string,
   ) => void;
+  selectionMode?: boolean;
 }
 
 /**
@@ -37,6 +38,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   cachedVerses,
   cachedFontFamily,
   onDataLoaded,
+  selectionMode = false,
 }) => {
   const [verses, setVerses] = useState<Verse[]>(cachedVerses || []);
   const [isLoading, setIsLoading] = useState(!cachedVerses);
@@ -90,6 +92,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
       fontFamily={fontFamily}
       fontSize={fontSize}
       showPageFooter={showPageFooter}
+      selectionMode={selectionMode}
     />
   );
 };
