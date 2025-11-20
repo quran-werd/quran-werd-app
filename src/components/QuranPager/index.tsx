@@ -8,6 +8,7 @@ import {
   getJuzNumber,
   getPageData,
   getSurahNameArabic,
+  getSurahPages,
   toArabicNumerals,
   totalPagesCount,
 } from '../../content';
@@ -15,6 +16,7 @@ import {colors} from '../../styles/colors';
 import type {Verse} from './types';
 import {LineSelectionProvider} from './context';
 import {MemorizationSelectionSheet} from './components/MemorizationSelectionSheet';
+import {JumpSheet} from './components/JumpSheet';
 import {MemorizedRange} from '../../types/memorization.types';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
 import {
@@ -70,6 +72,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const {t} = useTranslation();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [jumpSheetVisible, setJumpSheetVisible] = useState(false);
   const pagerRef = useRef<PagerView>(null);
 
   // Cache for storing fetched page data
@@ -135,6 +138,41 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const handleRedo = useCallback(() => {
     dispatch(redo());
   }, [dispatch]);
+
+  // Jump to page
+  const handleJumpToPage = useCallback(
+    (pageNum: number) => {
+      // Navigate to the target page (convert to 0-based index)
+      pagerRef.current?.setPage(pageNum - 1);
+      setCurrentPage(pageNum);
+      onPageChange?.(pageNum);
+      setJumpSheetVisible(false);
+    },
+    [onPageChange],
+  );
+
+  // Jump to chapter
+  const handleJumpToChapter = useCallback(
+    (chapterNumber: number) => {
+      const surahPages = getSurahPages(chapterNumber);
+      if (surahPages.length > 0) {
+        const targetPage = surahPages[0]; // Jump to first page of the surah
+        pagerRef.current?.setPage(targetPage - 1);
+        setCurrentPage(targetPage);
+        onPageChange?.(targetPage);
+        setJumpSheetVisible(false);
+      }
+    },
+    [onPageChange],
+  );
+
+  const handleOpenJumpSheet = useCallback(() => {
+    setJumpSheetVisible(true);
+  }, []);
+
+  const handleCloseJumpSheet = useCallback(() => {
+    setJumpSheetVisible(false);
+  }, []);
 
   // Render pages with windowing for performance
   // Only render content for current page +/- WINDOW_SIZE
@@ -241,6 +279,11 @@ const QuranPager: React.FC<QuranPagerProps> = ({
               fill={!canRedo ? colors.text.secondary : colors.white}
             />
           </Pressable>
+          <Pressable style={styles.jumpButton} onPress={handleOpenJumpSheet}>
+            <Text style={styles.jumpButtonText}>
+              {t('memorization.selection.jump', 'Jump')}
+            </Text>
+          </Pressable>
           <Pressable
             style={styles.toggleSheetButton}
             onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
@@ -251,6 +294,16 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             </Text>
           </Pressable>
         </View>
+      )}
+
+      {/* Jump Sheet */}
+      {selectionMode && (
+        <JumpSheet
+          visible={jumpSheetVisible}
+          onClose={handleCloseJumpSheet}
+          onJumpToChapter={handleJumpToChapter}
+          onJumpToPage={handleJumpToPage}
+        />
       )}
     </SafeAreaView>
   );
@@ -365,6 +418,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toggleSheetButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  jumpButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 24,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  jumpButtonText: {
     color: colors.white,
     fontSize: 14,
     fontWeight: '600',
