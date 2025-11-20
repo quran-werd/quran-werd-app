@@ -1,5 +1,6 @@
 import React, {useState, useRef, useCallback, useMemo} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
+import {Icon} from '@ui-kitten/components';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
 import {
@@ -14,6 +15,21 @@ import type {Verse} from './types';
 import {LineSelectionProvider} from './context';
 import {MemorizationSelectionSheet} from './components/MemorizationSelectionSheet';
 import {MemorizedRange} from '../../types/memorization.types';
+import {useAppSelector, useAppDispatch} from '../../store/hooks';
+import {
+  undo,
+  redo,
+  selectCanUndo,
+  selectCanRedo,
+} from '../../features/Memorization/verseSelectionSlice';
+
+// Icon wrapper components for UI Kitten
+const UndoIcon = (props: any) => (
+  <Icon {...props} name="corner-up-left-outline" />
+);
+const RedoIcon = (props: any) => (
+  <Icon {...props} name="corner-up-right-outline" />
+);
 
 interface QuranPagerProps {
   initialPage?: number;
@@ -107,6 +123,17 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
+  // Undo/Redo functionality for selection mode
+  const dispatch = useAppDispatch();
+  const canUndo = useAppSelector(selectCanUndo);
+  const canRedo = useAppSelector(selectCanRedo);
+  const handleUndo = useCallback(() => {
+    dispatch(undo());
+  }, [dispatch]);
+  const handleRedo = useCallback(() => {
+    dispatch(redo());
+  }, [dispatch]);
+
   // Render pages with windowing for performance
   // Only render content for current page +/- WINDOW_SIZE
   // Memoized to avoid re-creating all 604 page elements on every render
@@ -191,15 +218,35 @@ const QuranPager: React.FC<QuranPagerProps> = ({
         />
       )}
 
-      {/* Button to toggle bottom sheet in selection mode */}
+      {/* Action buttons for selection mode */}
       {selectionMode && (
-        <Pressable
-          style={styles.toggleSheetButton}
-          onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
-          <Text style={styles.toggleSheetButtonText}>
-            {bottomSheetVisible ? 'Hide' : 'Show'} Selection
-          </Text>
-        </Pressable>
+        <View style={styles.selectionActions}>
+          <Pressable
+            style={[styles.undoButton, !canUndo && styles.undoButtonDisabled]}
+            onPress={handleUndo}
+            disabled={!canUndo}>
+            <UndoIcon
+              style={styles.icon}
+              fill={!canUndo ? colors.text.secondary : colors.white}
+            />
+          </Pressable>
+          <Pressable
+            style={[styles.redoButton, !canRedo && styles.redoButtonDisabled]}
+            onPress={handleRedo}
+            disabled={!canRedo}>
+            <RedoIcon
+              style={styles.icon}
+              fill={!canRedo ? colors.text.secondary : colors.white}
+            />
+          </Pressable>
+          <Pressable
+            style={styles.toggleSheetButton}
+            onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
+            <Text style={styles.toggleSheetButtonText}>
+              {bottomSheetVisible ? 'Hide' : 'Show'} Selection
+            </Text>
+          </Pressable>
+        </View>
       )}
     </SafeAreaView>
   );
@@ -255,10 +302,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  toggleSheetButton: {
+  selectionActions: {
     position: 'absolute',
     bottom: 20,
     right: 20,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  undoButton: {
+    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  undoButtonDisabled: {
+    backgroundColor: colors.border,
+    opacity: 0.5,
+  },
+  redoButton: {
+    backgroundColor: colors.primary,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  redoButtonDisabled: {
+    backgroundColor: colors.border,
+    opacity: 0.5,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+  toggleSheetButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -268,6 +357,8 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   toggleSheetButtonText: {
     color: colors.white,

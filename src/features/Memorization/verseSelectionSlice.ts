@@ -12,11 +12,39 @@ import {
 interface VerseSelectionState {
   ranges: VerseRange[];
   pendingStartVerse: string | null;
+  history: Array<{
+    ranges: VerseRange[];
+    pendingStartVerse: string | null;
+  }>; // History stack for undo (snapshots without history field to avoid circular reference)
+  future: Array<{
+    ranges: VerseRange[];
+    pendingStartVerse: string | null;
+  }>; // Future stack for redo
 }
 
 const initialState: VerseSelectionState = {
   ranges: [],
   pendingStartVerse: null,
+  history: [],
+  future: [],
+};
+
+// Helper function to save current state to history before mutation
+const saveToHistory = (state: VerseSelectionState) => {
+  // Clear future stack when performing a new action (can't redo after new action)
+  state.future = [];
+
+  // Save a snapshot of the current state (excluding history to avoid circular reference)
+  // We only need ranges and pendingStartVerse for undo functionality
+  const stateSnapshot = {
+    ranges: state.ranges.map(range => ({...range})),
+    pendingStartVerse: state.pendingStartVerse,
+  };
+  state.history.push(stateSnapshot);
+  // Limit history to last 50 actions to prevent memory issues
+  if (state.history.length > 50) {
+    state.history.shift();
+  }
 };
 
 export const verseSelectionSlice = createSlice({
@@ -24,12 +52,17 @@ export const verseSelectionSlice = createSlice({
   initialState,
   reducers: {
     setPendingStartVerse: (state, action: PayloadAction<string | null>) => {
-      state.pendingStartVerse = action.payload;
+      // Only save to history if actually changing
+      if (state.pendingStartVerse !== action.payload) {
+        saveToHistory(state);
+        state.pendingStartVerse = action.payload;
+      }
     },
     addVerseRange: (
       state,
       action: PayloadAction<{startKey: string; endKey: string}>,
     ) => {
+      saveToHistory(state);
       const {startKey, endKey} = action.payload;
       const splitRanges = splitRangeBySurah(startKey, endKey);
       const startParsed = parseVerseKey(startKey);
@@ -59,17 +92,55 @@ export const verseSelectionSlice = createSlice({
       state.pendingStartVerse = null;
     },
     removeRange: (state, action: PayloadAction<string>) => {
+      saveToHistory(state);
       state.ranges = state.ranges.filter(range => range.id !== action.payload);
     },
     clearRanges: state => {
+      saveToHistory(state);
       state.ranges = [];
       state.pendingStartVerse = null;
+    },
+    undo: state => {
+      if (state.history.length > 0) {
+        // Save current state to future stack for redo
+        const currentStateSnapshot = {
+          ranges: state.ranges.map(range => ({...range})),
+          pendingStartVerse: state.pendingStartVerse,
+        };
+        state.future.push(currentStateSnapshot);
+
+        // Restore previous state from history
+        const previousState = state.history.pop()!;
+        state.ranges = previousState.ranges.map(range => ({...range}));
+        state.pendingStartVerse = previousState.pendingStartVerse;
+      }
+    },
+    redo: state => {
+      if (state.future.length > 0) {
+        // Save current state back to history
+        const currentStateSnapshot = {
+          ranges: state.ranges.map(range => ({...range})),
+          pendingStartVerse: state.pendingStartVerse,
+        };
+        state.history.push(currentStateSnapshot);
+
+        // Restore future state
+        const futureState = state.future.pop()!;
+        state.ranges = futureState.ranges.map(range => ({...range}));
+        state.pendingStartVerse = futureState.pendingStartVerse;
+      }
     },
   },
 });
 
-export const {setPendingStartVerse, addVerseRange, removeRange, clearRanges} =
-  verseSelectionSlice.actions;
+export const {
+  setPendingStartVerse,
+  addVerseRange,
+  removeRange,
+  clearRanges,
+  undo,
+  redo,
+} = verseSelectionSlice.actions;
 
 // Selectors
 export const selectRanges = (state: RootState) => state.verseSelection.ranges;
@@ -100,5 +171,15 @@ export const selectSingleVerseRangeForVerse = (verseKey: string) =>
     const found = findSingleVerseRange(verseKey, ranges);
     return found || null;
   });
+
+// Selector to check if undo is available
+export const selectCanUndo = (state: RootState): boolean => {
+  return state.verseSelection.history.length > 0;
+};
+
+// Selector to check if redo is available
+export const selectCanRedo = (state: RootState): boolean => {
+  return state.verseSelection.future.length > 0;
+};
 
 export default verseSelectionSlice.reducer;
