@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   },
   verseContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     paddingVertical: 2,
     paddingHorizontal: 2,
     borderRadius: 4,
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   wordsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     justifyContent: 'center',
   },
   bismillahContainer: {
