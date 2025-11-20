@@ -36,7 +36,16 @@
       "emptyState": "No ranges selected. Tap verses to create ranges.",
       "summary": "{{rangeCount}} range{{rangeCount, plural, one {} other {s}}} • {{verseCount}} verses • {{wordCount}} words",
       "showSelection": "Show Selection",
-      "hideSelection": "Hide Selection"
+      "hideSelection": "Hide Selection",
+      "jump": "Jump",
+      "jumpTitle": "Jump to Page or Chapter",
+      "jumpToPage": "Jump to Page",
+      "jumpPagePlaceholder": "Enter page number",
+      "selectChapter": "Select Chapter",
+      "searchChapter": "Search chapters...",
+      "go": "Go",
+      "jumpInvalid": "Invalid input",
+      "jumpInvalidMessage": "Please enter a valid page number"
     }
   },
   "common": {

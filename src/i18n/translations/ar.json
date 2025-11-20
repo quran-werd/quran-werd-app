@@ -36,7 +36,16 @@
       "emptyState": "لم يتم تحديد نطاقات. انقر على الآيات لإنشاء نطاقات.",
       "summary": "{{rangeCount}} نطاق • {{verseCount}} آية • {{wordCount}} كلمة",
       "showSelection": "إظهار التحديد",
-      "hideSelection": "إخفاء التحديد"
+      "hideSelection": "إخفاء التحديد",
+      "jump": "انتقل",
+      "jumpTitle": "الانتقال إلى صفحة أو سورة",
+      "jumpToPage": "الانتقال إلى صفحة",
+      "jumpPagePlaceholder": "أدخل رقم الصفحة",
+      "selectChapter": "اختر سورة",
+      "searchChapter": "بحث في السور...",
+      "go": "انتقل",
+      "jumpInvalid": "إدخال غير صحيح",
+      "jumpInvalidMessage": "يرجى إدخال رقم صفحة صحيح"
     }
   },
   "common": {
