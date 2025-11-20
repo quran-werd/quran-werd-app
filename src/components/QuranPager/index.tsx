@@ -1,5 +1,6 @@
 import React, {useState, useRef, useCallback, useMemo} from 'react';
 import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {Icon} from '@ui-kitten/components';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
@@ -66,6 +67,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   selectionMode = false,
   onSave,
 }) => {
+  const {t} = useTranslation();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const pagerRef = useRef<PagerView>(null);
@@ -243,7 +245,9 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             style={styles.toggleSheetButton}
             onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
             <Text style={styles.toggleSheetButtonText}>
-              {bottomSheetVisible ? 'Hide' : 'Show'} Selection
+              {bottomSheetVisible
+                ? t('memorization.selection.hideSelection')
+                : t('memorization.selection.showSelection')}
             </Text>
           </Pressable>
         </View>

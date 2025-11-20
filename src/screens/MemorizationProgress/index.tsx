@@ -66,7 +66,7 @@ export default function MemorizationProgress() {
           onPress={handleAddMemorizationPress}
           style={styles.addButton}>
           <Text style={styles.addButtonText}>
-            {t('memorization.addRange', 'Add Memorization Range')}
+            {t('memorization.progress.addRange')}
           </Text>
         </TouchableOpacity>
 

@@ -7,6 +7,7 @@ import {MemorizedRange} from '../../types/memorization.types';
 import Card from '../shared/Card';
 import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
+import {formatNumberWithCommas} from '../QuranPager/utils/verseSelection.utils';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
@@ -46,14 +47,16 @@ export default function MemorizedRangeItem({
               variant="small"
               color="secondary"
               style={styles.wordCount}>
-              {t('memorization.surah.wordCount', {count: range.wordCount})}
+              {t('memorization.surah.wordCount', {
+                count: formatNumberWithCommas(range.wordCount),
+              })}
             </Typography>
             <Typography
               variant="small"
               color="secondary"
               style={styles.verseCount}>
               {t('memorization.surah.verseCountShort', {
-                count: range.verseCount,
+                count: formatNumberWithCommas(range.verseCount),
               })}
             </Typography>
           </View>
