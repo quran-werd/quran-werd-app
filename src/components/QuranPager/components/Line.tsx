@@ -10,9 +10,12 @@ import {useLineSelection} from '../context';
 import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
   selectPendingStartVerse,
+  selectRanges,
   setPendingStartVerse,
   addVerseRange,
+  removeRange,
 } from '../../../features/Memorization/verseSelectionSlice';
+import {findSingleVerseRange} from '../utils/verseSelection.utils';
 
 interface LineProps {
   words: Word[];
@@ -52,7 +55,6 @@ const Line: React.FC<LineProps> = ({
   let toggleLineSelection: (lineKey: string) => void = () => {};
   let isSelectedFromContext: (lineKey: string) => boolean = () => false;
   try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const lineSelection = useLineSelection();
     toggleLineSelection = lineSelection.toggleLineSelection;
     isSelectedFromContext = lineSelection.isLineSelected;
@@ -63,6 +65,7 @@ const Line: React.FC<LineProps> = ({
   // Get verse selection state from Redux when in selection mode
   const dispatch = useAppDispatch();
   const pendingStartVerse = useAppSelector(selectPendingStartVerse);
+  const ranges = useAppSelector(selectRanges);
 
   const isShowBismillah = words[0].verseNumber === 1;
 
@@ -90,9 +93,26 @@ const Line: React.FC<LineProps> = ({
       return;
     }
 
+    // Check if this verse is already selected (part of any range)
+    const isVerseAlreadySelected = selectedVerseKeys.has(verseKey);
+
     if (!pendingStartVerse) {
-      // First click - set as start
-      dispatch(setPendingStartVerse(verseKey));
+      // No pending start verse - check if this verse is already selected
+      // Check if this verse is already selected in a single-verse range
+      const singleVerseRange = findSingleVerseRange(verseKey, ranges);
+
+      if (singleVerseRange) {
+        // Verse is already selected in a single-verse range (third click)
+        // Remove the single-verse range
+        dispatch(removeRange(singleVerseRange.id));
+      } else if (isVerseAlreadySelected) {
+        // Verse is already selected in a range - ignore click
+        // Don't allow clicking on already selected verses
+        return;
+      } else {
+        // First click - set as start
+        dispatch(setPendingStartVerse(verseKey));
+      }
     } else {
       // Second click - create range
       dispatch(addVerseRange({startKey: pendingStartVerse, endKey: verseKey}));
@@ -141,7 +161,6 @@ const Line: React.FC<LineProps> = ({
 
     // Fallback to isHighlighted prop for backwards compatibility
     return isHighlighted;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     highlightedLineKeys,
     lineKey,

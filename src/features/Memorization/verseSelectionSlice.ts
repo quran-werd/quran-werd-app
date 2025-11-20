@@ -5,6 +5,8 @@ import {
   splitRangeBySurah,
   parseVerseKey,
   getAllSelectedVerseKeys,
+  mergeOverlappingRanges,
+  findSingleVerseRange,
 } from '../../components/QuranPager/utils/verseSelection.utils';
 
 interface VerseSelectionState {
@@ -21,10 +23,7 @@ export const verseSelectionSlice = createSlice({
   name: 'verseSelection',
   initialState,
   reducers: {
-    setPendingStartVerse: (
-      state,
-      action: PayloadAction<string | null>,
-    ) => {
+    setPendingStartVerse: (state, action: PayloadAction<string | null>) => {
       state.pendingStartVerse = action.payload;
     },
     addVerseRange: (
@@ -37,7 +36,9 @@ export const verseSelectionSlice = createSlice({
 
       splitRanges.forEach(splitRange => {
         // Generate unique ID for the range
-        const id = `${splitRange.startKey}-${splitRange.endKey}-${Date.now()}-${Math.random()}`;
+        const id = `${splitRange.startKey}-${
+          splitRange.endKey
+        }-${Date.now()}-${Math.random()}`;
         state.ranges.push({
           id,
           startVerseKey: splitRange.startKey,
@@ -50,6 +51,9 @@ export const verseSelectionSlice = createSlice({
               : undefined,
         });
       });
+
+      // Merge overlapping and adjacent ranges
+      state.ranges = mergeOverlappingRanges(state.ranges);
 
       // Clear pending start after range is created
       state.pendingStartVerse = null;
@@ -64,16 +68,11 @@ export const verseSelectionSlice = createSlice({
   },
 });
 
-export const {
-  setPendingStartVerse,
-  addVerseRange,
-  removeRange,
-  clearRanges,
-} = verseSelectionSlice.actions;
+export const {setPendingStartVerse, addVerseRange, removeRange, clearRanges} =
+  verseSelectionSlice.actions;
 
 // Selectors
-export const selectRanges = (state: RootState) =>
-  state.verseSelection.ranges;
+export const selectRanges = (state: RootState) => state.verseSelection.ranges;
 
 export const selectPendingStartVerse = (state: RootState) =>
   state.verseSelection.pendingStartVerse;
@@ -95,5 +94,11 @@ export const selectIsVerseSelected = (verseKey: string) =>
     return selectedKeys.has(verseKey);
   });
 
-export default verseSelectionSlice.reducer;
+// Selector to find a single-verse range for a given verse key
+export const selectSingleVerseRangeForVerse = (verseKey: string) =>
+  createSelector([selectRanges], (ranges: VerseRange[]): VerseRange | null => {
+    const found = findSingleVerseRange(verseKey, ranges);
+    return found || null;
+  });
 
+export default verseSelectionSlice.reducer;
