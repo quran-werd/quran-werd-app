@@ -2,6 +2,13 @@ import {Word, Verse, VerseRange} from '../types';
 import {getVerseCount} from '../../../content/quran';
 
 /**
+ * Format a number with thousands separators (e.g., 1500 -> "1,500")
+ */
+export function formatNumberWithCommas(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/**
  * Parse a verse key string (e.g., "2:5") into chapterId and verseNumber
  * This is exported for use in context as well
  */
@@ -105,6 +112,7 @@ export function getVerseTextFromWords(words: Word[]): string {
 
 /**
  * Calculate statistics for a verse range
+ * Only counts actual words (filters out markers like 'end', 'pause', etc.)
  */
 export function calculateRangeStats(
   range: VerseRange,
@@ -118,8 +126,12 @@ export function calculateRangeStats(
 
   versesInRange.forEach(verseKey => {
     const verse = verses.find(v => v.verseKey === verseKey);
-    if (verse) {
-      wordCount += verse.words.length;
+    if (verse && verse.words && Array.isArray(verse.words)) {
+      // Only count actual words, filter out markers (end, pause, sajdah, rub-el-hizb)
+      const actualWords = verse.words.filter(
+        word => word && word.charTypeName === 'word',
+      );
+      wordCount += actualWords.length;
     }
   });
 

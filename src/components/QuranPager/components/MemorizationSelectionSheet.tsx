@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {Icon, Button} from '@ui-kitten/components';
+import {useTranslation} from 'react-i18next';
 import {colors} from '../../../styles/colors';
 import {Verse} from '../types';
 import {MemorizedRange} from '../../../types/memorization.types';
@@ -20,6 +21,7 @@ import {
   parseVerseKey,
   getVerseTextFromWords,
   calculateRangeStats,
+  formatNumberWithCommas,
 } from '../utils/verseSelection.utils';
 import {getSurahNameArabic} from '../../../content';
 import MemorizedRangeItem from '../../MemorizedRangeItem';
@@ -39,6 +41,7 @@ const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
 export const MemorizationSelectionSheet: React.FC<
   MemorizationSelectionSheetProps
 > = ({visible, onClose, onSave, verses}) => {
+  const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const ranges = useAppSelector(selectRanges);
 
@@ -111,7 +114,9 @@ export const MemorizationSelectionSheet: React.FC<
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Memorization Ranges</Text>
+            <Text style={styles.headerTitle}>
+              {t('memorization.selection.title')}
+            </Text>
             <Button
               appearance="ghost"
               status="basic"
@@ -126,9 +131,11 @@ export const MemorizationSelectionSheet: React.FC<
           {memorizedRanges.length > 0 && (
             <View style={styles.summary}>
               <Text style={styles.summaryText}>
-                {memorizedRanges.length} range
-                {memorizedRanges.length !== 1 ? 's' : ''} •{' '}
-                {totalStats.verseCount} verses • {totalStats.wordCount} words
+                {t('memorization.selection.summary', {
+                  rangeCount: memorizedRanges.length,
+                  verseCount: formatNumberWithCommas(totalStats.verseCount),
+                  wordCount: formatNumberWithCommas(totalStats.wordCount),
+                })}
               </Text>
             </View>
           )}
@@ -140,7 +147,7 @@ export const MemorizationSelectionSheet: React.FC<
             {memorizedRanges.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyStateText}>
-                  No ranges selected. Tap verses to create ranges.
+                  {t('memorization.selection.emptyState')}
                 </Text>
               </View>
             ) : (
@@ -162,7 +169,9 @@ export const MemorizationSelectionSheet: React.FC<
                 onPress={handleSave}
                 style={styles.saveButton}
                 disabled={memorizedRanges.length === 0}>
-                <Text style={styles.saveButtonText}>Save</Text>
+                <Text style={styles.saveButtonText}>
+                  {t('common.save')}
+                </Text>
               </Pressable>
             </View>
           )}
