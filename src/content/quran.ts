@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import {juz} from './juz_data';
 import {pageData, PageDataItem} from './page_data';
 import {surah} from './surah_data';
@@ -287,7 +288,14 @@ export function getVerseQCF(
 }
 
 export function getPageQCFontName(pageNumber: number): string {
-  return `QCF_P${pageNumber.toString().padStart(3, '0')}`;
+  // iOS uses QCF_P001, QCF_P002 format
+  // Android uses p1, p2, p10, p100 format (matches filename)
+  if (Platform.OS === 'android') {
+    return `p${pageNumber}`;
+  }
+  const fontName = `QCF_P${pageNumber.toString().padStart(3, '0')}`;
+  console.log('fontName', fontName);
+  return fontName;
 }
 
 /**
