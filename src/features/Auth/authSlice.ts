@@ -53,6 +53,11 @@ export const authSlice = createSlice({
       state.token = null;
       state.otpSent = false;
       state.otpVerified = false;
+      state.phoneNumber = '';
+      state.error = null;
+      // Clear token from API client
+      const {clearAuthToken} = require('../../api/clients/werdApiClient');
+      clearAuthToken();
     },
   },
   extraReducers: builder => {

@@ -8,25 +8,24 @@ import {
   ScrollView,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useDispatch, useSelector} from 'react-redux';
 import {colors} from '../../styles/colors';
 import Typography from '../../components/shared/Typography';
 import PhoneInput from '../../components/shared/PhoneInput';
 import OTPInput from '../../components/shared/OTPInput';
 import Button from '../../components/shared/Button';
 import {
-  sendOTP,
-  verifyOTP,
   setPhoneNumber,
   setResendCooldown,
   clearError,
   selectAuth,
 } from '../../features/Auth/authSlice';
+import {sendOTP, verifyOTP} from '../../features/Auth/authAction';
+import {useAppDispatch, useAppSelector} from '../../store/hooks';
 
 export default function Login() {
   const {t} = useTranslation();
-  const dispatch = useDispatch();
-  const auth = useSelector(selectAuth);
+  const dispatch = useAppDispatch();
+  const auth = useAppSelector(selectAuth);
   const [otp, setOtp] = useState('');
 
   // Cooldown timer effect
@@ -112,10 +111,7 @@ export default function Login() {
                 color="secondary"
                 align="center"
                 style={styles.subtitle}>
-                {t(
-                  'login.subtitle',
-                  'Enter your phone number to continue',
-                )}
+                {t('login.subtitle', 'Enter your phone number to continue')}
               </Typography>
             </View>
 
@@ -235,4 +231,3 @@ const styles = StyleSheet.create({
     minWidth: 120,
   },
 });
-

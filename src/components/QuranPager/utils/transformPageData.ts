@@ -1,5 +1,5 @@
 import {Verse} from '../types';
-import {fetchPageVerses} from '../../../api/client';
+import {fetchPageVerses} from '../../../api/clients/quranCdnClient';
 import {transformApiVersesResponse} from '../../../api/transformers';
 import {ApiVersesResponse} from '../../../api/types';
 

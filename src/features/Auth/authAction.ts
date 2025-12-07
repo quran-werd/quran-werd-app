@@ -1,29 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {slicesNames} from '../../store/constants';
-
-// Mock API calls - replace with actual API endpoints
-const sendOTPAPI = async (phoneNumber: string): Promise<{success: boolean}> => {
-  // TODO: Replace with actual API call
-  // Example: return await api.post('/auth/send-otp', { phoneNumber });
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({success: true});
-    }, 1000);
-  });
-};
-
-const verifyOTPAPI = async (
-  phoneNumber: string,
-  otp: string,
-): Promise<{token: string}> => {
-  // TODO: Replace with actual API call
-  // Example: return await api.post('/auth/verify-otp', { phoneNumber, otp });
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({token: 'mock-jwt-token-' + Date.now()});
-    }, 1000);
-  });
-};
+import {werdApiFetcher, setAuthToken} from '../../api/clients/werdApiClient';
 
 export const sendOTP = createAsyncThunk(
   `${slicesNames.auth}/sendOTP`,
@@ -42,8 +19,19 @@ export const sendOTP = createAsyncThunk(
         return rejectWithValue('Failed to send OTP');
       }
     } catch (error: any) {
+      // Log full error details for debugging
+      console.error('sendOTP error:', {
+        message: error?.message,
+        response: error?.response,
+        request: error?.request,
+        code: error?.code,
+      });
+
       return rejectWithValue(
-        error?.message || 'Failed to send OTP. Please try again.',
+        error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error?.message ||
+          'Failed to send OTP. Please try again.',
       );
     }
   },
@@ -63,12 +51,51 @@ export const verifyOTP = createAsyncThunk(
 
       const cleanedPhone = phoneNumber.replace(/\D/g, '');
       const response = await verifyOTPAPI(cleanedPhone, otp);
+
+      // Store token for future API requests
+      if (response.token) {
+        setAuthToken(response.token);
+      }
+
       return response;
     } catch (error: any) {
+      // Log full error details for debugging
+      console.error('verifyOTP error:', {
+        message: error?.message,
+        response: error?.response,
+        request: error?.request,
+        code: error?.code,
+      });
+
       return rejectWithValue(
-        error?.message || 'Invalid OTP. Please try again.',
+        error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          error?.message ||
+          'Invalid OTP. Please try again.',
       );
     }
   },
 );
 
+// API calls using Werd API fetcher
+const sendOTPAPI = async (phone: string): Promise<{success: boolean}> => {
+  return await werdApiFetcher<{success: boolean}>('/users/login', {
+    method: 'POST',
+    data: {
+      phone,
+    },
+  });
+};
+
+const verifyOTPAPI = async (
+  phone: string,
+  otp: string,
+): Promise<{token: string}> => {
+  return await werdApiFetcher<{token: string}>('/users/login/verify', {
+    method: 'POST',
+    data: {
+      phone,
+      otp,
+    },
+  });
+};

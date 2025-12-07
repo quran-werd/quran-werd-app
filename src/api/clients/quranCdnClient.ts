@@ -1,17 +1,17 @@
 /**
- * API Client for Quran.com API
+ * API Client for Quran CDN API
  * Uses axios for HTTP requests
  * Matches quran.com-frontend-next architecture
  */
 
 import axios, {AxiosInstance, AxiosError} from 'axios';
-import {API_CONFIG, DEFAULT_VERSES_PARAMS} from './config';
+import {QURAN_CDN_API_CONFIG, QURAN_CDN_DEFAULT_VERSES_PARAMS} from '../config';
 
 /**
- * Create axios instance with default configuration
+ * Create axios instance with default configuration for Quran CDN
  */
-const apiClient: AxiosInstance = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
+const quranCdnClient: AxiosInstance = axios.create({
+  baseURL: QURAN_CDN_API_CONFIG.BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ const apiClient: AxiosInstance = axios.create({
 /**
  * Request interceptor for converting camelCase to snake_case
  */
-apiClient.interceptors.request.use(config => {
+quranCdnClient.interceptors.request.use(config => {
   if (config.params) {
     const snakeCaseParams: Record<string, any> = {};
     Object.entries(config.params).forEach(([key, value]) => {
@@ -42,28 +42,28 @@ apiClient.interceptors.request.use(config => {
 /**
  * Response interceptor for error handling
  */
-apiClient.interceptors.response.use(
+quranCdnClient.interceptors.response.use(
   response => response,
   (error: AxiosError) => {
     if (error.response) {
       // Server responded with error status
-      console.error('API Error:', error.response.status, error.response.data);
+      console.error('Quran CDN API Error:', error.response.status, error.response.data);
     } else if (error.request) {
       // Request made but no response received
-      console.error('Network Error:', error.message);
+      console.error('Quran CDN Network Error:', error.message);
     } else {
       // Error in request configuration
-      console.error('Request Error:', error.message);
+      console.error('Quran CDN Request Error:', error.message);
     }
     return Promise.reject(error);
   },
 );
 
 /**
- * Makes a URL for API requests
+ * Makes a URL for Quran CDN API requests
  */
-export const makeUrl = (path: string, params?: Record<string, any>): string => {
-  const baseUrl = `${API_CONFIG.BASE_URL}${path}`;
+export const makeQuranCdnUrl = (path: string, params?: Record<string, any>): string => {
+  const baseUrl = `${QURAN_CDN_API_CONFIG.BASE_URL}${path}`;
 
   if (!params) {
     return baseUrl;
@@ -85,31 +85,31 @@ export const makeUrl = (path: string, params?: Record<string, any>): string => {
 };
 
 /**
- * Makes a URL for fetching page verses
+ * Makes a URL for fetching page verses from Quran CDN
  */
 export const makePageVersesUrl = (
   pageNumber: number,
   params?: Record<string, any>,
 ): string => {
   const finalParams = {
-    ...DEFAULT_VERSES_PARAMS,
+    ...QURAN_CDN_DEFAULT_VERSES_PARAMS,
     ...params,
   };
 
-  return makeUrl(`/verses/by_page/${pageNumber}`, finalParams);
+  return makeQuranCdnUrl(`/verses/by_page/${pageNumber}`, finalParams);
 };
 
 /**
- * Generic fetcher function using axios
+ * Generic fetcher function using axios for Quran CDN
  */
-export const fetcher = async <T>(url: string): Promise<T> => {
+export const quranCdnFetcher = async <T>(url: string): Promise<T> => {
   try {
     const response = await axios.get<T>(url);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        `API Error: ${error.response?.status || 'Unknown'} ${
+        `Quran CDN API Error: ${error.response?.status || 'Unknown'} ${
           error.response?.statusText || error.message
         }`,
       );
@@ -119,21 +119,17 @@ export const fetcher = async <T>(url: string): Promise<T> => {
 };
 
 /**
- * Fetches verses for a specific page using axios
+ * Fetches verses for a specific page using Quran CDN API
  */
 export const fetchPageVerses = async (pageNumber: number) => {
   const path = `/verses/by_page/${pageNumber}`;
   const params = {
-    ...DEFAULT_VERSES_PARAMS,
+    ...QURAN_CDN_DEFAULT_VERSES_PARAMS,
   };
 
-  console.log(1111, path, params);
-
-  const response = await apiClient.get(path, {params});
+  const response = await quranCdnClient.get(path, {params});
   return response.data;
 };
 
-/**
- * Export the configured axios instance for advanced usage
- */
-export {apiClient};
+export {quranCdnClient};
+
