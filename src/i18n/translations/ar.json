@@ -66,5 +66,16 @@
     "language": "اللغة",
     "arabic": "العربية",
     "english": "English"
+  },
+  "login": {
+    "title": "مرحباً",
+    "subtitle": "أدخل رقم هاتفك للمتابعة",
+    "phoneLabel": "رقم الهاتف",
+    "otpLabel": "أدخل رمز التحقق",
+    "sendOTP": "إرسال رمز التحقق",
+    "verifyOTP": "التحقق من الرمز",
+    "resendOTP": "إعادة إرسال الرمز",
+    "resendOTPWithTimer": "إعادة إرسال الرمز ({{seconds}}ث)",
+    "didntReceive": "لم تستلم الرمز؟"
   }
 }
