@@ -1,4 +1,4 @@
-import {Word, Verse, VerseRange} from '../types';
+import {Word, Verse, VerseRange} from '../../../types/quran-pager.types';
 import {getVerseCount} from '../../../content/quran';
 
 /**

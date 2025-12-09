@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Verse} from '../types';
+import {Verse} from '../../../types/quran-pager.types';
 import {getLineDataFromVerses} from '../utils/groupLinesByVerses';
 import {colors} from '../../../styles/colors';
 import Line from './Line';
@@ -69,7 +69,11 @@ const Page: React.FC<PageProps> = ({
   }, [selectionMode, externalHighlightedLineKeys]);
 
   return (
-    <View style={[styles.container, selectionMode && styles.containerWithSelection]}>
+    <View
+      style={[
+        styles.container,
+        selectionMode && styles.containerWithSelection,
+      ]}>
       <View style={styles.versesContainer}>
         <View
           // eslint-disable-next-line react-native/no-inline-styles

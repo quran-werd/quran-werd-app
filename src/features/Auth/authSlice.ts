@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
 import {slicesNames} from '../../store/constants';
 import {sendOTP, verifyOTP} from './authAction';
+import {clearAuthData} from '../../utils/storage/auth.storage';
 
 // Define a type for the slice state
 interface AuthState {
@@ -12,7 +13,12 @@ interface AuthState {
   otpSent: boolean;
   otpVerified: boolean;
   resendCooldown: number; // seconds remaining
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: {
+    id: string;
+    phone: string;
+  } | null;
 }
 
 // Define the initial state using that type
@@ -24,7 +30,9 @@ const initialState: AuthState = {
   otpSent: false,
   otpVerified: false,
   resendCooldown: 0,
-  token: null,
+  accessToken: null,
+  refreshToken: null,
+  user: null,
 };
 
 export const authSlice = createSlice({
@@ -46,11 +54,30 @@ export const authSlice = createSlice({
       state.otpSent = false;
       state.otpVerified = false;
       state.error = null;
-      state.token = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.user = null;
+    },
+    setAuthData: (
+      state,
+      action: PayloadAction<{
+        accessToken: string;
+        refreshToken: string;
+        user: {id: string; phone: string};
+        phoneNumber: string;
+      }>,
+    ) => {
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      state.user = action.payload.user;
+      state.phoneNumber = action.payload.phoneNumber;
+      state.isAuthenticated = true;
     },
     logout: state => {
       state.isAuthenticated = false;
-      state.token = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.user = null;
       state.otpSent = false;
       state.otpVerified = false;
       state.phoneNumber = '';
@@ -58,6 +85,10 @@ export const authSlice = createSlice({
       // Clear token from API client
       const {clearAuthToken} = require('../../api/clients/werdApiClient');
       clearAuthToken();
+      // Clear persisted auth data (async, but don't wait for it)
+      clearAuthData().catch(error => {
+        console.error('Failed to clear auth data on logout:', error);
+      });
     },
   },
   extraReducers: builder => {
@@ -87,7 +118,10 @@ export const authSlice = createSlice({
       state.loading = false;
       state.otpVerified = true;
       state.isAuthenticated = true;
-      state.token = action.payload.token;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      state.user = action.payload.user;
+      state.phoneNumber = action.payload.phoneNumber;
       state.error = null;
     });
     builder.addCase(verifyOTP.rejected, (state, action) => {
@@ -103,6 +137,7 @@ export const {
   setResendCooldown,
   clearError,
   resetAuth,
+  setAuthData,
   logout,
 } = authSlice.actions;
 
@@ -116,6 +151,9 @@ export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectOtpSent = (state: RootState) => state.auth.otpSent;
 export const selectResendCooldown = (state: RootState) =>
   state.auth.resendCooldown;
+export const selectAccessToken = (state: RootState) => state.auth.accessToken;
+export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
+export const selectUser = (state: RootState) => state.auth.user;
 
 export default authSlice.reducer;
 

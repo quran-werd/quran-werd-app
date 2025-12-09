@@ -4,7 +4,7 @@
  */
 
 import {ApiVerse, ApiWord, ApiVersesResponse} from './types';
-import {Verse, Word} from '../components/QuranPager/types';
+import {Verse, Word} from '../types/quran-pager.types';
 
 /**
  * Extract chapter ID from verse_key (e.g., "2:255" -> 2)

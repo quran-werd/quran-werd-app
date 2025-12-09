@@ -1,10 +1,10 @@
 import {PageTypes} from '../../types/page.types';
-import {APITypes, Verse} from '../../types/api.types';
+import {APITypes} from '../../types/api.types';
 
 export function addUthmaniTextToVersesInfo(
   verses: APITypes.Verse[],
   versesInfo: APITypes.VerseInfo[],
-): Verse[] {
+): APITypes.VerseInfo[] {
   return versesInfo.map((verse, idx) => {
     console.log(1111, {verse, original: verses[idx]});
     const splittedUthmani = verses[idx].text_uthmani.split(' ');
@@ -30,7 +30,7 @@ export function addUthmaniTextToVersesInfo(
 type ChaptersObjMap = {[key: number]: PageTypes.Chapter};
 type LinesObjMap = {[key: number]: PageTypes.Line};
 
-export function getPageContent(verses: Verse[]): PageTypes.Page {
+export function getPageContent(verses: APITypes.VerseInfo[]): PageTypes.Page {
   let chaptersObj: ChaptersObjMap = {};
   let linesObjets: LinesObjMap = {};
 
@@ -94,7 +94,7 @@ function _sortChaptersByNumber(chapters: ChaptersObjMap): PageTypes.Chapter[] {
 }
 
 function _checkIsNextVerseInNewChapter(
-  verse: Verse,
+  verse: APITypes.VerseInfo,
   currentChapterNumber: number,
 ): boolean {
   const chapterNumber = _getChapterNumberByVerseKey(verse.verse_key);

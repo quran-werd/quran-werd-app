@@ -1,6 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {slicesNames} from '../../store/constants';
 import {werdApiFetcher, setAuthToken} from '../../api/clients/werdApiClient';
+import {saveAuthData} from '../../utils/storage/auth.storage';
 
 export const sendOTP = createAsyncThunk(
   `${slicesNames.auth}/sendOTP`,
@@ -52,12 +53,26 @@ export const verifyOTP = createAsyncThunk(
       const cleanedPhone = phoneNumber.replace(/\D/g, '');
       const response = await verifyOTPAPI(cleanedPhone, otp);
 
-      // Store token for future API requests
-      if (response.token) {
-        setAuthToken(response.token);
+      // Store access token for future API requests
+      if (response.accessToken) {
+        setAuthToken(response.accessToken);
       }
 
-      return response;
+      // Persist auth data to storage
+      await saveAuthData({
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        user: response.user,
+        phoneNumber: `+${cleanedPhone}`,
+        isAuthenticated: true,
+      });
+
+      return {
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+        user: response.user,
+        phoneNumber: `+${cleanedPhone}`,
+      };
     } catch (error: any) {
       // Log full error details for debugging
       console.error('verifyOTP error:', {
@@ -90,8 +105,22 @@ const sendOTPAPI = async (phone: string): Promise<{verification: any}> => {
 const verifyOTPAPI = async (
   phone: string,
   otp: string,
-): Promise<{token: string}> => {
-  return await werdApiFetcher<{token: string}>('/users/login/verify', {
+): Promise<{
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    phone: string;
+  };
+}> => {
+  return await werdApiFetcher<{
+    accessToken: string;
+    refreshToken: string;
+    user: {
+      id: string;
+      phone: string;
+    };
+  }>('/users/login/verify', {
     method: 'POST',
     data: {
       phone: `+${phone}`,

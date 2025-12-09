@@ -1,7 +1,7 @@
 import React, {memo} from 'react';
 import {Text, StyleSheet} from 'react-native';
 import {colors} from '../../../styles/colors';
-import {Word as WordType} from '../types';
+import {Word as WordType} from '../../../types/quran-pager.types';
 
 interface WordProps {
   word: WordType;

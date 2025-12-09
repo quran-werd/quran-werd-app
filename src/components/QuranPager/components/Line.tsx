@@ -1,7 +1,7 @@
 import React, {memo, useMemo} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
 import {colors} from '../../../styles/colors';
-import {Word} from '../types';
+import {Word} from '../../../types/quran-pager.types';
 import Basmalah from './Basmalah';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';

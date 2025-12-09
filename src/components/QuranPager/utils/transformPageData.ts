@@ -1,7 +1,7 @@
-import {Verse} from '../types';
+import {Verse} from '../../../types/quran-pager.types';
 import {fetchPageVerses} from '../../../api/clients/quranCdnClient';
 import {transformApiVersesResponse} from '../../../api/transformers';
-import {ApiVersesResponse} from '../../../api/types';
+import {ApiVersesResponse} from '../../../types/api-response.types';
 
 /**
  * Fetches and transforms page data from Quran.com API
