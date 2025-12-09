@@ -13,7 +13,7 @@ export const sendOTP = createAsyncThunk(
       }
 
       const response = await sendOTPAPI(cleanedPhone);
-      if (response.success) {
+      if (response.verification) {
         return {success: true};
       } else {
         return rejectWithValue('Failed to send OTP');
@@ -78,11 +78,11 @@ export const verifyOTP = createAsyncThunk(
 );
 
 // API calls using Werd API fetcher
-const sendOTPAPI = async (phone: string): Promise<{success: boolean}> => {
-  return await werdApiFetcher<{success: boolean}>('/users/login', {
+const sendOTPAPI = async (phone: string): Promise<{verification: any}> => {
+  return await werdApiFetcher<{verification: any}>('/users/login', {
     method: 'POST',
     data: {
-      phone,
+      phone: `+${phone}`,
     },
   });
 };
@@ -94,7 +94,7 @@ const verifyOTPAPI = async (
   return await werdApiFetcher<{token: string}>('/users/login/verify', {
     method: 'POST',
     data: {
-      phone,
+      phone: `+${phone}`,
       otp,
     },
   });
