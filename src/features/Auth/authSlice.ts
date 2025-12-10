@@ -156,4 +156,3 @@ export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
 export const selectUser = (state: RootState) => state.auth.user;
 
 export default authSlice.reducer;
-

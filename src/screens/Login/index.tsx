@@ -137,7 +137,6 @@ export default function Login() {
                 <>
                   {/* OTP Input Section */}
                   <OTPInput
-                    value={otp}
                     onChangeText={handleOTPChange}
                     label={t('login.otpLabel', 'Enter OTP')}
                     error={auth.error && auth.otpSent ? auth.error : undefined}
