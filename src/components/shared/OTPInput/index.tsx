@@ -6,6 +6,7 @@ import {
   TextInputProps,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
+  I18nManager,
 } from 'react-native';
 import {colors} from '../../../styles/colors';
 import Typography from '../Typography';
@@ -81,7 +82,7 @@ export default function OTPInput({
           {label}
         </Typography>
       )}
-      <View style={styles.inputsContainer}>
+      <View style={[styles.inputsContainer, {direction: 'ltr'}]}>
         {Array.from({length}).map((_, index) => (
           <TextInput
             key={index}
@@ -101,6 +102,7 @@ export default function OTPInput({
             keyboardType="number-pad"
             maxLength={1}
             selectTextOnFocus
+            textAlign="center"
             {...props}
           />
         ))}
