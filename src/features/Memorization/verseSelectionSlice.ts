@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction, createSelector} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
-import {VerseRange} from '../../components/QuranPager/types';
+import {VerseRange} from '../../types/quran-pager.types';
 import {
   splitRangeBySurah,
   parseVerseKey,

@@ -3,6 +3,7 @@ import chaptersSlice from '../features/Chapters/chaptersSlice';
 import chapterSlice from '../features/Chapter/chapterSlice';
 import memorizationSlice from '../features/Memorization/memorizationSlice';
 import verseSelectionSlice from '../features/Memorization/verseSelectionSlice';
+import authSlice from '../features/Auth/authSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     chapter: chapterSlice,
     memorization: memorizationSlice,
     verseSelection: verseSelectionSlice,
+    auth: authSlice,
   },
 });
 

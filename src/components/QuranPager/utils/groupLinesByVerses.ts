@@ -1,4 +1,4 @@
-import {Verse, Word, LineData} from '../types';
+import {Verse, Word, LineData} from '../../../types/quran-pager.types';
 
 /**
  * Groups verses into lines to match the Quran Page (Mushaf) layout
@@ -17,9 +17,7 @@ import {Verse, Word, LineData} from '../types';
  * @param verses - Array of verses to group
  * @returns Record of line keys to words
  */
-export const groupLinesByVerses = (
-  verses: Verse[],
-): Record<string, Word[]> => {
+export const groupLinesByVerses = (verses: Verse[]): Record<string, Word[]> => {
   const words: Word[] = verses.flatMap(verse => verse.words);
 
   // Groups the words based on their (page and) line number from API
@@ -56,4 +54,3 @@ export const getLineDataFromVerses = (verses: Verse[]): LineData[] => {
     };
   });
 };
-

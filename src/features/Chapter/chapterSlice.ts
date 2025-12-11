@@ -6,14 +6,14 @@ import {
   fetchChapterInfo,
   fetchVersesFullInfo,
 } from './chapterAction';
-import {Verse} from '../../types/api.types';
+import {APITypes} from '../../types/api.types';
 import {addUthmaniTextToVersesInfo, getPageContent} from './utils';
 import {PageTypes} from '../../types/page.types';
 
 // Define a type for the slice state
 interface ChapterState {
   loading: boolean;
-  verses: Verse[];
+  verses: APITypes.VerseInfo[];
   content: PageTypes.Page;
 }
 

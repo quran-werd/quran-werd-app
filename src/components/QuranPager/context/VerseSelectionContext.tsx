@@ -5,7 +5,7 @@ import React, {
   useCallback,
   ReactNode,
 } from 'react';
-import {VerseRange} from '../types';
+import {VerseRange} from '../../../types/quran-pager.types';
 import {
   splitRangeBySurah,
   parseVerseKey,
@@ -35,9 +35,9 @@ interface VerseSelectionProviderProps {
  * VerseSelectionProvider - Provides verse range selection state management
  * Handles range creation with automatic splitting across surah boundaries
  */
-export const VerseSelectionProvider: React.FC<
-  VerseSelectionProviderProps
-> = ({children}) => {
+export const VerseSelectionProvider: React.FC<VerseSelectionProviderProps> = ({
+  children,
+}) => {
   const [ranges, setRanges] = useState<VerseRange[]>([]);
   const [pendingStartVerse, setPendingStartVerseState] = useState<
     string | null
@@ -58,7 +58,9 @@ export const VerseSelectionProvider: React.FC<
       const newRanges = [...prev];
       splitRanges.forEach(splitRange => {
         // Generate unique ID for the range
-        const id = `${splitRange.startKey}-${splitRange.endKey}-${Date.now()}-${Math.random()}`;
+        const id = `${splitRange.startKey}-${
+          splitRange.endKey
+        }-${Date.now()}-${Math.random()}`;
         newRanges.push({
           id,
           startVerseKey: splitRange.startKey,

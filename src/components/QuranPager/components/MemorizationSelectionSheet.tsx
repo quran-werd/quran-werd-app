@@ -10,7 +10,7 @@ import {
 import {Icon, Button} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
 import {colors} from '../../../styles/colors';
-import {Verse} from '../types';
+import {Verse} from '../../../types/quran-pager.types';
 import {MemorizedRange} from '../../../types/memorization.types';
 import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
@@ -169,9 +169,7 @@ export const MemorizationSelectionSheet: React.FC<
                 onPress={handleSave}
                 style={styles.saveButton}
                 disabled={memorizedRanges.length === 0}>
-                <Text style={styles.saveButtonText}>
-                  {t('common.save')}
-                </Text>
+                <Text style={styles.saveButtonText}>{t('common.save')}</Text>
               </Pressable>
             </View>
           )}

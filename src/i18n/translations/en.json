@@ -66,5 +66,16 @@
     "language": "Language",
     "arabic": "العربية",
     "english": "English"
+  },
+  "login": {
+    "title": "Welcome",
+    "subtitle": "Enter your phone number to continue",
+    "phoneLabel": "Phone Number",
+    "otpLabel": "Enter OTP",
+    "sendOTP": "Send OTP",
+    "verifyOTP": "Verify OTP",
+    "resendOTP": "Resend OTP",
+    "resendOTPWithTimer": "Resend OTP ({{seconds}}s)",
+    "didntReceive": "Didn't receive the code?"
   }
 }

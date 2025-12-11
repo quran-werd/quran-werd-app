@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
-import {Verse} from '../types';
+import {Verse} from '../../../types/quran-pager.types';
 import {getPageVerses} from '../utils/transformPageData';
 import {getPageQCFontName} from '../../../content';
 import {colors} from '../../../styles/colors';

@@ -1,4 +1,4 @@
-import {Verse} from '../types';
+import {Verse} from '../../../types/quran-pager.types';
 
 /**
  * Groups verses into pages to match the Quran Page (Mushaf) layout
@@ -30,4 +30,3 @@ export const groupPagesByVerses = (
 
   return pages;
 };
-
