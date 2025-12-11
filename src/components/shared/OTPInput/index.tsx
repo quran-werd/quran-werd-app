@@ -35,6 +35,9 @@ export default function OTPInput({
         onFilled={onChangeText}
         textInputProps={{
           accessibilityLabel: 'One-Time Password',
+          autoComplete: 'sms-otp',
+          textContentType: 'oneTimeCode',
+          keyboardType: 'number-pad',
         }}
         theme={{
           containerStyle: {
@@ -88,7 +91,7 @@ const styles = StyleSheet.create({
   },
   focusStick: {
     backgroundColor: colors.primary,
-    height: 2,
+    height: 25,
   },
   errorText: {
     marginTop: 4,
