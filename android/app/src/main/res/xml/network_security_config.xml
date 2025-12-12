@@ -7,8 +7,8 @@
         <domain includeSubdomains="true">127.0.0.1</domain>
     </domain-config>
     
-    <!-- Allow all HTTPS traffic -->
-    <base-config cleartextTrafficPermitted="false">
+    <!-- Allow cleartext traffic for local network IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x) -->
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

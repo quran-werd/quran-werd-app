@@ -25,15 +25,12 @@ export const QURAN_CDN_DEFAULT_VERSES_PARAMS = {
 export const WERD_API_CONFIG = {
   PRODUCTION_HOST: 'https://quran-werd-server.onrender.com',
   STAGING_HOST: 'https://quran-werd-server.onrender.com',
-  LOCAL_HOST: 'http://192.168.100.239:3000', // Android emulator localhost
+  LOCAL_HOST: 'http://192.168.100.239:3000',
   API_ROOT_PATH: '',
 
-  // Use __DEV__ to automatically switch to localhost in development
-  // For Android emulator, use 10.0.2.2 instead of localhost
   get BASE_URL() {
-    // Uncomment the line below to use localhost in development
     return __DEV__
-      ? `${this.STAGING_HOST}${this.API_ROOT_PATH}`
+      ? `${this.LOCAL_HOST}${this.API_ROOT_PATH}`
       : `${this.STAGING_HOST}${this.API_ROOT_PATH}`;
   },
 };
