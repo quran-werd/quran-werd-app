@@ -1,8 +1,14 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import type {RootState} from '../../store';
 import {
   MemorizationState,
   MemorizationProgress,
+  ServerMemorizationData,
 } from '../../types/memorization.types';
+import {
+  fetchMemorizations,
+  fetchMemorizationByChapter,
+} from './memorizationAction';
 
 const initialState: MemorizationState = {
   progress: {
@@ -69,6 +75,7 @@ const initialState: MemorizationState = {
     ],
     lastReviewDate: '2024-03-15',
   },
+  serverData: null,
   isLoading: false,
   error: null,
 };
@@ -132,6 +139,52 @@ export const memorizationSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    // Set memorizations from server data
+    setMemorizations: (
+      state,
+      action: PayloadAction<ServerMemorizationData | null>,
+    ) => {
+      state.serverData = action.payload;
+    },
+  },
+  extraReducers: builder => {
+    // Fetch all memorizations
+    builder.addCase(fetchMemorizations.pending, state => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchMemorizations.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.serverData = action.payload;
+      state.error = null;
+    });
+    builder.addCase(fetchMemorizations.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
+
+    // Fetch memorization by chapter
+    builder.addCase(fetchMemorizationByChapter.pending, state => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(
+      fetchMemorizationByChapter.fulfilled,
+      (state, action) => {
+        state.isLoading = false;
+        // Update serverData with the specific chapter's data
+        if (!state.serverData) {
+          state.serverData = {};
+        }
+        state.serverData[action.payload.chapterNumber] =
+          action.payload.ranges;
+        state.error = null;
+      },
+    );
+    builder.addCase(fetchMemorizationByChapter.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
   },
 });
 
@@ -141,6 +194,21 @@ export const {
   updateSurahProgress,
   setLoading,
   setError,
+  setMemorizations,
 } = memorizationSlice.actions;
+
+// Selectors
+export const selectMemorization = (state: RootState) => state.memorization;
+export const selectMemorizationProgress = (state: RootState) =>
+  state.memorization.progress;
+export const selectServerMemorizationData = (state: RootState) =>
+  state.memorization.serverData;
+export const selectMemorizationLoading = (state: RootState) =>
+  state.memorization.isLoading;
+export const selectMemorizationError = (state: RootState) =>
+  state.memorization.error;
+export const selectMemorizationByChapter = (chapterNumber: number) => (
+  state: RootState,
+) => state.memorization.serverData?.[chapterNumber] || [];
 
 export default memorizationSlice.reducer;

@@ -30,8 +30,19 @@ export interface MemorizationProgress {
   lastReviewDate?: string;
 }
 
+// Server response format: { [chapterNumber: number]: MemorizedRange[] }
+export type ServerMemorizationData = {
+  [chapterNumber: number]: Array<{
+    startVerse: number;
+    endVerse: number;
+    wordsCount: number;
+  }>;
+};
+
 export interface MemorizationState {
   progress: MemorizationProgress;
+  // Raw server data in the format returned by the API
+  serverData: ServerMemorizationData | null;
   isLoading: boolean;
   error: string | null;
 }
