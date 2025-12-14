@@ -14,7 +14,7 @@ import {
   setPendingStartVerse,
   addVerseRange,
   removeRange,
-} from '../../../features/Memorization/verseSelectionSlice';
+} from '../../../features/Memorization/memorizationSelectionSlice';
 import {findSingleVerseRange} from '../utils/verseSelection.utils';
 
 interface LineProps {

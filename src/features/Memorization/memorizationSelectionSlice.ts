@@ -9,7 +9,7 @@ import {
   findSingleVerseRange,
 } from '../../components/QuranPager/utils/verseSelection.utils';
 
-interface VerseSelectionState {
+interface MemorizationSelectionState {
   ranges: VerseRange[];
   pendingStartVerse: string | null;
   history: Array<{
@@ -22,7 +22,7 @@ interface VerseSelectionState {
   }>; // Future stack for redo
 }
 
-const initialState: VerseSelectionState = {
+const initialState: MemorizationSelectionState = {
   ranges: [],
   pendingStartVerse: null,
   history: [],
@@ -30,7 +30,7 @@ const initialState: VerseSelectionState = {
 };
 
 // Helper function to save current state to history before mutation
-const saveToHistory = (state: VerseSelectionState) => {
+const saveToHistory = (state: MemorizationSelectionState) => {
   // Clear future stack when performing a new action (can't redo after new action)
   state.future = [];
 
@@ -47,8 +47,8 @@ const saveToHistory = (state: VerseSelectionState) => {
   }
 };
 
-export const verseSelectionSlice = createSlice({
-  name: 'verseSelection',
+export const memorizationSelectionSlice = createSlice({
+  name: 'memorizationSelection',
   initialState,
   reducers: {
     setPendingStartVerse: (state, action: PayloadAction<string | null>) => {
@@ -140,13 +140,14 @@ export const {
   clearRanges,
   undo,
   redo,
-} = verseSelectionSlice.actions;
+} = memorizationSelectionSlice.actions;
 
 // Selectors
-export const selectRanges = (state: RootState) => state.verseSelection.ranges;
+export const selectRanges = (state: RootState) =>
+  state.memorizationSelection.ranges;
 
 export const selectPendingStartVerse = (state: RootState) =>
-  state.verseSelection.pendingStartVerse;
+  state.memorizationSelection.pendingStartVerse;
 
 // Memoized selector that only recomputes when ranges change
 // This prevents unnecessary re-renders by returning the same Set reference
@@ -174,12 +175,12 @@ export const selectSingleVerseRangeForVerse = (verseKey: string) =>
 
 // Selector to check if undo is available
 export const selectCanUndo = (state: RootState): boolean => {
-  return state.verseSelection.history.length > 0;
+  return state.memorizationSelection.history.length > 0;
 };
 
 // Selector to check if redo is available
 export const selectCanRedo = (state: RootState): boolean => {
-  return state.verseSelection.future.length > 0;
+  return state.memorizationSelection.future.length > 0;
 };
 
-export default verseSelectionSlice.reducer;
+export default memorizationSelectionSlice.reducer;

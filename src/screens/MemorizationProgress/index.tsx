@@ -1,5 +1,11 @@
-import React from 'react';
-import {Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
@@ -13,6 +19,7 @@ import {
   SurahDetailsList,
 } from '../../components';
 import {MemorizationProgressProps} from '../../routes/MemorizationStack';
+import {fetchMemorizations} from '../../features/Memorization/memorizationAction';
 
 export default function MemorizationProgress() {
   const {progress} = useAppSelector(state => state.memorization);
@@ -32,6 +39,12 @@ export default function MemorizationProgress() {
   const handleAddMemorizationPress = () => {
     navigation.navigate('MemorizationSelection', {initialPage: 1});
   };
+
+  useEffect(() => {
+    dispatch(fetchMemorizations());
+  }, []);
+
+  console.log('progress', progress);
 
   return (
     <SafeAreaView style={styles.container}>

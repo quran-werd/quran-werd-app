@@ -24,7 +24,7 @@ import {
   redo,
   selectCanUndo,
   selectCanRedo,
-} from '../../features/Memorization/verseSelectionSlice';
+} from '../../features/Memorization/memorizationSelectionSlice';
 
 // Icon wrapper components for UI Kitten
 const UndoIcon = (props: any) => (

@@ -16,7 +16,7 @@ import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
   selectRanges,
   removeRange,
-} from '../../../features/Memorization/verseSelectionSlice';
+} from '../../../features/Memorization/memorizationSelectionSlice';
 import {
   parseVerseKey,
   getVerseTextFromWords,

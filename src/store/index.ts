@@ -2,7 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import chaptersSlice from '../features/Chapters/chaptersSlice';
 import chapterSlice from '../features/Chapter/chapterSlice';
 import memorizationSlice from '../features/Memorization/memorizationSlice';
-import verseSelectionSlice from '../features/Memorization/verseSelectionSlice';
+import memorizationSelectionSlice from '../features/Memorization/memorizationSelectionSlice';
 import authSlice from '../features/Auth/authSlice';
 
 export const store = configureStore({
@@ -10,7 +10,7 @@ export const store = configureStore({
     chapters: chaptersSlice,
     chapter: chapterSlice,
     memorization: memorizationSlice,
-    verseSelection: verseSelectionSlice,
+    memorizationSelection: memorizationSelectionSlice,
     auth: authSlice,
   },
 });
