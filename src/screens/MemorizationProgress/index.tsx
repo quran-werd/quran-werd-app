@@ -44,8 +44,6 @@ export default function MemorizationProgress() {
     dispatch(fetchMemorizations());
   }, []);
 
-  console.log('progress', progress);
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
