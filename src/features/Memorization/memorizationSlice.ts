@@ -12,68 +12,13 @@ import {
 
 const initialState: MemorizationState = {
   progress: {
-    overallProgress: 2,
-    totalMemorizedVerses: 13,
-    totalVerses: 789,
+    overallProgress: 0,
+    totalMemorizedVerses: 0,
+    totalVerses: 0,
     completedSurahs: 0,
-    inProgressSurahs: 3,
-    surahs: [
-      {
-        id: '1',
-        number: 1,
-        nameArabic: 'الفاتحة',
-        nameEnglish: 'Al-Fatihah',
-        type: 'Makkiyah',
-        totalVerses: 7,
-        memorizedVerses: 3,
-        memorizedRanges: [],
-        isExpanded: false,
-      },
-      {
-        id: '2',
-        number: 2,
-        nameArabic: 'البقرة',
-        nameEnglish: 'Al-Baqarah',
-        type: 'Madaniyah',
-        totalVerses: 286,
-        memorizedVerses: 8,
-        memorizedRanges: [
-          {
-            id: 'range-1',
-            startVerse: 1,
-            endVerse: 5,
-            startText: 'الم ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ',
-            endText:
-              'أُولَـٰئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ وَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ',
-            wordCount: 36,
-            verseCount: 5,
-          },
-          {
-            id: 'range-2',
-            startVerse: 12,
-            endVerse: 14,
-            startText:
-              'أَلَا إِنَّهُمْ هُمُ الْمُفْسِدُونَ وَلَـٰكِن لَّا يَشْعُرُونَ',
-            endText: 'وَإِذَا لَقُوا الَّذِينَ آمَنُوا قَالُوا آمَنَّا',
-            wordCount: 42,
-            verseCount: 3,
-          },
-        ],
-        isExpanded: true,
-      },
-      {
-        id: '3',
-        number: 3,
-        nameArabic: 'آل عمران',
-        nameEnglish: 'Ali-Imran',
-        type: 'Madaniyah',
-        totalVerses: 200,
-        memorizedVerses: 2,
-        memorizedRanges: [],
-        isExpanded: false,
-      },
-    ],
-    lastReviewDate: '2024-03-15',
+    inProgressSurahs: 0,
+    surahs: [],
+    lastReviewDate: '',
   },
   serverData: null,
   isLoading: false,
@@ -168,19 +113,15 @@ export const memorizationSlice = createSlice({
       state.isLoading = true;
       state.error = null;
     });
-    builder.addCase(
-      fetchMemorizationByChapter.fulfilled,
-      (state, action) => {
-        state.isLoading = false;
-        // Update serverData with the specific chapter's data
-        if (!state.serverData) {
-          state.serverData = {};
-        }
-        state.serverData[action.payload.chapterNumber] =
-          action.payload.ranges;
-        state.error = null;
-      },
-    );
+    builder.addCase(fetchMemorizationByChapter.fulfilled, (state, action) => {
+      state.isLoading = false;
+      // Update serverData with the specific chapter's data
+      if (!state.serverData) {
+        state.serverData = {};
+      }
+      state.serverData[action.payload.chapterNumber] = action.payload.ranges;
+      state.error = null;
+    });
     builder.addCase(fetchMemorizationByChapter.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
@@ -207,8 +148,8 @@ export const selectMemorizationLoading = (state: RootState) =>
   state.memorization.isLoading;
 export const selectMemorizationError = (state: RootState) =>
   state.memorization.error;
-export const selectMemorizationByChapter = (chapterNumber: number) => (
-  state: RootState,
-) => state.memorization.serverData?.[chapterNumber] || [];
+export const selectMemorizationByChapter =
+  (chapterNumber: number) => (state: RootState) =>
+    state.memorization.serverData?.[chapterNumber] || [];
 
 export default memorizationSlice.reducer;

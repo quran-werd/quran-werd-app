@@ -7,6 +7,8 @@ import Badge from '../shared/Badge';
 import {colors} from '../../styles/colors';
 import {SurahProgress} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
+import SurahNumber from './components/SurahNumber';
+import ProgressInfo from './components/ProgressInfo';
 
 interface SurahProgressCardProps {
   surah: SurahProgress;
@@ -34,57 +36,38 @@ export default function SurahProgressCard({
         padding={16}
         margin={0}
         shadow={false}>
-        <Badge variant="light" size="medium" style={styles.surahNumber}>
-          <Typography variant="small" weight="semibold" color="primary">
-            {surah.number}
-          </Typography>
-        </Badge>
-        <View style={styles.surahInfo}>
-          <Typography variant="h3" style={styles.surahNameArabic}>
-            {surah.nameArabic}
-          </Typography>
-          <View style={styles.surahTypeContainer}>
+        <View style={styles.surahTypeContainer}>
+          <SurahNumber surahNumber={surah.number} />
+
+          <View style={styles.surahInfo}>
+            <Typography variant="h3" style={styles.surahNameArabic}>
+              {surah.nameArabic}
+            </Typography>
             <Typography variant="small" color="light" style={styles.surahType}>
               {surahType}
             </Typography>
-            <Typography variant="small" color="light" style={styles.surahType}>
-              {t('memorization.surah.verseCount', {
-                memorized: surah.memorizedVerses,
-                total: surah.totalVerses,
-              })}
-            </Typography>
           </View>
         </View>
-        <View style={styles.progressInfo}>
-          <Typography
-            variant="h2"
-            color="primary"
-            style={styles.progressPercentage}>
-            {progressPercentage}%
-          </Typography>
-          <Typography
-            variant="small"
-            color="secondary"
-            style={styles.memorizedVerses}>
-            {t('memorization.surah.memorizedVerses', {
-              count: surah.memorizedVerses,
-            })}
-          </Typography>
-          <Typography variant="small" color="light" style={styles.expandIcon}>
-            {surah.isExpanded ? '▲' : '▼'}
-          </Typography>
-        </View>
+
+        <ProgressInfo
+          progressPercentage={progressPercentage}
+          memorizedVerses={surah.memorizedVerses}
+        />
+
+        <Typography variant="small" color="light" style={styles.expandIcon}>
+          {surah.isExpanded ? '▲' : '▼'}
+        </Typography>
       </Card>
 
       {surah.isExpanded && surah.memorizedRanges.length > 0 && (
         <View style={styles.expandedContent}>
-          <Typography variant="h3" style={styles.rangesTitle}>
+          {/* <Typography variant="h3" style={styles.rangesTitle}>
             {t('memorization.surah.memorizedRanges')}
-          </Typography>
+          </Typography> */}
           {surah.memorizedRanges.map(range => (
             <MemorizedRangeItem key={range.id} range={range} />
           ))}
-          <View style={styles.summary}>
+          {/* <View style={styles.summary}>
             <Typography
               variant="body"
               weight="medium"
@@ -97,7 +80,7 @@ export default function SurahProgressCard({
                 total: surah.totalVerses,
               })}
             </Typography>
-          </View>
+          </View> */}
         </View>
       )}
     </Card>
@@ -112,14 +95,14 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
   },
   surahTypeContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  surahNumber: {
-    marginRight: 12,
   },
   surahInfo: {
     flex: 1,
@@ -132,16 +115,6 @@ const styles = StyleSheet.create({
   },
   verseCount: {
     // Typography component handles styling
-  },
-  progressInfo: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  progressPercentage: {
-    marginBottom: 6,
-  },
-  memorizedVerses: {
-    marginBottom: 8,
   },
   expandIcon: {
     textAlign: 'center',
