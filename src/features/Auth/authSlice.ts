@@ -2,7 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
 import {slicesNames} from '../../store/constants';
 import {sendOTP, verifyOTP} from './authAction';
-import {clearAuthData} from '../../utils/storage/auth.storage';
+import {clearAuthData, StoredAuthData} from '../../utils/storage/auth.storage';
 
 // Define a type for the slice state
 interface AuthState {
@@ -73,6 +73,33 @@ export const authSlice = createSlice({
       state.phoneNumber = action.payload.phoneNumber;
       state.isAuthenticated = true;
     },
+    updateAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
+      // Update token in API client
+      const {setAuthToken} = require('../../api/clients/werdApiClient');
+      setAuthToken(action.payload);
+      // Update persisted auth data (async, but don't wait for it)
+      const {
+        loadAuthData,
+        saveAuthData,
+      } = require('../../utils/storage/auth.storage');
+      loadAuthData()
+        .then((authData: StoredAuthData) => {
+          if (authData) {
+            saveAuthData({...authData, accessToken: action.payload}).catch(
+              (error: unknown) => {
+                console.error(
+                  'Failed to update access token in storage:',
+                  error,
+                );
+              },
+            );
+          }
+        })
+        .catch((error: unknown) => {
+          console.error('Failed to load auth data for token update:', error);
+        });
+    },
     logout: state => {
       state.isAuthenticated = false;
       state.accessToken = null;
@@ -138,6 +165,7 @@ export const {
   clearError,
   resetAuth,
   setAuthData,
+  updateAccessToken,
   logout,
 } = authSlice.actions;
 

@@ -3,8 +3,36 @@
  * Uses axios for HTTP requests with bearer token authentication
  */
 
-import axios, {AxiosInstance, AxiosError} from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import {WERD_API_CONFIG} from '../config';
+import {store} from '../../store';
+import {selectRefreshToken} from '../../features/Auth/authSlice';
+import {updateAccessToken, logout} from '../../features/Auth/authSlice';
+
+/**
+ * Refresh access token using refresh token
+ * This is used internally by the API client interceptor
+ * Uses direct axios call to avoid interceptor loops
+ */
+const refreshAccessToken = async (
+  refreshToken: string,
+): Promise<{accessToken: string}> => {
+  const response = await axios.post(
+    `${WERD_API_CONFIG.BASE_URL}/users/refresh`,
+    {refreshToken},
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+
+  return response.data;
+};
 
 /**
  * Create axios instance with default configuration for Werd API
@@ -46,7 +74,30 @@ werdApiClient.interceptors.request.use(
 );
 
 /**
- * Response interceptor for error handling
+ * Flag to prevent infinite refresh loops
+ */
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: any) => void;
+  reject: (error?: any) => void;
+}> = [];
+
+/**
+ * Process queued requests after token refresh
+ */
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(promise => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+/**
+ * Response interceptor for error handling and automatic token refresh
  */
 werdApiClient.interceptors.response.use(
   response => {
@@ -57,10 +108,90 @@ werdApiClient.interceptors.response.use(
     });
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
     if (error.response) {
       // Server responded with error status
       const status = error.response.status;
+
+      // Handle 403 Forbidden - access token expired or invalid
+      if (status === 403 && originalRequest && !originalRequest._retry) {
+        // Skip refresh if this is already a refresh request to avoid infinite loop
+        if (originalRequest.url?.includes('/users/refresh')) {
+          // Refresh token is also invalid, logout user
+          console.warn('🔒 Refresh token invalid. Logging out...');
+          store.dispatch(logout());
+          clearAuthToken();
+          return Promise.reject(error);
+        }
+
+        // If already refreshing, queue this request
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({resolve, reject});
+          })
+            .then(token => {
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              return werdApiClient(originalRequest);
+            })
+            .catch(err => {
+              return Promise.reject(err);
+            });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          // Get refresh token from Redux store
+          const state = store.getState();
+          const refreshToken = selectRefreshToken(state);
+
+          if (!refreshToken) {
+            console.warn('🔒 No refresh token available. Logging out...');
+            store.dispatch(logout());
+            clearAuthToken();
+            processQueue(error, null);
+            isRefreshing = false;
+            return Promise.reject(error);
+          }
+
+          console.log('🔄 Refreshing access token...');
+          // Call refresh endpoint
+          const response = await refreshAccessToken(refreshToken);
+          console.log('🔄 Refresh token response:', response);
+          const newAccessToken = response.accessToken;
+
+          // Update token in store and API client
+          store.dispatch(updateAccessToken(newAccessToken));
+          setAuthToken(newAccessToken);
+
+          // Update the original request with new token
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          }
+
+          console.log('✅ Access token refreshed successfully');
+          processQueue(null, newAccessToken);
+          isRefreshing = false;
+
+          // Retry the original request
+          return werdApiClient(originalRequest);
+        } catch (refreshError: any) {
+          console.error('❌ Failed to refresh token:', refreshError);
+          // Refresh failed, logout user
+          store.dispatch(logout());
+          clearAuthToken();
+          processQueue(refreshError, null);
+          isRefreshing = false;
+          return Promise.reject(refreshError);
+        }
+      }
 
       // Handle 401 Unauthorized - token expired or invalid
       if (status === 401) {
