@@ -1,47 +1,65 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Card from '../shared/Card';
 import Typography from '../shared/Typography';
-import Badge from '../shared/Badge';
 import {colors} from '../../styles/colors';
-import {SurahProgress} from '../../types/memorization.types';
+import {MemorizedRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
 import SurahNumber from './components/SurahNumber';
 import ProgressInfo from './components/ProgressInfo';
+import {SURAHS_INFO} from '../../content';
+import {
+  getMemorizedPercentageFromRanges,
+  getMemorizedVersesCountFromRanges,
+} from '../../utils/helpers.utils';
 
 interface SurahProgressCardProps {
-  surah: SurahProgress;
-  onToggleExpansion: (surahId: string) => void;
+  ranges: MemorizedRange[];
+  surahNumber: number;
 }
 
 export default function SurahProgressCard({
-  surah,
-  onToggleExpansion,
+  surahNumber,
+  ranges,
 }: SurahProgressCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const {t} = useTranslation();
-  const progressPercentage = Math.round(
-    (surah.memorizedVerses / surah.totalVerses) * 100,
+
+  const progressPercentage = useMemo(
+    () => getMemorizedPercentageFromRanges(surahNumber, ranges),
+    [surahNumber, ranges],
   );
+
+  const memorizedVersesCount = useMemo(
+    () => getMemorizedVersesCountFromRanges(ranges),
+    [ranges],
+  );
+
+  const surahInfo = useMemo(() => SURAHS_INFO[surahNumber], [surahNumber]);
+
   const surahType =
-    surah.type === 'Makkiyah'
+    surahInfo.place === 'Makkah'
       ? t('memorization.surah.makkiyah')
       : t('memorization.surah.madaniyah');
+
+  const handleToggleExpansion = () => setIsExpanded(!isExpanded);
 
   return (
     <Card style={styles.container} margin={8}>
       <Card
-        onPress={() => onToggleExpansion(surah.id)}
+        onPress={handleToggleExpansion}
         style={styles.header}
         padding={16}
         margin={0}
         shadow={false}>
         <View style={styles.surahTypeContainer}>
-          <SurahNumber surahNumber={surah.number} />
+          <SurahNumber surahNumber={surahNumber} />
 
           <View style={styles.surahInfo}>
             <Typography variant="h3" style={styles.surahNameArabic}>
-              {surah.nameArabic}
+              {surahInfo.arabic}
             </Typography>
             <Typography variant="small" color="light" style={styles.surahType}>
               {surahType}
@@ -51,36 +69,38 @@ export default function SurahProgressCard({
 
         <ProgressInfo
           progressPercentage={progressPercentage}
-          memorizedVerses={surah.memorizedVerses}
+          memorizedVerses={memorizedVersesCount}
         />
 
         <Typography variant="small" color="light" style={styles.expandIcon}>
-          {surah.isExpanded ? '▲' : '▼'}
+          {isExpanded ? '▲' : '▼'}
         </Typography>
       </Card>
 
-      {surah.isExpanded && surah.memorizedRanges.length > 0 && (
+      {isExpanded && ranges.length > 0 && (
         <View style={styles.expandedContent}>
-          {/* <Typography variant="h3" style={styles.rangesTitle}>
+          <Typography variant="h3" style={styles.rangesTitle}>
             {t('memorization.surah.memorizedRanges')}
-          </Typography> */}
-          {surah.memorizedRanges.map(range => (
-            <MemorizedRangeItem key={range.id} range={range} />
+          </Typography>
+
+          {ranges.map(range => (
+            <MemorizedRangeItem key={range.startVerse} range={range} />
           ))}
-          {/* <View style={styles.summary}>
+
+          <View style={styles.summary}>
             <Typography
-              variant="body"
-              weight="medium"
+              variant="caption"
+              weight="normal"
               color="primary"
               align="center"
               style={styles.summaryText}>
               {t('memorization.surah.rangesSummary', {
-                rangeCount: surah.memorizedRanges.length,
-                memorized: surah.memorizedVerses,
-                total: surah.totalVerses,
+                rangeCount: ranges.length,
+                memorized: memorizedVersesCount,
+                total: surahInfo.aya,
               })}
             </Typography>
-          </View> */}
+          </View>
         </View>
       )}
     </Card>

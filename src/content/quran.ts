@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {juz} from './juz_data';
 import {pageData, PageDataItem} from './page_data';
-import {surah} from './surah_data';
+import {SURAHS_INFO} from './surah_data';
 import {sajdahVerses} from './sajdah_verses';
 import {QURAN_TEXT} from './quran_text';
 import {QURAN_NORMAL_TEXT} from './quran_text_normal';
@@ -153,7 +153,7 @@ export function getSurahName(surahNumber: number): string {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No Surah found with given surahNumber');
   }
-  return surah[surahNumber - 1].name;
+  return SURAHS_INFO[surahNumber - 1].name;
 }
 
 /**
@@ -163,7 +163,7 @@ export function getSurahNameEnglish(surahNumber: number): string {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No Surah found with given surahNumber');
   }
-  return surah[surahNumber - 1].english;
+  return SURAHS_INFO[surahNumber - 1].english;
 }
 
 /**
@@ -173,7 +173,7 @@ export function getSurahNameTurkish(surahNumber: number): string {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No Surah found with given surahNumber');
   }
-  return surah[surahNumber - 1].turkish;
+  return SURAHS_INFO[surahNumber - 1].turkish;
 }
 
 /**
@@ -183,7 +183,7 @@ export function getSurahNameArabic(surahNumber: number): string {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No Surah found with given surahNumber');
   }
-  return surah[surahNumber - 1].arabic;
+  return SURAHS_INFO[surahNumber - 1].arabic;
 }
 
 /**
@@ -224,7 +224,7 @@ export function getPlaceOfRevelation(surahNumber: number): string {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No Surah found with given surahNumber');
   }
-  return surah[surahNumber - 1].place;
+  return SURAHS_INFO[surahNumber - 1].place;
 }
 
 /**
@@ -234,7 +234,7 @@ export function getVerseCount(surahNumber: number): number {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No verse found with given surahNumber');
   }
-  return surah[surahNumber - 1].aya;
+  return SURAHS_INFO[surahNumber - 1].aya;
 }
 
 /**

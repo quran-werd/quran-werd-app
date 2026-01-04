@@ -4,8 +4,8 @@ export interface MemorizedRange {
   endVerse: number;
   startText: string;
   endText: string;
-  wordCount: number;
-  verseCount: number;
+  wordsCount: number;
+  versesCount: number;
 }
 
 export interface SurahProgress {
@@ -31,18 +31,13 @@ export interface MemorizationProgress {
 }
 
 // Server response format: { [chapterNumber: number]: MemorizedRange[] }
-export type ServerMemorizationData = {
-  [chapterNumber: number]: Array<{
-    startVerse: number;
-    endVerse: number;
-    wordsCount: number;
-  }>;
+export type ServerMemorizationRanges = {
+  [chapterNumber: number]: MemorizedRange[];
 };
 
 export interface MemorizationState {
   progress: MemorizationProgress;
-  // Raw server data in the format returned by the API
-  serverData: ServerMemorizationData | null;
+  ranges: ServerMemorizationRanges;
   isLoading: boolean;
   error: string | null;
 }

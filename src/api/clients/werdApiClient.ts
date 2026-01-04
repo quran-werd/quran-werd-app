@@ -28,6 +28,7 @@ const refreshAccessToken = async (
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 2500,
     },
   );
 
@@ -133,7 +134,12 @@ werdApiClient.interceptors.response.use(
           return new Promise((resolve, reject) => {
             failedQueue.push({resolve, reject});
           })
-            .then(token => {
+            .then((token: unknown) => {
+              if (!token || typeof token !== 'string') {
+                return Promise.reject(
+                  new Error('Token refresh failed - no token received'),
+                );
+              }
               if (originalRequest.headers) {
                 originalRequest.headers.Authorization = `Bearer ${token}`;
               }
@@ -165,11 +171,19 @@ werdApiClient.interceptors.response.use(
           // Call refresh endpoint
           const response = await refreshAccessToken(refreshToken);
           console.log('🔄 Refresh token response:', response);
+
+          // Validate response
+          if (!response || !response.accessToken) {
+            throw new Error(
+              'Invalid refresh token response: missing accessToken',
+            );
+          }
+
           const newAccessToken = response.accessToken;
 
           // Update token in store and API client
-          store.dispatch(updateAccessToken(newAccessToken));
           setAuthToken(newAccessToken);
+          store.dispatch(updateAccessToken(newAccessToken));
 
           // Update the original request with new token
           if (originalRequest.headers) {
@@ -183,7 +197,15 @@ werdApiClient.interceptors.response.use(
           // Retry the original request
           return werdApiClient(originalRequest);
         } catch (refreshError: any) {
-          console.error('❌ Failed to refresh token:', refreshError);
+          console.error('❌ Failed to refresh token:', {
+            message: refreshError?.message,
+            code: refreshError?.code,
+            response: refreshError?.response?.data,
+            isTimeout:
+              refreshError?.code === 'ECONNABORTED' ||
+              refreshError?.message?.includes('timeout'),
+          });
+
           // Refresh failed, logout user
           store.dispatch(logout());
           clearAuthToken();

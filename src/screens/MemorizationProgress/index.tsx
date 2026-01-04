@@ -9,7 +9,10 @@ import {
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
-import {toggleSurahExpansion} from '../../features/Memorization/memorizationSlice';
+import {
+  selectMemorizationRanges,
+  toggleSurahExpansion,
+} from '../../features/Memorization/memorizationSlice';
 import {colors} from '../../styles/colors';
 import {
   ProgressCard,
@@ -20,9 +23,11 @@ import {
 } from '../../components';
 import {MemorizationProgressProps} from '../../routes/MemorizationStack';
 import {fetchMemorizations} from '../../features/Memorization/memorizationAction';
+import {fetchAyahByKey} from '../../api';
 
 export default function MemorizationProgress() {
   const {progress} = useAppSelector(state => state.memorization);
+  const ranges = useAppSelector(selectMemorizationRanges);
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
   const navigation = useNavigation<MemorizationProgressProps['navigation']>();
@@ -42,6 +47,7 @@ export default function MemorizationProgress() {
 
   useEffect(() => {
     dispatch(fetchMemorizations());
+    fetchAyahByKey(2, 2);
   }, []);
 
   return (
@@ -82,7 +88,7 @@ export default function MemorizationProgress() {
         </TouchableOpacity>
 
         <SurahDetailsList
-          surahs={progress.surahs}
+          surahs={ranges}
           onToggleExpansion={handleToggleSurah}
         />
       </ScrollView>

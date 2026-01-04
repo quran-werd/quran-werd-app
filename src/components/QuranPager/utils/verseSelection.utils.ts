@@ -104,7 +104,7 @@ export function getVerseTextFromWords(words: Word[]): string {
   // Use textUthmani (Uthmani Arabic) first, then plain text, avoid codeV1 (QCF codes)
   // textUthmani is the standard readable Arabic text format
   return words
-    .map(word => word.textUthmani || word.text || '')
+    .map(word => word.text_uthmani || word.text || '')
     .filter(text => text.trim().length > 0) // Filter out empty strings
     .join(' ')
     .trim();

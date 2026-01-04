@@ -6,6 +6,7 @@
 
 import axios, {AxiosInstance, AxiosError} from 'axios';
 import {QURAN_CDN_API_CONFIG, QURAN_CDN_DEFAULT_VERSES_PARAMS} from '../config';
+import {getVerseTextFromWords} from '../../components/QuranPager/utils/verseSelection.utils';
 
 /**
  * Create axios instance with default configuration for Quran CDN
@@ -47,7 +48,11 @@ quranCdnClient.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response) {
       // Server responded with error status
-      console.error('Quran CDN API Error:', error.response.status, error.response.data);
+      console.error(
+        'Quran CDN API Error:',
+        error.response.status,
+        error.response.data,
+      );
     } else if (error.request) {
       // Request made but no response received
       console.error('Quran CDN Network Error:', error.message);
@@ -62,7 +67,10 @@ quranCdnClient.interceptors.response.use(
 /**
  * Makes a URL for Quran CDN API requests
  */
-export const makeQuranCdnUrl = (path: string, params?: Record<string, any>): string => {
+export const makeQuranCdnUrl = (
+  path: string,
+  params?: Record<string, any>,
+): string => {
   const baseUrl = `${QURAN_CDN_API_CONFIG.BASE_URL}${path}`;
 
   if (!params) {
@@ -131,5 +139,21 @@ export const fetchPageVerses = async (pageNumber: number) => {
   return response.data;
 };
 
-export {quranCdnClient};
+export const fetchAyahByKey = async (
+  chapterNumber: number,
+  verseNumber: number,
+) => {
+  const ayahKey = `${chapterNumber}:${verseNumber}`;
 
+  const path = `/verses/by_key/${ayahKey}`;
+  const params = {
+    ...QURAN_CDN_DEFAULT_VERSES_PARAMS,
+  };
+
+  const response = await quranCdnClient.get(path, {params});
+  const words = response.data.verse.words;
+  const verseText = getVerseTextFromWords(words);
+  return verseText;
+};
+
+export {quranCdnClient};

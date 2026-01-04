@@ -2,7 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import {StyleSheet, ScrollView, SafeAreaView, I18nManager} from 'react-native';
 import {colors} from '../../styles/colors';
 import ChapterListItem from '../../components/ChapterListItem';
-import {surah} from '../../content/surah_data';
+import {SURAHS_INFO} from '../../content/surah_data';
 
 export default function Chapters() {
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function Chapters() {
   // Transform local surah data to match API Chapter structure
   const chapters = useMemo(
     () =>
-      surah.map(s => ({
+      SURAHS_INFO.map(s => ({
         id: s.id,
         name_arabic: s.arabic,
         verses_count: s.aya,

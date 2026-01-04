@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {Icon, Button} from '@ui-kitten/components';
@@ -8,6 +8,7 @@ import Card from '../shared/Card';
 import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
 import {formatNumberWithCommas} from '../QuranPager/utils/verseSelection.utils';
+import {fetchAyahByKey} from '../../api';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
@@ -22,6 +23,9 @@ export default function MemorizedRangeItem({
   onDelete,
   showDeleteButton = false,
 }: MemorizedRangeItemProps) {
+  const [startVerse, setStartVerse] = useState<string | null>(null);
+  const [endVerse, setEndVerse] = useState<string | null>(null);
+
   const {t} = useTranslation();
 
   const handleDelete = () => {
@@ -29,6 +33,14 @@ export default function MemorizedRangeItem({
       onDelete(range.id);
     }
   };
+
+  useEffect(() => {
+    fetchAyahByKey(2, range.startVerse).then(setStartVerse);
+  }, [range.startVerse]);
+
+  useEffect(() => {
+    fetchAyahByKey(2, range.endVerse).then(setEndVerse);
+  }, [range.endVerse]);
 
   return (
     <Card style={styles.container} padding={12} margin={8} shadow={false}>
@@ -48,16 +60,22 @@ export default function MemorizedRangeItem({
               color="secondary"
               style={styles.wordCount}>
               {t('memorization.surah.wordCount', {
-                count: formatNumberWithCommas(range.wordCount),
-              })}
+                count: range.wordsCount,
+              }).replace(
+                range.wordsCount.toString(),
+                formatNumberWithCommas(range.wordsCount),
+              )}
             </Typography>
             <Typography
               variant="small"
               color="secondary"
               style={styles.verseCount}>
               {t('memorization.surah.verseCountShort', {
-                count: formatNumberWithCommas(range.verseCount),
-              })}
+                count: range.endVerse - range.startVerse + 1,
+              }).replace(
+                (range.endVerse - range.startVerse + 1).toString(),
+                formatNumberWithCommas(range.endVerse - range.startVerse + 1),
+              )}
             </Typography>
           </View>
         </View>
@@ -82,7 +100,7 @@ export default function MemorizedRangeItem({
             {t('memorization.surah.from')}
             {': '}
           </Text>
-          {range.startText}
+          {startVerse}
         </Typography>
         <Typography
           variant="caption"
@@ -93,7 +111,7 @@ export default function MemorizedRangeItem({
             {t('memorization.surah.to')}
             {': '}
           </Text>
-          {range.endText}
+          {endVerse}
         </Typography>
       </View>
     </Card>
