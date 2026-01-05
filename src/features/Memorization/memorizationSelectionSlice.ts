@@ -8,6 +8,7 @@ import {
   mergeOverlappingRanges,
   findSingleVerseRange,
 } from '../../components/QuranPager/utils/verseSelection.utils';
+import {getChapterNumberFromVerseKey} from '../../utils/helpers.utils';
 
 interface MemorizationSelectionState {
   ranges: VerseRange[];
@@ -76,6 +77,7 @@ export const memorizationSelectionSlice = createSlice({
           id,
           startVerseKey: splitRange.startKey,
           endVerseKey: splitRange.endKey,
+          chapterNumber: getChapterNumberFromVerseKey(splitRange.startKey),
           surahId: splitRange.surahId,
           // If this is a cross-surah range, track the original start surah
           startSurahId:

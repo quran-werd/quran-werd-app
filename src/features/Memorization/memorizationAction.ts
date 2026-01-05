@@ -1,5 +1,9 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {werdApiFetcher} from '../../api/clients/werdApiClient';
+import {
+  MemorizedRange,
+  SaveMemorizationRange,
+} from '../../types/memorization.types';
 
 // Server response type: { [chapterNumber: number]: MemorizedRange[] }
 export type ServerMemorizationResponse = {
@@ -73,6 +77,24 @@ export const fetchMemorizationByChapter = createAsyncThunk(
           error?.message ||
           'Failed to fetch chapter memorizations. Please try again.',
       );
+    }
+  },
+);
+
+export const saveMemorization = createAsyncThunk(
+  'memorization/saveMemorization',
+  async (ranges: SaveMemorizationRange[], {rejectWithValue}) => {
+    try {
+      const response = await werdApiFetcher<MemorizedRange[]>(
+        '/memorizations',
+        {
+          method: 'POST',
+          data: {ranges},
+        },
+      );
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || error?.message);
     }
   },
 );

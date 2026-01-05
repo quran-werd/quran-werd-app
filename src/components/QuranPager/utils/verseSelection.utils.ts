@@ -104,7 +104,7 @@ export function getVerseTextFromWords(words: Word[]): string {
   // Use textUthmani (Uthmani Arabic) first, then plain text, avoid codeV1 (QCF codes)
   // textUthmani is the standard readable Arabic text format
   return words
-    .map(word => word.text_uthmani || word.text || '')
+    .map(word => word.textUthmani || word.text || '')
     .filter(text => text.trim().length > 0) // Filter out empty strings
     .join(' ')
     .trim();
@@ -240,6 +240,7 @@ function mergeRanges(range1: VerseRange, range2: VerseRange): VerseRange {
     endVerseKey,
     surahId,
     startSurahId: range1.startSurahId || range2.startSurahId,
+    chapterNumber: range1.chapterNumber || range2.chapterNumber,
   };
 }
 

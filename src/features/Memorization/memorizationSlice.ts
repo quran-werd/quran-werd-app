@@ -8,6 +8,7 @@ import {
 import {
   fetchMemorizations,
   fetchMemorizationByChapter,
+  saveMemorization,
 } from './memorizationAction';
 
 const initialState: MemorizationState = {
@@ -107,6 +108,21 @@ export const memorizationSlice = createSlice({
       state.error = null;
     });
     builder.addCase(fetchMemorizationByChapter.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
+
+    // Save memorization
+    builder.addCase(saveMemorization.pending, state => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(saveMemorization.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.ranges = action.payload as unknown as ServerMemorizationRanges;
+      state.error = null;
+    });
+    builder.addCase(saveMemorization.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
     });

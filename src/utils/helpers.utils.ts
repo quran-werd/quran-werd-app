@@ -1,5 +1,5 @@
-import {SURAHS_INFO} from '../content';
-import {MemorizedRange} from '../types';
+import {getVerseCount} from '../content';
+import {MemorizedRange, SaveMemorizationRange} from '../types';
 
 export function getMemorizedVersesCountFromRanges(ranges: MemorizedRange[]) {
   return ranges.reduce((acc, range) => {
@@ -11,7 +11,22 @@ export function getMemorizedPercentageFromRanges(
   surahNumber: number,
   ranges: MemorizedRange[],
 ) {
-  const totalVerses = SURAHS_INFO[surahNumber].aya;
+  const totalVerses = getVerseCount(surahNumber);
   const memorizedVerses = getMemorizedVersesCountFromRanges(ranges);
   return Math.round((memorizedVerses / totalVerses) * 100);
+}
+
+export function mapMemorizedRangesToSaveMemorizationRequest(
+  ranges: MemorizedRange[],
+): SaveMemorizationRange[] {
+  return ranges.map(range => ({
+    chapterId: range.chapterNumber,
+    startVerse: range.startVerse,
+    endVerse: range.endVerse,
+    wordsCount: range.wordsCount,
+  }));
+}
+
+export function getChapterNumberFromVerseKey(verseKey: string): number {
+  return parseInt(verseKey.split(':')[0]);
 }

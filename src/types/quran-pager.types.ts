@@ -71,6 +71,6 @@ export interface VerseRange {
   startVerseKey: string;
   endVerseKey: string;
   surahId: number;
+  chapterNumber: number;
   startSurahId?: number; // For ranges that span surahs
 }
-

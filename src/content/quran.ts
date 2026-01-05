@@ -231,7 +231,7 @@ export function getPlaceOfRevelation(surahNumber: number): string {
  * Takes [surahNumber] and returns the count of total Verses in the Surah
  */
 export function getVerseCount(surahNumber: number): number {
-  if (surahNumber > 114 || surahNumber <= 0) {
+  if (!surahNumber || surahNumber > 114 || surahNumber <= 0) {
     throw new Error('No verse found with given surahNumber');
   }
   return SURAHS_INFO[surahNumber - 1].aya;

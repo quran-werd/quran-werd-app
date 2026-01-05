@@ -8,7 +8,7 @@ import {MemorizedRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
 import SurahNumber from './components/SurahNumber';
 import ProgressInfo from './components/ProgressInfo';
-import {SURAHS_INFO} from '../../content';
+import {getVerseCount, SURAHS_INFO} from '../../content';
 import {
   getMemorizedPercentageFromRanges,
   getMemorizedVersesCountFromRanges,
@@ -37,7 +37,7 @@ export default function SurahProgressCard({
     [ranges],
   );
 
-  const surahInfo = useMemo(() => SURAHS_INFO[surahNumber], [surahNumber]);
+  const surahInfo = useMemo(() => SURAHS_INFO[surahNumber - 1], [surahNumber]);
 
   const surahType =
     surahInfo.place === 'Makkah'
@@ -84,7 +84,11 @@ export default function SurahProgressCard({
           </Typography>
 
           {ranges.map(range => (
-            <MemorizedRangeItem key={range.startVerse} range={range} />
+            <MemorizedRangeItem
+              key={range.startVerse}
+              range={range}
+              surahNumber={surahNumber}
+            />
           ))}
 
           <View style={styles.summary}>
@@ -97,7 +101,7 @@ export default function SurahProgressCard({
               {t('memorization.surah.rangesSummary', {
                 rangeCount: ranges.length,
                 memorized: memorizedVersesCount,
-                total: surahInfo.aya,
+                total: getVerseCount(surahNumber),
               })}
             </Typography>
           </View>

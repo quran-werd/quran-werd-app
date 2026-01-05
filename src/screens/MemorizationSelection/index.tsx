@@ -2,7 +2,9 @@ import React, {useCallback} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import QuranPager from '../../components/QuranPager';
 import {MemorizationSelectionProps as RouteProps} from '../../routes/MemorizationStack';
-import {MemorizedRange} from '../../types/memorization.types';
+import {SaveMemorizationRange} from '../../types/memorization.types';
+import {saveMemorization} from '../../features/Memorization/memorizationAction';
+import {useAppDispatch} from '../../store/hooks';
 
 interface MemorizationSelectionScreenProps extends RouteProps {
   // Additional props if needed
@@ -15,18 +17,15 @@ interface MemorizationSelectionScreenProps extends RouteProps {
  */
 export default function MemorizationSelection({
   route,
-  navigation,
 }: MemorizationSelectionScreenProps) {
   const initialPage = route.params?.initialPage || 1;
+  const dispatch = useAppDispatch();
 
   const handleSave = useCallback(
-    (ranges: MemorizedRange[]) => {
-      // TODO: Replace with actual API call when backend is ready
-      console.log('Saving memorization ranges:', ranges);
-      // After saving, navigate back
-      navigation.goBack();
+    async (ranges: SaveMemorizationRange[]) => {
+      await dispatch(saveMemorization(ranges)).unwrap();
     },
-    [navigation],
+    [dispatch],
   );
 
   return (
@@ -47,4 +46,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-

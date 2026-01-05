@@ -12,6 +12,7 @@ import {fetchAyahByKey} from '../../api';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
+  surahNumber: number;
   onDelete?: (rangeId: string) => void;
   showDeleteButton?: boolean;
 }
@@ -20,6 +21,7 @@ const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
 
 export default function MemorizedRangeItem({
   range,
+  surahNumber,
   onDelete,
   showDeleteButton = false,
 }: MemorizedRangeItemProps) {
@@ -35,11 +37,11 @@ export default function MemorizedRangeItem({
   };
 
   useEffect(() => {
-    fetchAyahByKey(2, range.startVerse).then(setStartVerse);
+    fetchAyahByKey(surahNumber, range.startVerse).then(setStartVerse);
   }, [range.startVerse]);
 
   useEffect(() => {
-    fetchAyahByKey(2, range.endVerse).then(setEndVerse);
+    fetchAyahByKey(surahNumber, range.endVerse).then(setEndVerse);
   }, [range.endVerse]);
 
   return (

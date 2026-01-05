@@ -6,6 +6,7 @@ export interface MemorizedRange {
   endText: string;
   wordsCount: number;
   versesCount: number;
+  chapterNumber: number;
 }
 
 export interface SurahProgress {
@@ -40,4 +41,15 @@ export interface MemorizationState {
   ranges: ServerMemorizationRanges;
   isLoading: boolean;
   error: string | null;
+}
+
+export interface SaveMemorizationRequest {
+  ranges: SaveMemorizationRange[];
+}
+
+export interface SaveMemorizationRange {
+  endVerse: number;
+  chapterId: number;
+  startVerse: number;
+  wordsCount: number;
 }
