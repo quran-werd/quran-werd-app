@@ -1,29 +1,26 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import QuranPager from '../../components/QuranPager';
-import {MemorizationSelectionProps as RouteProps} from '../../routes/MemorizationStack';
+import {MemorizationScreenProps} from '../../navigation/MemorizationStack';
 import {SaveMemorizationRange} from '../../types/memorization.types';
-import {saveMemorization} from '../../features/Memorization/memorizationAction';
+import {addMemorizationRange} from '../../features/Memorization/memorizationAction';
 import {useAppDispatch} from '../../store/hooks';
 
-interface MemorizationSelectionScreenProps extends RouteProps {
-  // Additional props if needed
-}
-
-/**
- * Memorization Selection Screen
- * Allows users to select verse ranges for memorization tracking
- * Uses QuranPager with selectionMode enabled
- */
-export default function MemorizationSelection({
-  route,
-}: MemorizationSelectionScreenProps) {
+export default function MemorizationScreen({route}: MemorizationScreenProps) {
   const initialPage = route.params?.initialPage || 1;
   const dispatch = useAppDispatch();
 
   const handleSave = useCallback(
     async (ranges: SaveMemorizationRange[]) => {
-      await dispatch(saveMemorization(ranges)).unwrap();
+      for (const range of ranges) {
+        await dispatch(
+          addMemorizationRange({
+            surah: range.chapterId,
+            from: range.startVerse,
+            to: range.endVerse,
+          }),
+        ).unwrap();
+      }
     },
     [dispatch],
   );
@@ -42,7 +39,5 @@ export default function MemorizationSelection({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {flex: 1},
 });

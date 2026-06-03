@@ -1,9 +1,49 @@
 {
   "tabs": {
+    "home": "الرئيسية",
+    "memorization": "الحفظ",
+    "plan": "الخطة",
     "chapters": "السور",
     "progress": "التقدم"
   },
+  "auth": {
+    "title": "مرحباً",
+    "subtitle": "سجّل الدخول للمتابعة",
+    "googleSignIn": "تسجيل الدخول عبر Google"
+  },
+  "home": {
+    "title": "ورد اليوم",
+    "subtitle": "مراجعة يومية للحفظ",
+    "range": "من آية {{from}} إلى {{to}}",
+    "status": "الحالة: {{status}}",
+    "statusPending": "قيد الانتظار",
+    "statusCompleted": "مكتمل",
+    "statusSkipped": "تم التخطي",
+    "startRevision": "بدء المراجعة",
+    "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
+    "addMemorization": "إضافة حفظ"
+  },
+  "revision": {
+    "complete": "إتمام",
+    "skip": "تخطي"
+  },
+  "plan": {
+    "title": "خطة المراجعة",
+    "subtitle": "أوردتك اليومية",
+    "capacity": "القدرة اليومية (آيات)",
+    "generate": "إنشاء الخطة",
+    "updateCapacity": "تحديث القدرة",
+    "empty": "لا توجد أوردة. أنشئ خطة بعد إضافة حفظ.",
+    "werdOrder": "الورد {{order}}"
+  },
+  "quran": {
+    "juz": "الجزء {{number}}"
+  },
   "memorization": {
+    "delete": {
+      "title": "حذف النطاق",
+      "message": "هل أنت متأكد من حذف هذا النطاق؟"
+    },
     "progress": {
       "title": "تقدم الحفظ",
       "subtitle": "رحلة حفظ القرآن الكريم",
@@ -67,15 +107,12 @@
     "arabic": "العربية",
     "english": "English"
   },
-  "login": {
-    "title": "مرحباً",
-    "subtitle": "أدخل رقم هاتفك للمتابعة",
-    "phoneLabel": "رقم الهاتف",
-    "otpLabel": "أدخل رمز التحقق",
-    "sendOTP": "إرسال رمز التحقق",
-    "verifyOTP": "التحقق من الرمز",
-    "resendOTP": "إعادة إرسال الرمز",
-    "resendOTPWithTimer": "إعادة إرسال الرمز ({{seconds}}ث)",
-    "didntReceive": "لم تستلم الرمز؟"
+  "rtl": {
+    "enabledTitle": "تم تفعيل RTL",
+    "enabledMessage": "يرجى إعادة تشغيل التطبيق لتطبيق التخطيط"
+  },
+  "notifications": {
+    "dailyTitle": "ورد اليوم",
+    "dailyBody": "حان وقت مراجعة وردك اليوم"
   }
 }

@@ -1,6 +1,6 @@
 import {Verse} from '../../../types/quran-pager.types';
-import {fetchPageVerses} from '../../../api/clients/quranCdnClient';
-import {transformApiVersesResponse} from '../../../api/transformers';
+import {fetchPageWithCache} from '../../../services/quranCache.service';
+import {transformApiVersesResponse} from '../../../services/transformers';
 import {ApiVersesResponse} from '../../../types/api-response.types';
 
 /**
@@ -13,7 +13,7 @@ import {ApiVersesResponse} from '../../../types/api-response.types';
 export const getPageVerses = async (pageNumber: number): Promise<Verse[]> => {
   try {
     // Fetch from Quran.com API using axios
-    const response: ApiVersesResponse = await fetchPageVerses(pageNumber);
+    const response: ApiVersesResponse = await fetchPageWithCache(pageNumber);
 
     // Transform API response to component format
     const verses = transformApiVersesResponse(response);

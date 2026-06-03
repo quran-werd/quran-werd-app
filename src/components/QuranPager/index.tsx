@@ -217,7 +217,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           {/* Right: Juz and page number */}
           <View style={styles.headerRight}>
             <Text style={styles.juzText}>
-              الجزء {toArabicNumerals(juzNumber)}
+              {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
             </Text>
           </View>
         </View>

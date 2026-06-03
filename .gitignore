@@ -67,3 +67,5 @@ yarn-error.log
 
 # keystore
 /android/key.properties
+
+.env

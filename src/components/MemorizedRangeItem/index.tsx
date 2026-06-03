@@ -8,12 +8,12 @@ import Card from '../shared/Card';
 import Typography from '../shared/Typography';
 import Badge from '../shared/Badge';
 import {formatNumberWithCommas} from '../QuranPager/utils/verseSelection.utils';
-import {fetchAyahByKey} from '../../api';
+import {fetchAyahByKey} from '../../services/clients/quranCdnClient';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
   surahNumber: number;
-  onDelete?: (rangeId: string) => void;
+  onDelete?: () => void;
   showDeleteButton?: boolean;
 }
 
@@ -31,9 +31,7 @@ export default function MemorizedRangeItem({
   const {t} = useTranslation();
 
   const handleDelete = () => {
-    if (onDelete) {
-      onDelete(range.id);
-    }
+    onDelete?.();
   };
 
   useEffect(() => {

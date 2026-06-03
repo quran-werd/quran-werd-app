@@ -1,17 +1,23 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
 import {
-  MemorizationState,
   MemorizationProgress,
-  ServerMemorizationRanges,
+  MemorizedRange,
+  VerseRange,
 } from '../../types/memorization.types';
 import {
   fetchMemorizations,
-  fetchMemorizationByChapter,
-  saveMemorization,
+  addMemorizationRange,
+  removeMemorizationRange,
+  MemorizationRanges,
 } from './memorizationAction';
 
-const initialState: MemorizationState = {
+const initialState: {
+  progress: MemorizationProgress;
+  ranges: MemorizationRanges;
+  isLoading: boolean;
+  error: string | null;
+} = {
   progress: {
     overallProgress: 0,
     totalMemorizedVerses: 0,
@@ -39,46 +45,6 @@ export const memorizationSlice = createSlice({
         surah.isExpanded = !surah.isExpanded;
       }
     },
-    updateSurahProgress: (
-      state,
-      action: PayloadAction<{
-        surahId: string;
-        memorizedVerses: number;
-        memorizedRanges: any[];
-      }>,
-    ) => {
-      const surah = state.progress.surahs.find(
-        s => s.id === action.payload.surahId,
-      );
-      if (surah) {
-        surah.memorizedVerses = action.payload.memorizedVerses;
-        surah.memorizedRanges = action.payload.memorizedRanges;
-      }
-
-      // Recalculate overall progress
-      const totalMemorized = state.progress.surahs.reduce(
-        (acc, s) => acc + s.memorizedVerses,
-        0,
-      );
-      const totalVerses = state.progress.surahs.reduce(
-        (acc, s) => acc + s.totalVerses,
-        0,
-      );
-
-      state.progress.totalMemorizedVerses = totalMemorized;
-      state.progress.totalVerses = totalVerses;
-      state.progress.overallProgress = Math.round(
-        (totalMemorized / totalVerses) * 100,
-      );
-
-      // Update completed and in-progress counts
-      state.progress.completedSurahs = state.progress.surahs.filter(
-        s => s.memorizedVerses === s.totalVerses,
-      ).length;
-      state.progress.inProgressSurahs = state.progress.surahs.filter(
-        s => s.memorizedVerses > 0 && s.memorizedVerses < s.totalVerses,
-      ).length;
-    },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -87,60 +53,56 @@ export const memorizationSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // Fetch all memorizations
-    builder.addCase(fetchMemorizations.pending, state => {
-      state.isLoading = true;
-      state.error = null;
-    });
-    builder.addCase(fetchMemorizations.fulfilled, (state, action) => {
+    const handleRangesFulfilled = (
+      state: typeof initialState,
+      ranges: MemorizationRanges,
+    ) => {
       state.isLoading = false;
-      state.ranges = action.payload as ServerMemorizationRanges;
+      state.ranges = ranges;
       state.error = null;
-    });
-    builder.addCase(fetchMemorizations.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload as string;
-    });
+    };
 
-    // Fetch memorization by chapter
-    builder.addCase(fetchMemorizationByChapter.pending, state => {
-      state.isLoading = true;
-      state.error = null;
-    });
-    builder.addCase(fetchMemorizationByChapter.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload as string;
-    });
-
-    // Save memorization
-    builder.addCase(saveMemorization.pending, state => {
-      state.isLoading = true;
-      state.error = null;
-    });
-    builder.addCase(saveMemorization.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.ranges = action.payload as unknown as ServerMemorizationRanges;
-      state.error = null;
-    });
-    builder.addCase(saveMemorization.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.payload as string;
-    });
+    builder
+      .addCase(fetchMemorizations.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchMemorizations.fulfilled, (state, action) => {
+        handleRangesFulfilled(state, action.payload);
+      })
+      .addCase(fetchMemorizations.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(addMemorizationRange.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(addMemorizationRange.fulfilled, (state, action) => {
+        handleRangesFulfilled(state, action.payload);
+      })
+      .addCase(addMemorizationRange.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(removeMemorizationRange.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(removeMemorizationRange.fulfilled, (state, action) => {
+        handleRangesFulfilled(state, action.payload);
+      })
+      .addCase(removeMemorizationRange.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const {
-  setProgress,
-  toggleSurahExpansion,
-  updateSurahProgress,
-  setLoading,
-  setError,
-} = memorizationSlice.actions;
+export const {setProgress, toggleSurahExpansion, setLoading, setError} =
+  memorizationSlice.actions;
 
-// Selectors
 export const selectMemorization = (state: RootState) => state.memorization;
-export const selectMemorizationProgress = (state: RootState) =>
-  state.memorization.progress;
 export const selectMemorizationRanges = (state: RootState) =>
   state.memorization.ranges;
 export const selectMemorizationLoading = (state: RootState) =>

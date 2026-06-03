@@ -1,24 +1,33 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {SectionHeader} from '../SectionHeader';
 import SurahProgressCard from '../SurahProgressCard';
-import {ServerMemorizationRanges} from '../../types/memorization.types';
+import {MemorizationVerseRange} from '../../types/memorization.types';
 
 interface SurahDetailsListProps {
   surahs: ServerMemorizationRanges;
-  onToggleExpansion: (surahId: string) => void;
-  style?: any;
+  onDeleteRange?: (surah: number, range: MemorizationVerseRange) => void;
+  style?: object;
 }
 
 export const SurahDetailsList: React.FC<SurahDetailsListProps> = ({
   surahs,
-  onToggleExpansion,
+  onDeleteRange,
   style,
 }) => {
   const {t} = useTranslation();
 
-  console.log(1111, 'SurahDetailsList', {surahs});
+  const handleDelete = (surah: number, range: MemorizationVerseRange) => {
+    Alert.alert(t('memorization.delete.title'), t('memorization.delete.message'), [
+      {text: t('common.cancel'), style: 'cancel'},
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: () => onDeleteRange?.(surah, range),
+      },
+    ]);
+  };
 
   return (
     <View style={[styles.section, style]}>
@@ -27,12 +36,17 @@ export const SurahDetailsList: React.FC<SurahDetailsListProps> = ({
         title={t('memorization.progress.surahDetails')}
       />
       {Object.keys(surahs).map(surahNumber => {
-        const ranges = surahs[Number(surahNumber) as keyof typeof surahs];
+        const ranges = surahs[surahNumber] || [];
         return (
           <SurahProgressCard
             key={surahNumber}
             surahNumber={Number(surahNumber)}
             ranges={ranges}
+            onDeleteRange={
+              onDeleteRange
+                ? range => handleDelete(Number(surahNumber), range)
+                : undefined
+            }
           />
         );
       })}
@@ -41,7 +55,5 @@ export const SurahDetailsList: React.FC<SurahDetailsListProps> = ({
 };
 
 const styles = StyleSheet.create({
-  section: {
-    marginBottom: 28,
-  },
+  section: {marginBottom: 28},
 });

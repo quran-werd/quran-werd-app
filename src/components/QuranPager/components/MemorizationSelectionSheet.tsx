@@ -167,7 +167,7 @@ export const MemorizationSelectionSheet: React.FC<
                   key={range.id}
                   range={range}
                   surahNumber={range.chapterNumber}
-                  onDelete={handleDelete}
+                  onDelete={() => handleDelete(range.id)}
                   showDeleteButton={true}
                 />
               ))

@@ -1,3 +1,8 @@
+export interface MemorizationVerseRange {
+  from: number;
+  to: number;
+}
+
 export interface MemorizedRange {
   id: string;
   startVerse: number;
@@ -31,20 +36,13 @@ export interface MemorizationProgress {
   lastReviewDate?: string;
 }
 
-// Server response format: { [chapterNumber: number]: MemorizedRange[] }
-export type ServerMemorizationRanges = {
-  [chapterNumber: number]: MemorizedRange[];
-};
+export type ServerMemorizationRanges = Record<string, MemorizationVerseRange[]>;
 
 export interface MemorizationState {
   progress: MemorizationProgress;
   ranges: ServerMemorizationRanges;
   isLoading: boolean;
   error: string | null;
-}
-
-export interface SaveMemorizationRequest {
-  ranges: SaveMemorizationRange[];
 }
 
 export interface SaveMemorizationRange {

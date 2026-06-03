@@ -3,7 +3,7 @@
  * Converts API camelCase responses to component-friendly camelCase
  */
 
-import {ApiVerse, ApiWord, ApiVersesResponse} from './types';
+import {ApiVerse, ApiWord, ApiVersesResponse} from '../types/api-response.types';
 import {Verse, Word} from '../types/quran-pager.types';
 
 /**

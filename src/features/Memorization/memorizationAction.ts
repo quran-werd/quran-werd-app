@@ -1,100 +1,58 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {werdApiFetcher} from '../../api/clients/werdApiClient';
 import {
-  MemorizedRange,
-  SaveMemorizationRange,
-} from '../../types/memorization.types';
+  getMemorizations,
+  addRange,
+  deleteRange,
+  MemorizationData,
+} from '../../services/memorizations.service';
+import {ApiError} from '../../types/api.types';
 
-// Server response type: { [chapterNumber: number]: MemorizedRange[] }
-export type ServerMemorizationResponse = {
-  [chapterNumber: number]: Array<{
-    startVerse: number;
-    endVerse: number;
-    wordsCount: number;
-  }>;
-};
-
-/**
- * Fetch all memorized ranges from the server
- */
 export const fetchMemorizations = createAsyncThunk(
   'memorization/fetchMemorizations',
   async (_, {rejectWithValue}) => {
     try {
-      const response = await werdApiFetcher<ServerMemorizationResponse>(
-        '/memorizations',
-        {
-          method: 'GET',
-        },
-      );
-      return response;
-    } catch (error: any) {
-      console.error('fetchMemorizations error:', {
-        message: error?.message,
-        response: error?.response,
-        request: error?.request,
-        code: error?.code,
-      });
-
-      return rejectWithValue(
-        error?.response?.data?.message ||
-          error?.response?.data?.error ||
-          error?.message ||
-          'Failed to fetch memorizations. Please try again.',
-      );
+      const data = await getMemorizations();
+      return data.ranges;
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : 'Failed to fetch memorizations';
+      return rejectWithValue(message);
     }
   },
 );
 
-/**
- * Fetch memorized ranges for a specific chapter
- */
-export const fetchMemorizationByChapter = createAsyncThunk(
-  'memorization/fetchMemorizationByChapter',
-  async (chapterNumber: number, {rejectWithValue}) => {
+export const addMemorizationRange = createAsyncThunk(
+  'memorization/addRange',
+  async (
+    {surah, from, to}: {surah: number; from: number; to: number},
+    {rejectWithValue},
+  ) => {
     try {
-      const response = await werdApiFetcher<{
-        [chapterNumber: number]: Array<{
-          startVerse: number;
-          endVerse: number;
-          wordsCount: number;
-        }>;
-      }>(`/memorizations/${chapterNumber}`, {
-        method: 'GET',
-      });
-      return {chapterNumber, ranges: response[chapterNumber] || []};
-    } catch (error: any) {
-      console.error('fetchMemorizationByChapter error:', {
-        message: error?.message,
-        response: error?.response,
-        request: error?.request,
-        code: error?.code,
-      });
-
-      return rejectWithValue(
-        error?.response?.data?.message ||
-          error?.response?.data?.error ||
-          error?.message ||
-          'Failed to fetch chapter memorizations. Please try again.',
-      );
+      const data = await addRange(surah, from, to);
+      return data.ranges;
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : 'Failed to add range';
+      return rejectWithValue(message);
     }
   },
 );
 
-export const saveMemorization = createAsyncThunk(
-  'memorization/saveMemorization',
-  async (ranges: SaveMemorizationRange[], {rejectWithValue}) => {
+export const removeMemorizationRange = createAsyncThunk(
+  'memorization/deleteRange',
+  async (
+    {surah, from, to}: {surah: number; from: number; to: number},
+    {rejectWithValue},
+  ) => {
     try {
-      const response = await werdApiFetcher<MemorizedRange[]>(
-        '/memorizations',
-        {
-          method: 'POST',
-          data: {ranges},
-        },
-      );
-      return response;
-    } catch (error: any) {
-      return rejectWithValue(error?.response?.data?.message || error?.message);
+      const data = await deleteRange(surah, from, to);
+      return data.ranges;
+    } catch (error) {
+      const message =
+        error instanceof ApiError ? error.message : 'Failed to delete range';
+      return rejectWithValue(message);
     }
   },
 );
+
+export type MemorizationRanges = MemorizationData['ranges'];
