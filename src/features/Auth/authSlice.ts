@@ -58,7 +58,7 @@ export const authSlice = createSlice({
       })
       .addCase(signInWithGoogle.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = (action.payload as string | null) ?? null;
       })
       .addCase(restoreSession.pending, state => {
         state.loading = true;

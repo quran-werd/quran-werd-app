@@ -37,6 +37,26 @@ werdApiClient.interceptors.response.use(
   },
 );
 
+export function getApiErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    if (
+      error.code === 'ECONNABORTED' ||
+      error.message?.toLowerCase().includes('timeout')
+    ) {
+      return `Cannot reach the server at ${API_BASE_URL}. Make sure it is running and your device can access it.`;
+    }
+    if (error.message === 'Network Error') {
+      return `Network error connecting to ${API_BASE_URL}. Check API_BASE_URL in .env and rebuild the app.`;
+    }
+  }
+
+  if (error instanceof ApiError) {
+    return error.message;
+  }
+
+  return error instanceof Error ? error.message : 'Request failed';
+}
+
 export async function werdApiRequest<T>(
   url: string,
   options?: {

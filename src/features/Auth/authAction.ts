@@ -1,39 +1,64 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+  isErrorWithCode,
+  isCancelledResponse,
+} from '@react-native-google-signin/google-signin';
 import {slicesNames} from '../../store/constants';
 import {
   googleLogin,
   logout as logoutApi,
   getMe,
 } from '../../services/auth.service';
-import {setAuthToken, clearAuthToken} from '../../services/werdApi';
+import {
+  GOOGLE_IOS_CLIENT_ID,
+  GOOGLE_WEB_CLIENT_ID,
+} from '../../services/config';
+import {
+  setAuthToken,
+  clearAuthToken,
+  getApiErrorMessage,
+} from '../../services/werdApi';
+import axios from 'axios';
 import {saveAuthData, clearAuthData} from '../../utils/storage/auth.storage';
 
-let Config: {GOOGLE_WEB_CLIENT_ID?: string} = {};
-try {
-  Config = require('react-native-config').default;
-} catch {
-  Config = {};
-}
-
-// GoogleSignin.configure({
-//   webClientId: Config.GOOGLE_WEB_CLIENT_ID,
-//   offlineAccess: false,
-// });
 GoogleSignin.configure({
-  webClientId:
-    '154027524372-64gh40fobnhtl65clllcn7mm7t7vnstd.apps.googleusercontent.com',
+  iosClientId: GOOGLE_IOS_CLIENT_ID,
+  webClientId: GOOGLE_WEB_CLIENT_ID,
   offlineAccess: false,
 });
+
+const getGoogleSignInErrorMessage = (error: unknown): string | null => {
+  if (isErrorWithCode(error)) {
+    switch (error.code) {
+      case statusCodes.SIGN_IN_CANCELLED:
+        return null;
+      case statusCodes.IN_PROGRESS:
+        return 'Sign-in is already in progress';
+      case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+        return 'Google Play Services is not available';
+      default:
+        return error.message || 'Google sign-in failed';
+    }
+  }
+
+  return error instanceof Error ? error.message : 'Google sign-in failed';
+};
 
 export const signInWithGoogle = createAsyncThunk(
   `${slicesNames.auth}/signInWithGoogle`,
   async (_, {rejectWithValue}) => {
     try {
-      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+
       const signInResult = await GoogleSignin.signIn();
-      const idToken = signInResult.data?.idToken;
-      console.log('SUCCESS -> ID_TOKEN', {idToken, signInResult});
+
+      if (isCancelledResponse(signInResult)) {
+        return rejectWithValue(null);
+      }
+
+      const idToken = signInResult.data.idToken;
 
       if (!idToken) {
         return rejectWithValue('Failed to get Google ID token');
@@ -49,9 +74,17 @@ export const signInWithGoogle = createAsyncThunk(
 
       return response;
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Google sign-in failed';
-      return rejectWithValue(message);
+      const googleMessage = getGoogleSignInErrorMessage(error);
+      if (googleMessage === null) {
+        return rejectWithValue(null);
+      }
+      if (isErrorWithCode(error)) {
+        return rejectWithValue(googleMessage);
+      }
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(getApiErrorMessage(error));
+      }
+      return rejectWithValue(googleMessage);
     }
   },
 );
@@ -62,9 +95,7 @@ export const fetchCurrentUser = createAsyncThunk(
     try {
       return await getMe();
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Failed to fetch user';
-      return rejectWithValue(message);
+      return rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
@@ -74,6 +105,11 @@ export const signOut = createAsyncThunk(
   async (_, {rejectWithValue}) => {
     try {
       await logoutApi();
+    } catch {
+      // Continue local sign-out even if the server session is already gone.
+    }
+
+    try {
       await GoogleSignin.signOut();
       await clearAuthData();
       clearAuthToken();
@@ -96,9 +132,7 @@ export const restoreSession = createAsyncThunk(
     } catch (error: unknown) {
       clearAuthToken();
       await clearAuthData();
-      const message =
-        error instanceof Error ? error.message : 'Session expired';
-      return rejectWithValue(message);
+      return rejectWithValue(getApiErrorMessage(error));
     }
   },
 );
