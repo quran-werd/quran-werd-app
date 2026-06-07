@@ -1,20 +1,14 @@
 /**
  * API configuration
- * Set API_BASE_URL via react-native-config (.env) or fallback for dev
+ * Set API_BASE_URL and Google client IDs via .env (react-native-dotenv)
  */
 
 import {Platform} from 'react-native';
-
-let Config: {
-  API_BASE_URL?: string;
-  GOOGLE_IOS_CLIENT_ID?: string;
-  GOOGLE_WEB_CLIENT_ID?: string;
-} = {};
-try {
-  Config = require('react-native-config').default;
-} catch {
-  Config = {};
-}
+import {
+  API_BASE_URL as ENV_API_BASE_URL,
+  GOOGLE_IOS_CLIENT_ID as ENV_GOOGLE_IOS_CLIENT_ID,
+  GOOGLE_WEB_CLIENT_ID as ENV_GOOGLE_WEB_CLIENT_ID,
+} from '@env';
 
 const devApiFallback =
   Platform.OS === 'android'
@@ -22,11 +16,11 @@ const devApiFallback =
     : 'http://192.168.1.169:3000';
 
 export const API_BASE_URL =
-  Config.API_BASE_URL ||
+  ENV_API_BASE_URL ||
   (__DEV__ ? devApiFallback : 'https://quran-werd-server.onrender.com');
 
-export const GOOGLE_IOS_CLIENT_ID = Config.GOOGLE_IOS_CLIENT_ID ?? '';
-export const GOOGLE_WEB_CLIENT_ID = Config.GOOGLE_WEB_CLIENT_ID ?? '';
+export const GOOGLE_IOS_CLIENT_ID = ENV_GOOGLE_IOS_CLIENT_ID ?? '';
+export const GOOGLE_WEB_CLIENT_ID = ENV_GOOGLE_WEB_CLIENT_ID ?? '';
 
 export const QURAN_CDN_API_CONFIG = {
   BASE_URL: 'https://api.qurancdn.com/api/qdc',
