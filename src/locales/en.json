@@ -3,6 +3,7 @@
     "home": "Home",
     "memorization": "Memorization",
     "plan": "Plan",
+    "settings": "Settings",
     "chapters": "Chapters",
     "progress": "Progress"
   },
@@ -114,6 +115,14 @@
   "notifications": {
     "dailyTitle": "Today's Werd",
     "dailyBody": "Time for your daily revision"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your daily werd reminder",
+    "notificationTime": "Daily reminder time",
+    "save": "Save",
+    "saved": "Reminder time saved",
+    "devOverride": "Dev mode: reminder time is set in .env ({{time}})"
   },
   "login": {
     "title": "Welcome",

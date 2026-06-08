@@ -1,5 +1,5 @@
-import React, {useCallback} from 'react';
-import {StyleSheet, SafeAreaView, View} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {StyleSheet, SafeAreaView, View, ActivityIndicator} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import QuranPager from '../../components/QuranPager';
@@ -9,8 +9,12 @@ import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {
   completeTodayWerd,
   skipTodayWerd,
+  fetchTodayWerd,
 } from '../../features/RevisionLog/revisionLogAction';
-import {selectTodayWerd, selectRevisionLogLoading} from '../../features/RevisionLog/revisionLogSlice';
+import {
+  selectTodayWerd,
+  selectRevisionLogLoading,
+} from '../../features/RevisionLog/revisionLogSlice';
 
 export default function RevisionScreen() {
   const {t} = useTranslation();
@@ -23,20 +27,34 @@ export default function RevisionScreen() {
   const werd = today?.werd;
   const werdId = route.params?.werdId || werd?._id;
 
+  useEffect(() => {
+    if (!werd) {
+      dispatch(fetchTodayWerd());
+    }
+  }, [dispatch, werd]);
+
   const handleComplete = useCallback(async () => {
-    if (!werdId) return;
+    if (!werdId) {
+      return;
+    }
     await dispatch(completeTodayWerd(werdId)).unwrap();
     navigation.navigate('Home');
   }, [dispatch, werdId, navigation]);
 
   const handleSkip = useCallback(async () => {
-    if (!werdId) return;
+    if (!werdId) {
+      return;
+    }
     await dispatch(skipTodayWerd(werdId)).unwrap();
     navigation.navigate('Home');
   }, [dispatch, werdId, navigation]);
 
   if (!werd) {
-    return null;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
   }
 
   return (
@@ -69,6 +87,12 @@ export default function RevisionScreen() {
 
 const styles = StyleSheet.create({
   container: {flex: 1},
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+  },
   actions: {
     padding: 16,
     gap: 12,

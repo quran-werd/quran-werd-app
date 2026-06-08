@@ -15,6 +15,7 @@
     "@eva-design/eva": "^2.2.0",
     "@notifee/react-native": "^9.1.8",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-community/datetimepicker": "^9.1.0",
     "@react-native-google-signin/google-signin": "^16.1.2",
     "@react-native-masked-view/masked-view": "^0.3.1",
     "@react-native-voice/voice": "^3.2.4",

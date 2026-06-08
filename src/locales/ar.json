@@ -3,6 +3,7 @@
     "home": "الرئيسية",
     "memorization": "الحفظ",
     "plan": "الخطة",
+    "settings": "الإعدادات",
     "chapters": "السور",
     "progress": "التقدم"
   },
@@ -114,5 +115,13 @@
   "notifications": {
     "dailyTitle": "ورد اليوم",
     "dailyBody": "حان وقت مراجعة وردك اليوم"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "تخصيص تذكير وردك اليومي",
+    "notificationTime": "وقت التذكير اليومي",
+    "save": "حفظ",
+    "saved": "تم حفظ وقت التذكير",
+    "devOverride": "وضع التطوير: وقت التذكير مُعرَّف في .env ({{time}})"
   }
 }

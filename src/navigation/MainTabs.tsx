@@ -7,6 +7,7 @@ import {colors} from '../styles/colors';
 import HomeScreen from '../screens/HomeScreen';
 import MemorizationStack from './MemorizationStack';
 import PlanScreen from '../screens/PlanScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,13 @@ const MemIcon = ({focused}: {focused: boolean}) => (
 const PlanIcon = ({focused}: {focused: boolean}) => (
   <Icon
     name="clipboard-outline"
+    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
+  />
+);
+
+const SettingsIcon = ({focused}: {focused: boolean}) => (
+  <Icon
+    name="settings-2-outline"
     style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
   />
 );
@@ -67,6 +75,14 @@ export default function MainTabs() {
         options={{
           title: t('tabs.plan'),
           tabBarIcon: PlanIcon,
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          title: t('tabs.settings'),
+          tabBarIcon: SettingsIcon,
         }}
       />
     </Tab.Navigator>

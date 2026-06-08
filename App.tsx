@@ -8,7 +8,9 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import notifee from '@notifee/react-native';
 import RootNavigator, {linking} from './src/navigation';
+import {navigationRef} from './src/navigation/navigationRef';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
 
@@ -22,7 +24,11 @@ import {loadAuthData} from './src/utils/storage/auth.storage';
 import {restoreSession} from './src/features/Auth/authAction';
 import {colors} from './src/styles/colors';
 import {useAppDispatch} from './src/store/hooks';
-import {scheduleDailyWerdNotification} from './src/services/notifications.service';
+import {
+  handleNotificationEvent,
+  handleNotificationPress,
+  scheduleDailyWerdNotification,
+} from './src/services/notifications.service';
 
 function AppContent(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -45,8 +51,25 @@ function AppContent(): React.JSX.Element {
     };
 
     bootstrap();
-    scheduleDailyWerdNotification().catch(() => {});
+    scheduleDailyWerdNotification().catch(console.error);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    const handleInitialNotification = async () => {
+      const initial = await notifee.getInitialNotification();
+      if (initial) {
+        await handleNotificationPress(initial.notification);
+      }
+    };
+
+    handleInitialNotification();
+
+    return notifee.onForegroundEvent(handleNotificationEvent);
+  }, [isLoading]);
 
   if (isLoading) {
     return (
@@ -64,7 +87,7 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer linking={linking as any}>
+        <NavigationContainer ref={navigationRef} linking={linking as any}>
           <AppContent />
         </NavigationContainer>
       </ApplicationProvider>

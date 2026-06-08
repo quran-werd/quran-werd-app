@@ -1152,6 +1152,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.3.1):
     - React-Core
+  - RNDateTimePicker (9.1.0):
+    - React-Core
   - RNGestureHandler (2.16.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1257,6 +1259,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNKeychain (from `../node_modules/react-native-keychain`)
@@ -1395,6 +1398,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
@@ -1484,6 +1489,7 @@ SPEC CHECKSUMS:
   ReactCommon: 2e5492a3e3a8e72d635c266405e49d12627e5bf0
   RNCAsyncStorage: b44e8a4e798c3e1f56bffccd0f591f674fb9198f
   RNCMaskedView: de80352547bd4f0d607bf6bab363d826822bd126
+  RNDateTimePicker: a4679e6488003e5fb68502b50ffb1b74b8b31ca0
   RNGestureHandler: e262eeb792addec0705a116456f210ee1be0dcd0
   RNGoogleSignin: b11289afb825c32c250272e4d92446f71091814e
   RNKeychain: 1fe24953a2c0b762e73925946667ec37122197c8
