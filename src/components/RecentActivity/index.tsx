@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+import {Icon} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
+import {colors} from '../../styles/colors';
 import {Card, Typography} from '../shared';
 import {SectionHeader} from '../SectionHeader';
 
@@ -18,7 +20,12 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
   return (
     <View style={[styles.section, style]}>
       <SectionHeader
-        icon="📅"
+        icon={
+          <Icon
+            name="calendar-outline"
+            style={{width: 22, height: 22, tintColor: colors.primary}}
+          />
+        }
         title={t('memorization.progress.recentActivity')}
       />
       <Card
