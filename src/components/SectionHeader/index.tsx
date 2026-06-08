@@ -3,8 +3,8 @@ import {View, StyleSheet, ViewStyle, TextStyle} from 'react-native';
 import {Typography} from '../shared';
 
 interface SectionHeaderProps {
-  icon: React.ReactNode | string;
   title: string;
+  icon: React.ReactNode | string;
   style?: ViewStyle;
   iconStyle?: TextStyle;
   titleStyle?: TextStyle;
