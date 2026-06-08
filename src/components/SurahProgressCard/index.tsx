@@ -8,7 +8,7 @@ import {MemorizationVerseRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
 import SurahNumber from './components/SurahNumber';
 import ProgressInfo from './components/ProgressInfo';
-import {getVerseCount, SURAHS_INFO} from '../../content';
+import {SURAHS_INFO} from '../../content';
 import {
   getMemorizedPercentageFromRanges,
   getMemorizedVersesCountFromRanges,

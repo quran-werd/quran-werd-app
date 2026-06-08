@@ -5,7 +5,10 @@ import {
   MemorizationVerseRange,
 } from '../types';
 
-type RangeLike = MemorizationVerseRange | MemorizedRange | {from: number; to: number; startVerse?: number; endVerse?: number};
+type RangeLike =
+  | MemorizationVerseRange
+  | MemorizedRange
+  | {from: number; to: number; startVerse?: number; endVerse?: number};
 
 const getRangeBounds = (range: RangeLike) => {
   if ('from' in range && range.from !== undefined) {
