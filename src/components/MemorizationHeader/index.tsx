@@ -18,9 +18,7 @@ export const MemorizationHeader: React.FC<MemorizationHeaderProps> = ({
   return (
     <View style={[styles.header, style]}>
       <View style={styles.headerContent}>
-        <Icon size={40} style={styles.headerIcon}>
-          📊
-        </Icon>
+        <Icon name="bar-chart-2-outline" size={40} style={styles.headerIcon} />
         <View style={styles.headerText}>
           <Typography variant="h2" weight="bold" style={styles.headerTitle}>
             {t('memorization.progress.title')}

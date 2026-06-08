@@ -254,8 +254,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             onPress={handleUndo}
             disabled={!canUndo}>
             <UndoIcon
-              style={styles.icon}
-              fill={!canUndo ? colors.text.secondary : colors.white}
+              style={[
+                styles.icon,
+                {tintColor: !canUndo ? colors.text.secondary : colors.white},
+              ]}
             />
           </Pressable>
           <Pressable
@@ -263,8 +265,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             onPress={handleRedo}
             disabled={!canRedo}>
             <RedoIcon
-              style={styles.icon}
-              fill={!canRedo ? colors.text.secondary : colors.white}
+              style={[
+                styles.icon,
+                {tintColor: !canRedo ? colors.text.secondary : colors.white},
+              ]}
             />
           </Pressable>
           <Pressable style={styles.jumpButton} onPress={handleOpenJumpSheet}>

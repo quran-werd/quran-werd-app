@@ -1,11 +1,12 @@
 import React, {useEffect, useMemo} from 'react';
 import {
-  Text,
   StyleSheet,
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  Text,
 } from 'react-native';
+import {Icon} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
@@ -67,7 +68,12 @@ export default function MyMemorizationsScreen() {
           value={t('memorization.progress.memorizedVersesValue', {
             count: totals.totalMemorizedVerses,
           })}
-          icon={<Text style={styles.progressIcon}>📈</Text>}
+          icon={
+            <Icon
+              name="trending-up-outline"
+              style={[styles.progressIcon, {tintColor: colors.primary}]}
+            />
+          }
           style={styles.mainProgressCard}
         />
 
@@ -100,7 +106,7 @@ const styles = StyleSheet.create({
   scrollView: {flex: 1},
   scrollViewContent: {paddingHorizontal: 16},
   mainProgressCard: {marginBottom: 20},
-  progressIcon: {fontSize: 24},
+  progressIcon: {width: 28, height: 28},
   addButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,

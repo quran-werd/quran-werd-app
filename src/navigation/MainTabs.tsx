@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Icon} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
 import {colors} from '../styles/colors';
 import HomeScreen from '../screens/HomeScreen';
@@ -9,22 +10,28 @@ import PlanScreen from '../screens/PlanScreen';
 
 const Tab = createBottomTabNavigator();
 
+const tabIconColor = (focused: boolean) =>
+  focused ? colors.primary : colors.text.light;
+
 const HomeIcon = ({focused}: {focused: boolean}) => (
-  <Text style={focused ? iconStyles.iconFocused : iconStyles.iconUnfocused}>
-    🏠
-  </Text>
+  <Icon
+    name="home-outline"
+    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
+  />
 );
 
 const MemIcon = ({focused}: {focused: boolean}) => (
-  <Text style={focused ? iconStyles.iconFocused : iconStyles.iconUnfocused}>
-    📊
-  </Text>
+  <Icon
+    name="bar-chart-2-outline"
+    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
+  />
 );
 
 const PlanIcon = ({focused}: {focused: boolean}) => (
-  <Text style={focused ? iconStyles.iconFocused : iconStyles.iconUnfocused}>
-    📋
-  </Text>
+  <Icon
+    name="clipboard-outline"
+    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
+  />
 );
 
 export default function MainTabs() {
@@ -75,9 +82,4 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8,
   },
-});
-
-const iconStyles = StyleSheet.create({
-  iconFocused: {fontSize: 20, opacity: 1},
-  iconUnfocused: {fontSize: 20, opacity: 0.6},
 });
