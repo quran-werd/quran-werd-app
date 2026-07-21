@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback, useState, useMemo} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import Typography from '../../components/shared/Typography';
 import Button from '../../components/shared/Button';
 import {colors} from '../../styles/colors';
@@ -18,25 +18,63 @@ import {
   selectTodayWerd,
   selectRevisionLogLoading,
 } from '../../features/RevisionLog/revisionLogSlice';
+import {fetchRevisionPlan} from '../../features/RevisionPlan/revisionPlanAction';
+import {selectRevisionPlan} from '../../features/RevisionPlan/revisionPlanSlice';
 import {getSurahNameArabic} from '../../content';
+import {
+  loadNotificationTime,
+  type NotificationTime,
+} from '../../utils/storage/notification.storage';
+import {
+  formatNotificationTime,
+  getNextWerdInPlan,
+} from '../../utils/nextWerd.utils';
 
 export default function HomeScreen() {
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const today = useAppSelector(selectTodayWerd);
+  const plan = useAppSelector(selectRevisionPlan);
   const loading = useAppSelector(selectRevisionLogLoading);
+  const [reminderTime, setReminderTime] = useState<NotificationTime | null>(
+    null,
+  );
 
-  const loadToday = useCallback(() => {
+  const loadReminderTime = useCallback(async () => {
+    const time = await loadNotificationTime();
+    setReminderTime(time);
+  }, []);
+
+  const loadHome = useCallback(() => {
     dispatch(fetchTodayWerd());
-  }, [dispatch]);
+    dispatch(fetchRevisionPlan());
+    loadReminderTime();
+  }, [dispatch, loadReminderTime]);
 
   useEffect(() => {
-    loadToday();
-  }, [loadToday]);
+    loadHome();
+  }, [loadHome]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadReminderTime();
+    }, [loadReminderTime]),
+  );
 
   const werd = today?.werd;
   const status = today?.status || 'pending';
+
+  const nextWerd = useMemo(() => {
+    if (!werd || !plan?.awrad.length) {
+      return null;
+    }
+    const next = getNextWerdInPlan(plan.awrad, werd);
+    if (!next || next._id === werd._id) {
+      return null;
+    }
+    return next;
+  }, [werd, plan?.awrad]);
 
   const statusLabel = {
     pending: t('home.statusPending'),
@@ -49,7 +87,7 @@ export default function HomeScreen() {
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={loadToday} />
+          <RefreshControl refreshing={loading} onRefresh={loadHome} />
         }>
         <Typography variant="h1">{t('home.title')}</Typography>
         <Typography variant="body" color="secondary">
@@ -59,27 +97,55 @@ export default function HomeScreen() {
         {loading && !today ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : werd ? (
-          <View style={styles.card}>
-            <Typography variant="h2">
-              {getSurahNameArabic(werd.surah)}
-            </Typography>
-            <Typography variant="body">
-              {t('home.range', {from: werd.range.from, to: werd.range.to})}
-            </Typography>
-            <Typography variant="caption" color="secondary">
-              {t('home.status', {status: statusLabel})}
-            </Typography>
-            {status === 'pending' && (
-              <Button
-                title={t('home.startRevision')}
-                onPress={() =>
-                  navigation.navigate('Revision', {werdId: werd._id})
-                }
-                fullWidth
-                style={styles.button}
-              />
-            )}
-          </View>
+          <>
+            <View style={styles.card}>
+              <Typography variant="h2">
+                {getSurahNameArabic(werd.surah)}
+              </Typography>
+              <Typography variant="body">
+                {t('home.range', {from: werd.range.from, to: werd.range.to})}
+              </Typography>
+              <Typography variant="caption" color="secondary">
+                {t('home.status', {status: statusLabel})}
+              </Typography>
+              {status === 'pending' && (
+                <Button
+                  title={t('home.startRevision')}
+                  onPress={() =>
+                    navigation.navigate('Revision', {werdId: werd._id})
+                  }
+                  fullWidth
+                  style={styles.button}
+                />
+              )}
+            </View>
+
+            {nextWerd ? (
+              <View style={styles.card}>
+                <Typography variant="h2">{t('home.nextWerdTitle')}</Typography>
+                <Typography variant="caption" color="secondary">
+                  {t('home.nextWerdSubtitle')}
+                </Typography>
+                <Typography variant="body">
+                  {getSurahNameArabic(nextWerd.surah)}
+                </Typography>
+                <Typography variant="body">
+                  {t('home.range', {
+                    from: nextWerd.range.from,
+                    to: nextWerd.range.to,
+                  })}
+                </Typography>
+              </View>
+            ) : null}
+
+            {reminderTime ? (
+              <Typography variant="caption" color="secondary" align="center">
+                {t('home.reminderTime', {
+                  time: formatNotificationTime(reminderTime),
+                })}
+              </Typography>
+            ) : null}
+          </>
         ) : (
           <View style={styles.card}>
             <Typography variant="body">{t('home.noWerd')}</Typography>

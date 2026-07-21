@@ -22,7 +22,10 @@
     "statusSkipped": "تم التخطي",
     "startRevision": "بدء المراجعة",
     "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
-    "addMemorization": "إضافة حفظ"
+    "addMemorization": "إضافة حفظ",
+    "nextWerdTitle": "الورد القادم",
+    "nextWerdSubtitle": "في دورة خطتك",
+    "reminderTime": "وقت التذكير: {{time}}"
   },
   "revision": {
     "complete": "إتمام",

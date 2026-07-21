@@ -22,7 +22,10 @@
     "statusSkipped": "Skipped",
     "startRevision": "Start Revision",
     "noWerd": "No werd today. Add memorization or generate a plan.",
-    "addMemorization": "Add Memorization"
+    "addMemorization": "Add Memorization",
+    "nextWerdTitle": "Next werd",
+    "nextWerdSubtitle": "Next in your plan",
+    "reminderTime": "Daily reminder: {{time}}"
   },
   "revision": {
     "complete": "Complete",
