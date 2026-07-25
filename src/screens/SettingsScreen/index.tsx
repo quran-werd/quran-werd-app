@@ -1,7 +1,15 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, SafeAreaView, Platform} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Platform,
+  Pressable,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  type DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import Typography from '../../components/shared/Typography';
 import Button from '../../components/shared/Button';
 import {colors} from '../../styles/colors';
@@ -37,15 +45,14 @@ export default function SettingsScreen() {
   const [pickerDate, setPickerDate] = useState(() =>
     timeToDate({hour: 8, minute: 0}),
   );
-  const [savedTime, setSavedTime] = useState<NotificationTime | null>(null);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
 
   const devOverride = getDevNotificationTimeOverride();
 
   const loadSettings = useCallback(async () => {
     const time = await loadNotificationTime();
-    setSavedTime(time);
     setPickerDate(timeToDate(time));
   }, []);
 
@@ -53,8 +60,14 @@ export default function SettingsScreen() {
     loadSettings();
   }, [loadSettings]);
 
-  const handleTimeChange = (_event: unknown, date?: Date) => {
-    if (date) {
+  const handleTimeChange = (event: DateTimePickerEvent, date?: Date) => {
+    // Android's dialog is modal and self-dismisses on OK/Cancel; iOS's inline
+    // spinner fires onChange continuously while scrolling, so only Android
+    // auto-closes here — iOS closes when the user taps the pill again.
+    if (Platform.OS === 'android') {
+      setShowPicker(false);
+    }
+    if (event.type === 'set' && date) {
       setPickerDate(date);
       setSaved(false);
     }
@@ -66,7 +79,6 @@ export default function SettingsScreen() {
     try {
       const time = dateToTime(pickerDate);
       await rescheduleDailyWerdNotification(time);
-      setSavedTime(time);
       setSaved(true);
     } catch (error) {
       console.error(error);
@@ -87,17 +99,23 @@ export default function SettingsScreen() {
           {t('settings.notificationTime')}
         </Typography>
 
-        {savedTime ? (
-          <Typography variant="body">{formatTime(savedTime)}</Typography>
-        ) : null}
+        <Pressable
+          onPress={() => setShowPicker(prev => !prev)}
+          style={styles.pill}>
+          <Typography variant="body">
+            {formatTime(dateToTime(pickerDate))}
+          </Typography>
+        </Pressable>
 
-        <DateTimePicker
-          value={pickerDate}
-          mode="time"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleTimeChange}
-          style={styles.picker}
-        />
+        {showPicker ? (
+          <DateTimePicker
+            value={pickerDate}
+            mode="time"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleTimeChange}
+            style={styles.picker}
+          />
+        ) : null}
 
         {__DEV__ && devOverride ? (
           <Typography variant="caption" color="secondary">
@@ -130,6 +148,15 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     gap: 12,
+  },
+  pill: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
   },
   picker: {
     alignSelf: 'stretch',

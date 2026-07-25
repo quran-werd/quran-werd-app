@@ -14,36 +14,7 @@ export interface MemorizedRange {
   chapterNumber: number;
 }
 
-export interface SurahProgress {
-  id: string;
-  number: number;
-  nameArabic: string;
-  nameEnglish: string;
-  type: 'Makkiyah' | 'Madaniyah';
-  totalVerses: number;
-  memorizedVerses: number;
-  memorizedRanges: MemorizedRange[];
-  isExpanded?: boolean;
-}
-
-export interface MemorizationProgress {
-  overallProgress: number;
-  totalMemorizedVerses: number;
-  totalVerses: number;
-  completedSurahs: number;
-  inProgressSurahs: number;
-  surahs: SurahProgress[];
-  lastReviewDate?: string;
-}
-
 export type ServerMemorizationRanges = Record<string, MemorizationVerseRange[]>;
-
-export interface MemorizationState {
-  progress: MemorizationProgress;
-  ranges: ServerMemorizationRanges;
-  isLoading: boolean;
-  error: string | null;
-}
 
 export interface SaveMemorizationRange {
   endVerse: number;

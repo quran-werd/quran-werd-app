@@ -6,7 +6,6 @@ import {
   parseVerseKey,
   getAllSelectedVerseKeys,
   mergeOverlappingRanges,
-  findSingleVerseRange,
 } from '../../components/QuranPager/utils/verseSelection.utils';
 import {getChapterNumberFromVerseKey} from '../../utils/helpers.utils';
 
@@ -97,11 +96,6 @@ export const memorizationSelectionSlice = createSlice({
       saveToHistory(state);
       state.ranges = state.ranges.filter(range => range.id !== action.payload);
     },
-    clearRanges: state => {
-      saveToHistory(state);
-      state.ranges = [];
-      state.pendingStartVerse = null;
-    },
     undo: state => {
       if (state.history.length > 0) {
         // Save current state to future stack for redo
@@ -139,7 +133,6 @@ export const {
   setPendingStartVerse,
   addVerseRange,
   removeRange,
-  clearRanges,
   undo,
   redo,
 } = memorizationSelectionSlice.actions;
@@ -160,20 +153,6 @@ export const selectSelectedVerseKeys = createSelector(
     return getAllSelectedVerseKeys(ranges);
   },
 );
-
-// Memoized selector for checking if a specific verse is selected
-// This selector factory returns a memoized selector per verseKey
-export const selectIsVerseSelected = (verseKey: string) =>
-  createSelector([selectSelectedVerseKeys], (selectedKeys: Set<string>) => {
-    return selectedKeys.has(verseKey);
-  });
-
-// Selector to find a single-verse range for a given verse key
-export const selectSingleVerseRangeForVerse = (verseKey: string) =>
-  createSelector([selectRanges], (ranges: VerseRange[]): VerseRange | null => {
-    const found = findSingleVerseRange(verseKey, ranges);
-    return found || null;
-  });
 
 // Selector to check if undo is available
 export const selectCanUndo = (state: RootState): boolean => {

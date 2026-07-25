@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {fetchPageVerses} from './clients/quranCdnClient';
 
 const CACHE_PREFIX = '@quran_cache_page_';
-const METADATA_KEY = '@quran_cache_metadata';
 
 export const getCachedPage = async (pageNumber: number) => {
   try {
@@ -33,21 +32,4 @@ export const fetchPageWithCache = async (pageNumber: number) => {
   const data = await fetchPageVerses(pageNumber);
   await cachePage(pageNumber, data);
   return data;
-};
-
-export const getCacheMetadata = async () => {
-  try {
-    const raw = await AsyncStorage.getItem(METADATA_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
-
-export const setCacheMetadata = async (metadata: unknown) => {
-  try {
-    await AsyncStorage.setItem(METADATA_KEY, JSON.stringify(metadata));
-  } catch {
-    // ignore
-  }
 };
