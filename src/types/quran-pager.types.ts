@@ -54,11 +54,6 @@ export interface Verse {
   };
 }
 
-export interface PageData {
-  pageNumber: number;
-  verses: Verse[];
-}
-
 export interface LineData {
   lineKey: string;
   words: Word[];

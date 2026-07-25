@@ -3,9 +3,7 @@
     "home": "Home",
     "memorization": "Memorization",
     "plan": "Plan",
-    "settings": "Settings",
-    "chapters": "Chapters",
-    "progress": "Progress"
+    "settings": "Settings"
   },
   "auth": {
     "title": "Welcome",
