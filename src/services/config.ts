@@ -1,30 +1,29 @@
 /**
  * API configuration
- * Set API_BASE_URL and Google client IDs via .env (react-native-dotenv)
+ * Set API_BASE_URL and Google client IDs via .env, exposed through
+ * app.config.ts's `extra` block and read here via expo-constants. In EAS
+ * Build these come from the build profile's registered environment variables.
  */
 
 import {Platform} from 'react-native';
-import {
-  API_BASE_URL as ENV_API_BASE_URL,
-  GOOGLE_IOS_CLIENT_ID as ENV_GOOGLE_IOS_CLIENT_ID,
-  GOOGLE_WEB_CLIENT_ID as ENV_GOOGLE_WEB_CLIENT_ID,
-  DEV_NOTIFICATION_TIME as ENV_DEV_NOTIFICATION_TIME,
-} from '@env';
+import Constants from 'expo-constants';
 import type {NotificationTime} from '../utils/storage/notification.storage';
+
+const extra = Constants.expoConfig?.extra ?? {};
 
 const devApiFallback =
   Platform.OS === 'android'
     ? 'http://10.0.2.2:3000'
     : 'http://192.168.1.169:3000';
 
-export const API_BASE_URL =
-  ENV_API_BASE_URL ||
+export const API_BASE_URL: string =
+  extra.apiBaseUrl ||
   (__DEV__ ? devApiFallback : 'https://quran-werd-server.onrender.com');
 
-export const GOOGLE_IOS_CLIENT_ID = ENV_GOOGLE_IOS_CLIENT_ID ?? '';
-export const GOOGLE_WEB_CLIENT_ID = ENV_GOOGLE_WEB_CLIENT_ID ?? '';
+export const GOOGLE_IOS_CLIENT_ID: string = extra.googleIosClientId ?? '';
+export const GOOGLE_WEB_CLIENT_ID: string = extra.googleWebClientId ?? '';
 
-export const DEV_NOTIFICATION_TIME = ENV_DEV_NOTIFICATION_TIME ?? '';
+export const DEV_NOTIFICATION_TIME: string = extra.devNotificationTime ?? '';
 
 export const parseNotificationTime = (
   value: string,
