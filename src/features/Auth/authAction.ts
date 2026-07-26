@@ -1,130 +1,138 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
+import {
+  GoogleSignin,
+  statusCodes,
+  isErrorWithCode,
+  isCancelledResponse,
+} from '@react-native-google-signin/google-signin';
 import {slicesNames} from '../../store/constants';
-import {werdApiFetcher, setAuthToken} from '../../api/clients/werdApiClient';
-import {saveAuthData} from '../../utils/storage/auth.storage';
+import {
+  googleLogin,
+  logout as logoutApi,
+  getMe,
+} from '../../services/auth.service';
+import {
+  GOOGLE_IOS_CLIENT_ID,
+  GOOGLE_WEB_CLIENT_ID,
+} from '../../services/config';
+import {
+  setAuthToken,
+  clearAuthToken,
+  getApiErrorMessage,
+} from '../../services/werdApi';
+import axios from 'axios';
+import {saveAuthData, clearAuthData} from '../../utils/storage/auth.storage';
 
-export const sendOTP = createAsyncThunk(
-  `${slicesNames.auth}/sendOTP`,
-  async (phoneNumber: string, {rejectWithValue}) => {
-    try {
-      // Validate phone number format
-      const cleanedPhone = phoneNumber.replace(/\D/g, '');
-      if (cleanedPhone.length < 10) {
-        return rejectWithValue('Invalid phone number');
-      }
+GoogleSignin.configure({
+  iosClientId: GOOGLE_IOS_CLIENT_ID,
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+  offlineAccess: false,
+});
 
-      const response = await sendOTPAPI(cleanedPhone);
-      if (response.verification) {
-        return {success: true};
-      } else {
-        return rejectWithValue('Failed to send OTP');
-      }
-    } catch (error: any) {
-      // Log full error details for debugging
-      console.error('sendOTP error:', {
-        message: error?.message,
-        response: error?.response,
-        request: error?.request,
-        code: error?.code,
-      });
-
-      return rejectWithValue(
-        error?.response?.data?.message ||
-          error?.response?.data?.error ||
-          error?.message ||
-          'Failed to send OTP. Please try again.',
-      );
+const getGoogleSignInErrorMessage = (error: unknown): string | null => {
+  if (isErrorWithCode(error)) {
+    switch (error.code) {
+      case statusCodes.SIGN_IN_CANCELLED:
+        return null;
+      case statusCodes.IN_PROGRESS:
+        return 'Sign-in is already in progress';
+      case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+        return 'Google Play Services is not available';
+      default:
+        return error.message || 'Google sign-in failed';
     }
-  },
-);
+  }
 
-export const verifyOTP = createAsyncThunk(
-  `${slicesNames.auth}/verifyOTP`,
-  async (
-    {phoneNumber, otp}: {phoneNumber: string; otp: string},
-    {rejectWithValue},
-  ) => {
+  return error instanceof Error ? error.message : 'Google sign-in failed';
+};
+
+export const signInWithGoogle = createAsyncThunk(
+  `${slicesNames.auth}/signInWithGoogle`,
+  async (_, {rejectWithValue}) => {
     try {
-      // Validate OTP format
-      if (otp.length !== 6 || !/^\d+$/.test(otp)) {
-        return rejectWithValue('Invalid OTP format');
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+
+      const signInResult = await GoogleSignin.signIn();
+
+      if (isCancelledResponse(signInResult)) {
+        return rejectWithValue(null);
       }
 
-      const cleanedPhone = phoneNumber.replace(/\D/g, '');
-      const response = await verifyOTPAPI(cleanedPhone, otp);
+      const idToken = signInResult.data.idToken;
 
-      // Store access token for future API requests
-      if (response.accessToken) {
-        setAuthToken(response.accessToken);
+      if (!idToken) {
+        return rejectWithValue('Failed to get Google ID token');
       }
 
-      // Persist auth data to storage
+      const response = await googleLogin(idToken);
+
       await saveAuthData({
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
+        token: response.token,
         user: response.user,
-        phoneNumber: `+${cleanedPhone}`,
         isAuthenticated: true,
       });
 
-      return {
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-        user: response.user,
-        phoneNumber: `+${cleanedPhone}`,
-      };
-    } catch (error: any) {
-      // Log full error details for debugging
-      console.error('verifyOTP error:', {
-        message: error?.message,
-        response: error?.response,
-        request: error?.request,
-        code: error?.code,
-      });
-
-      return rejectWithValue(
-        error?.response?.data?.message ||
-          error?.response?.data?.error ||
-          error?.message ||
-          'Invalid OTP. Please try again.',
-      );
+      return response;
+    } catch (error: unknown) {
+      const googleMessage = getGoogleSignInErrorMessage(error);
+      if (googleMessage === null) {
+        return rejectWithValue(null);
+      }
+      if (isErrorWithCode(error)) {
+        return rejectWithValue(googleMessage);
+      }
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(getApiErrorMessage(error));
+      }
+      return rejectWithValue(googleMessage);
     }
   },
 );
 
-// API calls using Werd API fetcher
-const sendOTPAPI = async (phone: string): Promise<{verification: any}> => {
-  return await werdApiFetcher<{verification: any}>('/users/login', {
-    method: 'POST',
-    data: {
-      phone: `+${phone}`,
-    },
-  });
-};
+export const fetchCurrentUser = createAsyncThunk(
+  `${slicesNames.auth}/fetchCurrentUser`,
+  async (_, {rejectWithValue}) => {
+    try {
+      return await getMe();
+    } catch (error: unknown) {
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);
 
-const verifyOTPAPI = async (
-  phone: string,
-  otp: string,
-): Promise<{
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    phone: string;
-  };
-}> => {
-  return await werdApiFetcher<{
-    accessToken: string;
-    refreshToken: string;
-    user: {
-      id: string;
-      phone: string;
-    };
-  }>('/users/login/verify', {
-    method: 'POST',
-    data: {
-      phone: `+${phone}`,
-      otp,
-    },
-  });
-};
+export const signOut = createAsyncThunk(
+  `${slicesNames.auth}/signOut`,
+  async (_, {rejectWithValue}) => {
+    try {
+      await logoutApi();
+    } catch {
+      // Continue local sign-out even if the server session is already gone.
+    }
+
+    try {
+      await GoogleSignin.signOut();
+      await clearAuthData();
+      clearAuthToken();
+    } catch (error: unknown) {
+      await clearAuthData();
+      clearAuthToken();
+      const message = error instanceof Error ? error.message : 'Logout failed';
+      return rejectWithValue(message);
+    }
+  },
+);
+
+export const restoreSession = createAsyncThunk(
+  `${slicesNames.auth}/restoreSession`,
+  async (token: string, {rejectWithValue}) => {
+    try {
+      setAuthToken(token);
+      const user = await getMe();
+      return {token, user};
+    } catch (error: unknown) {
+      clearAuthToken();
+      await clearAuthData();
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);

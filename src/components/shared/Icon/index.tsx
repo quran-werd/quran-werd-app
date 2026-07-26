@@ -1,9 +1,11 @@
 import React from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
+import {View, StyleSheet, ViewStyle} from 'react-native';
+import {Icon as EvaIcon} from '@ui-kitten/components';
 import {colors} from '../../../styles/colors';
 
 interface IconProps {
-  children: React.ReactNode;
+  name?: string;
+  children?: React.ReactNode;
   size?: number;
   backgroundColor?: string;
   color?: string;
@@ -12,6 +14,7 @@ interface IconProps {
 }
 
 export default function Icon({
+  name,
   children,
   size = 32,
   backgroundColor = colors.light,
@@ -19,6 +22,8 @@ export default function Icon({
   style,
   circular = false,
 }: IconProps) {
+  const iconSize = size * 0.55;
+
   return (
     <View
       style={[
@@ -31,9 +36,14 @@ export default function Icon({
         },
         style,
       ]}>
-      <Text style={[styles.icon, {color, fontSize: size * 0.5}]}>
-        {children}
-      </Text>
+      {name ? (
+        <EvaIcon
+          name={name}
+          style={{width: iconSize, height: iconSize, tintColor: color}}
+        />
+      ) : (
+        children
+      )}
     </View>
   );
 }
@@ -42,8 +52,5 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  icon: {
-    textAlign: 'center',
   },
 });

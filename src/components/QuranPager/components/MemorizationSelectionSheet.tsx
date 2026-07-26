@@ -11,12 +11,15 @@ import {Icon, Button} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
 import {colors} from '../../../styles/colors';
 import {Verse} from '../../../types/quran-pager.types';
-import {MemorizedRange} from '../../../types/memorization.types';
+import {
+  MemorizedRange,
+  SaveMemorizationRange,
+} from '../../../types/memorization.types';
 import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
   selectRanges,
   removeRange,
-} from '../../../features/Memorization/verseSelectionSlice';
+} from '../../../features/Memorization/memorizationSelectionSlice';
 import {
   parseVerseKey,
   getVerseTextFromWords,
@@ -25,12 +28,13 @@ import {
 } from '../utils/verseSelection.utils';
 import {getSurahNameArabic} from '../../../content';
 import MemorizedRangeItem from '../../MemorizedRangeItem';
+import {mapMemorizedRangesToSaveMemorizationRequest} from '../../../utils/helpers.utils';
 
 interface MemorizationSelectionSheetProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (ranges: MemorizedRange[]) => void;
-  verses: Verse[]; // All verses from current page(s) for text extraction
+  onSave: (ranges: SaveMemorizationRange[]) => void | Promise<void>;
+  verses: Verse[]; // All verses from current page(s) for text extraction // TODO: continue here <---- verses are being passed wrong.
 }
 
 const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
@@ -73,8 +77,9 @@ export const MemorizationSelectionSheet: React.FC<
         endVerse: endParsed.verseNumber,
         startText: startText || `${surahName} - ${startParsed.verseNumber}`,
         endText: endText || `${surahName} - ${endParsed.verseNumber}`,
-        wordCount: stats.wordCount,
-        verseCount: stats.verseCount,
+        wordsCount: stats.wordCount,
+        versesCount: stats.verseCount,
+        chapterNumber: range.chapterNumber,
       };
     });
   }, [ranges, verses]);
@@ -83,8 +88,8 @@ export const MemorizationSelectionSheet: React.FC<
   const totalStats = useMemo(() => {
     return memorizedRanges.reduce(
       (acc, range) => ({
-        verseCount: acc.verseCount + range.verseCount,
-        wordCount: acc.wordCount + range.wordCount,
+        verseCount: acc.verseCount + range.versesCount,
+        wordCount: acc.wordCount + range.wordsCount,
       }),
       {verseCount: 0, wordCount: 0},
     );
@@ -94,11 +99,17 @@ export const MemorizationSelectionSheet: React.FC<
     handleRemoveRange(rangeId);
   };
 
-  const handleSave = () => {
-    onSave(memorizedRanges);
+  const handleSave = async () => {
+    try {
+      await onSave(
+        mapMemorizedRangesToSaveMemorizationRequest(memorizedRanges),
+      );
+      onClose();
+    } catch (error) {
+      // Save failed, don't close the sheet
+      console.error('Failed to save memorization ranges:', error);
+    }
   };
-
-  console.log('memorizedRanges', memorizedRanges);
 
   return (
     <Modal
@@ -155,7 +166,8 @@ export const MemorizationSelectionSheet: React.FC<
                 <MemorizedRangeItem
                   key={range.id}
                   range={range}
-                  onDelete={handleDelete}
+                  surahNumber={range.chapterNumber}
+                  onDelete={() => handleDelete(range.id)}
                   showDeleteButton={true}
                 />
               ))

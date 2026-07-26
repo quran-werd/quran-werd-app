@@ -54,11 +54,6 @@ export interface Verse {
   };
 }
 
-export interface PageData {
-  pageNumber: number;
-  verses: Verse[];
-}
-
 export interface LineData {
   lineKey: string;
   words: Word[];
@@ -71,6 +66,6 @@ export interface VerseRange {
   startVerseKey: string;
   endVerseKey: string;
   surahId: number;
+  chapterNumber: number;
   startSurahId?: number; // For ranges that span surahs
 }
-

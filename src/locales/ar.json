@@ -1,0 +1,128 @@
+{
+  "tabs": {
+    "home": "الرئيسية",
+    "memorization": "الحفظ",
+    "plan": "الخطة",
+    "settings": "الإعدادات"
+  },
+  "auth": {
+    "title": "مرحباً",
+    "subtitle": "سجّل الدخول للمتابعة",
+    "googleSignIn": "تسجيل الدخول عبر Google"
+  },
+  "home": {
+    "title": "ورد اليوم",
+    "subtitle": "مراجعة يومية للحفظ",
+    "range": "من آية {{from}} إلى {{to}}",
+    "status": "الحالة: {{status}}",
+    "statusPending": "قيد الانتظار",
+    "statusCompleted": "مكتمل",
+    "statusSkipped": "تم التخطي",
+    "startRevision": "بدء المراجعة",
+    "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
+    "addMemorization": "إضافة حفظ",
+    "nextWerdTitle": "الورد القادم",
+    "nextWerdSubtitle": "في دورة خطتك",
+    "reminderTime": "وقت التذكير: {{time}}"
+  },
+  "revision": {
+    "complete": "إتمام",
+    "skip": "تخطي"
+  },
+  "plan": {
+    "title": "خطة المراجعة",
+    "subtitle": "أوردتك اليومية",
+    "capacity": "القدرة اليومية (آيات)",
+    "generate": "إنشاء الخطة",
+    "updateCapacity": "تحديث القدرة",
+    "empty": "لا توجد أوردة. أنشئ خطة بعد إضافة حفظ.",
+    "werdOrder": "الورد {{order}}"
+  },
+  "quran": {
+    "juz": "الجزء {{number}}"
+  },
+  "memorization": {
+    "delete": {
+      "title": "حذف النطاق",
+      "message": "هل أنت متأكد من حذف هذا النطاق؟"
+    },
+    "progress": {
+      "title": "تقدم الحفظ",
+      "subtitle": "رحلة حفظ القرآن الكريم",
+      "totalMemorizedVerses": "من {{total}} آية محفوظة {{memorized}}",
+      "memorizedVersesValue": "{{count}} آية محفوظة",
+      "completedSurahs": "سورة مكتملة",
+      "inProgressSurahs": "قيد الحفظ",
+      "recentActivity": "النشاط الأخير",
+      "lastReviewToday": "آخر مراجعة اليوم",
+      "tapForDetails": "انقر على السور لرؤية التفاصيل",
+      "surahDetails": "تفصيل السور",
+      "addRange": "إضافة نطاقات حفظ"
+    },
+    "surah": {
+      "verseCount": "آية {{memorized}} / {{total}}",
+      "memorizedVerses": "{{count}} آية محفوظة",
+      "makkiyah": "مكية",
+      "madaniyah": "مدنية",
+      "memorizedRanges": "النطاقات المحفوظة",
+      "rangesSummary": "مجموع النطاقات : {{rangeCount}} • آيات محفوظة {{memorized}} من {{total}}",
+      "verseRange": "آية {{startVerse}}-{{endVerse}}",
+      "wordCount": "{{count}} كلمة",
+      "verseCountShort": "{{count}} آية",
+      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ",
+      "from": "من",
+      "to": "إلى"
+    },
+    "selection": {
+      "title": "نطاقات الحفظ",
+      "emptyState": "لم يتم تحديد نطاقات. انقر على الآيات لإنشاء نطاقات.",
+      "summary": "{{rangeCount}} نطاق • {{verseCount}} آية • {{wordCount}} كلمة",
+      "showSelection": "إظهار التحديد",
+      "hideSelection": "إخفاء التحديد",
+      "jump": "انتقل",
+      "jumpTitle": "الانتقال إلى صفحة أو سورة",
+      "jumpToPage": "الانتقال إلى صفحة",
+      "jumpPagePlaceholder": "أدخل رقم الصفحة",
+      "selectChapter": "اختر سورة",
+      "searchChapter": "بحث في السور...",
+      "go": "انتقل",
+      "jumpInvalid": "إدخال غير صحيح",
+      "jumpInvalidMessage": "يرجى إدخال رقم صفحة صحيح"
+    }
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "ok": "موافق",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "finish": "إنهاء",
+    "languageChanged": "تم تغيير اللغة",
+    "restartRequired": "يجب إعادة تشغيل التطبيق لتطبيق التغييرات",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "English"
+  },
+  "rtl": {
+    "enabledTitle": "تم تفعيل RTL",
+    "enabledMessage": "يرجى إعادة تشغيل التطبيق لتطبيق التخطيط"
+  },
+  "notifications": {
+    "dailyTitle": "ورد اليوم",
+    "dailyBody": "حان وقت مراجعة وردك اليوم"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "تخصيص تذكير وردك اليومي",
+    "notificationTime": "وقت التذكير اليومي",
+    "save": "حفظ",
+    "saved": "تم حفظ وقت التذكير",
+    "devOverride": "وضع التطوير: وقت التذكير مُعرَّف في .env ({{time}})"
+  }
+}

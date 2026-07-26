@@ -142,22 +142,6 @@ export function calculateRangeStats(
 }
 
 /**
- * Check if a verse key falls within any of the selected ranges
- */
-export function isVerseInRanges(
-  verseKey: string,
-  ranges: VerseRange[],
-): boolean {
-  return ranges.some(range => {
-    const versesInRange = getVersesInRange(
-      range.startVerseKey,
-      range.endVerseKey,
-    );
-    return versesInRange.includes(verseKey);
-  });
-}
-
-/**
  * Get all verse keys that are selected in the given ranges
  */
 export function getAllSelectedVerseKeys(ranges: VerseRange[]): Set<string> {
@@ -240,6 +224,7 @@ function mergeRanges(range1: VerseRange, range2: VerseRange): VerseRange {
     endVerseKey,
     surahId,
     startSurahId: range1.startSurahId || range2.startSurahId,
+    chapterNumber: range1.chapterNumber || range2.chapterNumber,
   };
 }
 

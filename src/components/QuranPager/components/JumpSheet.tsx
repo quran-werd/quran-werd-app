@@ -13,7 +13,7 @@ import {Icon, Button} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
 import {colors} from '../../../styles/colors';
 import {totalPagesCount, getSurahPages} from '../../../content';
-import {surah} from '../../../content/surah_data';
+import {SURAHS_INFO} from '../../../content/surah_data';
 
 interface JumpSheetProps {
   visible: boolean;
@@ -61,11 +61,11 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
   // Filter chapters based on search query
   const filteredChapters = useMemo(() => {
     if (!searchQuery.trim()) {
-      return surah;
+      return SURAHS_INFO;
     }
 
     const query = searchQuery.toLowerCase().trim();
-    return surah.filter(
+    return SURAHS_INFO.filter(
       chapter =>
         chapter.arabic.includes(query) || chapter.id.toString().includes(query),
     );

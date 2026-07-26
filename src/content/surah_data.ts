@@ -8,7 +8,7 @@ export interface Surah {
   arabic: string;
 }
 
-export const surah: Surah[] = [
+export const SURAHS_INFO: Surah[] = [
   {
     id: 1,
     name: 'Al Fatiha',

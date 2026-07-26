@@ -6,7 +6,7 @@ import {colors} from '../../../styles/colors';
 import Line from './Line';
 import {toArabicNumerals} from '../../../content';
 import {useAppSelector} from '../../../store/hooks';
-import {selectSelectedVerseKeys} from '../../../features/Memorization/verseSelectionSlice';
+import {selectSelectedVerseKeys} from '../../../features/Memorization/memorizationSelectionSlice';
 
 const SMALLER_PAGES = [1, 2];
 

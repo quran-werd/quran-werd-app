@@ -1,6 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Icon} from '@ui-kitten/components';
 import {useTranslation} from 'react-i18next';
+import {colors} from '../../styles/colors';
 import ProgressCard from '../ProgressCard';
 
 interface MemorizationSummaryProps {
@@ -22,14 +24,24 @@ export const MemorizationSummary: React.FC<MemorizationSummaryProps> = ({
         title={t('memorization.progress.completedSurahs')}
         percentage={completedSurahs}
         value={`${completedSurahs}`}
-        icon={<Text style={styles.summaryIcon}>📖</Text>}
+        icon={
+          <Icon
+            name="book-outline"
+            style={[styles.summaryIcon, {tintColor: colors.primary}]}
+          />
+        }
         style={styles.summaryCard}
       />
       <ProgressCard
         title={t('memorization.progress.inProgressSurahs')}
         percentage={inProgressSurahs}
         value={`${inProgressSurahs}`}
-        icon={<Text style={styles.summaryIcon}>🎯</Text>}
+        icon={
+          <Icon
+            name="flag-outline"
+            style={[styles.summaryIcon, {tintColor: colors.primary}]}
+          />
+        }
         style={styles.summaryCard}
       />
     </View>
@@ -47,6 +59,7 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   summaryIcon: {
-    fontSize: 20,
+    width: 24,
+    height: 24,
   },
 });

@@ -17,14 +17,14 @@ import type {Verse} from './types';
 import {LineSelectionProvider} from './context';
 import {MemorizationSelectionSheet} from './components/MemorizationSelectionSheet';
 import {JumpSheet} from './components/JumpSheet';
-import {MemorizedRange} from '../../types/memorization.types';
+import {SaveMemorizationRange} from '../../types/memorization.types';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
 import {
   undo,
   redo,
   selectCanUndo,
   selectCanRedo,
-} from '../../features/Memorization/verseSelectionSlice';
+} from '../../features/Memorization/memorizationSelectionSlice';
 
 // Icon wrapper components for UI Kitten
 const UndoIcon = (props: any) => (
@@ -40,7 +40,7 @@ interface QuranPagerProps {
   showHeader?: boolean;
   onPageChange?: (page: number) => void;
   selectionMode?: boolean;
-  onSave?: (ranges: MemorizedRange[]) => void;
+  onSave?: (ranges: SaveMemorizationRange[]) => void | Promise<void>;
 }
 
 interface PageCache {
@@ -205,20 +205,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     return pagesArray;
   }, [fontSize, shouldRenderPage, handlePageDataLoaded, selectionMode]);
 
-  // Handle save action from bottom sheet
-  const handleSave = useCallback(
-    (ranges: MemorizedRange[]) => {
-      // Call the onSave callback if provided
-      onSave?.(ranges);
-      // TODO: Replace with actual API call when backend is ready
-      console.log('Saving memorization ranges:', ranges);
-      // API call placeholder:
-      // await saveMemorizationRanges(ranges);
-      setBottomSheetVisible(false);
-    },
-    [onSave],
-  );
-
   const content = (
     <SafeAreaView style={styles.container}>
       {showHeader && (
@@ -231,7 +217,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           {/* Right: Juz and page number */}
           <View style={styles.headerRight}>
             <Text style={styles.juzText}>
-              الجزء {toArabicNumerals(juzNumber)}
+              {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
             </Text>
           </View>
         </View>
@@ -255,7 +241,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
         <MemorizationSelectionSheet
           visible={bottomSheetVisible}
           onClose={() => setBottomSheetVisible(false)}
-          onSave={handleSave}
+          onSave={onSave}
           verses={allVerses}
         />
       )}
@@ -268,8 +254,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             onPress={handleUndo}
             disabled={!canUndo}>
             <UndoIcon
-              style={styles.icon}
-              fill={!canUndo ? colors.text.secondary : colors.white}
+              style={[
+                styles.icon,
+                {tintColor: !canUndo ? colors.text.secondary : colors.white},
+              ]}
             />
           </Pressable>
           <Pressable
@@ -277,8 +265,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             onPress={handleRedo}
             disabled={!canRedo}>
             <RedoIcon
-              style={styles.icon}
-              fill={!canRedo ? colors.text.secondary : colors.white}
+              style={[
+                styles.icon,
+                {tintColor: !canRedo ? colors.text.secondary : colors.white},
+              ]}
             />
           </Pressable>
           <Pressable style={styles.jumpButton} onPress={handleOpenJumpSheet}>

@@ -7,8 +7,10 @@
 
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {I18nManager, View, ActivityIndicator, StyleSheet} from 'react-native';
-import Routes from './src/routes';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import notifee from '@notifee/react-native';
+import RootNavigator, {linking} from './src/navigation';
+import {navigationRef} from './src/navigation/navigationRef';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
 
@@ -16,44 +18,58 @@ import * as eva from '@eva-design/eva';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 
-// Initialize i18n
 import './src/i18n';
 import {configureRTL} from './src/utils/rtl.utils';
 import {loadAuthData} from './src/utils/storage/auth.storage';
-import {setAuthData} from './src/features/Auth/authSlice';
-import {setAuthToken} from './src/api/clients/werdApiClient';
+import {restoreSession} from './src/features/Auth/authAction';
 import {colors} from './src/styles/colors';
 import {useAppDispatch} from './src/store/hooks';
+import {
+  handleNotificationEvent,
+  handleNotificationPress,
+  scheduleDailyWerdNotification,
+} from './src/services/notifications.service';
 
 function AppContent(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Configure RTL layout for Arabic
     configureRTL();
 
-    // Load persisted auth data
-    const loadPersistedAuth = async () => {
+    const bootstrap = async () => {
       try {
         const authData = await loadAuthData();
-        if (authData && authData.isAuthenticated) {
-          // Restore auth state
-          dispatch(setAuthData(authData));
-          // Set token in API client
-          if (authData.accessToken) {
-            setAuthToken(authData.accessToken);
-          }
+        if (authData?.isAuthenticated && authData.token) {
+          await dispatch(restoreSession(authData.token)).unwrap();
         }
-      } catch (error) {
-        console.error('Failed to load persisted auth:', error);
+      } catch {
+        // session invalid — user will see auth screen
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadPersistedAuth();
+    bootstrap();
+    scheduleDailyWerdNotification().catch(console.error);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    const handleInitialNotification = async () => {
+      const initial = await notifee.getInitialNotification();
+      if (initial) {
+        await handleNotificationPress(initial.notification);
+      }
+    };
+
+    handleInitialNotification();
+
+    return notifee.onForegroundEvent(handleNotificationEvent);
+  }, [isLoading]);
 
   if (isLoading) {
     return (
@@ -63,7 +79,7 @@ function AppContent(): React.JSX.Element {
     );
   }
 
-  return <Routes />;
+  return <RootNavigator />;
 }
 
 function App(): React.JSX.Element {
@@ -71,7 +87,7 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef} linking={linking as any}>
           <AppContent />
         </NavigationContainer>
       </ApplicationProvider>

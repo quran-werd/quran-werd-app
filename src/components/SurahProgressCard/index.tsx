@@ -1,103 +1,101 @@
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Card from '../shared/Card';
 import Typography from '../shared/Typography';
-import Badge from '../shared/Badge';
 import {colors} from '../../styles/colors';
-import {SurahProgress} from '../../types/memorization.types';
+import {MemorizationVerseRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
+import SurahNumber from './components/SurahNumber';
+import ProgressInfo from './components/ProgressInfo';
+import {SURAHS_INFO} from '../../content';
+import {
+  getMemorizedPercentageFromRanges,
+  getMemorizedVersesCountFromRanges,
+} from '../../utils/helpers.utils';
 
 interface SurahProgressCardProps {
-  surah: SurahProgress;
-  onToggleExpansion: (surahId: string) => void;
+  ranges: MemorizationVerseRange[];
+  surahNumber: number;
+  onDeleteRange?: (range: MemorizationVerseRange) => void;
 }
 
 export default function SurahProgressCard({
-  surah,
-  onToggleExpansion,
+  surahNumber,
+  ranges,
+  onDeleteRange,
 }: SurahProgressCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const {t} = useTranslation();
-  const progressPercentage = Math.round(
-    (surah.memorizedVerses / surah.totalVerses) * 100,
+
+  const progressPercentage = useMemo(
+    () => getMemorizedPercentageFromRanges(surahNumber, ranges),
+    [surahNumber, ranges],
   );
+
+  const memorizedVersesCount = useMemo(
+    () => getMemorizedVersesCountFromRanges(ranges),
+    [ranges],
+  );
+
+  const surahInfo = useMemo(() => SURAHS_INFO[surahNumber - 1], [surahNumber]);
+
   const surahType =
-    surah.type === 'Makkiyah'
+    surahInfo.place === 'Makkah'
       ? t('memorization.surah.makkiyah')
       : t('memorization.surah.madaniyah');
 
   return (
     <Card style={styles.container} margin={8}>
       <Card
-        onPress={() => onToggleExpansion(surah.id)}
+        onPress={() => setIsExpanded(!isExpanded)}
         style={styles.header}
         padding={16}
         margin={0}
         shadow={false}>
-        <Badge variant="light" size="medium" style={styles.surahNumber}>
-          <Typography variant="small" weight="semibold" color="primary">
-            {surah.number}
-          </Typography>
-        </Badge>
-        <View style={styles.surahInfo}>
-          <Typography variant="h3" style={styles.surahNameArabic}>
-            {surah.nameArabic}
-          </Typography>
-          <View style={styles.surahTypeContainer}>
+        <View style={styles.surahTypeContainer}>
+          <SurahNumber surahNumber={surahNumber} />
+          <View style={styles.surahInfo}>
+            <Typography variant="h3" style={styles.surahNameArabic}>
+              {surahInfo.arabic}
+            </Typography>
             <Typography variant="small" color="light" style={styles.surahType}>
               {surahType}
             </Typography>
-            <Typography variant="small" color="light" style={styles.surahType}>
-              {t('memorization.surah.verseCount', {
-                memorized: surah.memorizedVerses,
-                total: surah.totalVerses,
-              })}
-            </Typography>
           </View>
         </View>
-        <View style={styles.progressInfo}>
-          <Typography
-            variant="h2"
-            color="primary"
-            style={styles.progressPercentage}>
-            {progressPercentage}%
-          </Typography>
-          <Typography
-            variant="small"
-            color="secondary"
-            style={styles.memorizedVerses}>
-            {t('memorization.surah.memorizedVerses', {
-              count: surah.memorizedVerses,
-            })}
-          </Typography>
-          <Typography variant="small" color="light" style={styles.expandIcon}>
-            {surah.isExpanded ? '▲' : '▼'}
-          </Typography>
-        </View>
+        <ProgressInfo
+          progressPercentage={progressPercentage}
+          memorizedVerses={memorizedVersesCount}
+        />
+        <Typography variant="small" color="light" style={styles.expandIcon}>
+          {isExpanded ? '▲' : '▼'}
+        </Typography>
       </Card>
 
-      {surah.isExpanded && surah.memorizedRanges.length > 0 && (
+      {isExpanded && ranges.length > 0 && (
         <View style={styles.expandedContent}>
           <Typography variant="h3" style={styles.rangesTitle}>
             {t('memorization.surah.memorizedRanges')}
           </Typography>
-          {surah.memorizedRanges.map(range => (
-            <MemorizedRangeItem key={range.id} range={range} />
+          {ranges.map(range => (
+            <MemorizedRangeItem
+              key={`${range.from}-${range.to}`}
+              range={{
+                id: `${surahNumber}-${range.from}-${range.to}`,
+                startVerse: range.from,
+                endVerse: range.to,
+                startText: '',
+                endText: '',
+                wordsCount: 0,
+                versesCount: range.to - range.from + 1,
+                chapterNumber: surahNumber,
+              }}
+              surahNumber={surahNumber}
+              showDeleteButton={!!onDeleteRange}
+              onDelete={() => onDeleteRange?.(range)}
+            />
           ))}
-          <View style={styles.summary}>
-            <Typography
-              variant="body"
-              weight="medium"
-              color="primary"
-              align="center"
-              style={styles.summaryText}>
-              {t('memorization.surah.rangesSummary', {
-                rangeCount: surah.memorizedRanges.length,
-                memorized: surah.memorizedVerses,
-                total: surah.totalVerses,
-              })}
-            </Typography>
-          </View>
         </View>
       )}
     </Card>
@@ -105,64 +103,28 @@ export default function SurahProgressCard({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // Card component handles styling
-    padding: 0,
-  },
+  container: {padding: 0},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
   },
   surahTypeContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  surahNumber: {
-    marginRight: 12,
-  },
-  surahInfo: {
-    flex: 1,
-  },
-  surahNameArabic: {
-    marginBottom: 2,
-  },
-  surahType: {
-    marginBottom: 4,
-  },
-  verseCount: {
-    // Typography component handles styling
-  },
-  progressInfo: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  progressPercentage: {
-    marginBottom: 6,
-  },
-  memorizedVerses: {
-    marginBottom: 8,
-  },
-  expandIcon: {
-    textAlign: 'center',
-  },
+  surahInfo: {flex: 1},
+  surahNameArabic: {marginBottom: 2},
+  surahType: {marginBottom: 4},
+  expandIcon: {textAlign: 'center'},
   expandedContent: {
     paddingHorizontal: 16,
     paddingBottom: 16,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
-  rangesTitle: {
-    marginBottom: 12,
-    marginTop: 8,
-  },
-  summary: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  summaryText: {
-    // Typography component handles styling
-  },
+  rangesTitle: {marginBottom: 12, marginTop: 8},
 });

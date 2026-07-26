@@ -1,60 +1,53 @@
 /**
- * Authentication storage utilities
- * Handles persisting and retrieving auth state from AsyncStorage
+ * Authentication storage — JWT in Keychain, user prefs in AsyncStorage
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Keychain from 'react-native-keychain';
+import {User} from '../../services/auth.service';
 
-const AUTH_STORAGE_KEY = '@quran_werd_auth';
+const AUTH_USER_KEY = '@quran_werd_user';
+const KEYCHAIN_SERVICE = 'quran_werd_jwt';
 
 export interface StoredAuthData {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    phone: string;
-  };
-  phoneNumber: string;
+  token: string;
+  user: User;
   isAuthenticated: boolean;
 }
 
-/**
- * Save authentication data to AsyncStorage
- */
 export const saveAuthData = async (authData: StoredAuthData): Promise<void> => {
-  try {
-    await AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authData));
-  } catch (error) {
-    console.error('Failed to save auth data:', error);
-    throw error;
-  }
+  await Keychain.setGenericPassword('token', authData.token, {
+    service: KEYCHAIN_SERVICE,
+  });
+  await AsyncStorage.setItem(
+    AUTH_USER_KEY,
+    JSON.stringify({user: authData.user, isAuthenticated: true}),
+  );
 };
 
-/**
- * Load authentication data from AsyncStorage
- */
 export const loadAuthData = async (): Promise<StoredAuthData | null> => {
   try {
-    const data = await AsyncStorage.getItem(AUTH_STORAGE_KEY);
-    if (data) {
-      return JSON.parse(data) as StoredAuthData;
+    const credentials = await Keychain.getGenericPassword({
+      service: KEYCHAIN_SERVICE,
+    });
+    const userData = await AsyncStorage.getItem(AUTH_USER_KEY);
+
+    if (!credentials || !userData) {
+      return null;
     }
-    return null;
-  } catch (error) {
-    console.error('Failed to load auth data:', error);
+
+    const {user, isAuthenticated} = JSON.parse(userData);
+    return {
+      token: credentials.password,
+      user,
+      isAuthenticated,
+    };
+  } catch {
     return null;
   }
 };
 
-/**
- * Clear authentication data from AsyncStorage
- */
 export const clearAuthData = async (): Promise<void> => {
-  try {
-    await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
-  } catch (error) {
-    console.error('Failed to clear auth data:', error);
-    throw error;
-  }
+  await Keychain.resetGenericPassword({service: KEYCHAIN_SERVICE});
+  await AsyncStorage.removeItem(AUTH_USER_KEY);
 };
-
