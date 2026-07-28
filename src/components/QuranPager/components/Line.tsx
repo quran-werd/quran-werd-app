@@ -1,8 +1,16 @@
-import React, {memo, useMemo} from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import React, {memo, useEffect, useMemo} from 'react';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
+import {fontFamilies} from '../../../styles/typography';
 import {Word} from '../../../types/quran-pager.types';
-import Basmalah from './Basmalah';
+import BasmalaSvg from '../../shared/icons/BasmalaSvg';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
@@ -16,6 +24,7 @@ import {
   removeRange,
 } from '../../../features/Memorization/memorizationSelectionSlice';
 import {findSingleVerseRange} from '../utils/verseSelection.utils';
+import type {VerseRange} from '../../../types/quran-pager.types';
 
 interface LineProps {
   words: Word[];
@@ -29,6 +38,51 @@ interface LineProps {
   highlightedLineKeys?: Set<string>;
   selectionMode?: boolean;
   selectedVerseKeys?: Set<string>;
+}
+
+function verseNumberFromKey(verseKey: string): number {
+  return Number(verseKey.split(':')[1]);
+}
+
+function isRangeEndpoint(verseKey: string, ranges: VerseRange[]): boolean {
+  return ranges.some(
+    range => range.startVerseKey === verseKey || range.endVerseKey === verseKey,
+  );
+}
+
+type BadgeState = 'normal' | 'pending' | 'endpoint';
+
+function VerseNumberBadge({number, state}: {number: number; state: BadgeState}) {
+  const badgeStyle =
+    state === 'pending'
+      ? styles.verseBadge_pending
+      : state === 'endpoint'
+        ? styles.verseBadge_endpoint
+        : styles.verseBadge_normal;
+  const textStyle =
+    state === 'pending'
+      ? styles.verseBadgeText_pending
+      : state === 'endpoint'
+        ? styles.verseBadgeText_endpoint
+        : styles.verseBadgeText_normal;
+
+  return (
+    <View style={[styles.verseBadge, badgeStyle]}>
+      <Text style={[styles.verseBadgeText, textStyle]}>{number}</Text>
+    </View>
+  );
+}
+
+function PendingDot() {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withRepeat(withTiming(0.3, {duration: 750}), -1, true);
+  }, [opacity]);
+
+  const style = useAnimatedStyle(() => ({opacity: opacity.value}));
+
+  return <Animated.View style={[styles.pendingDot, style]} />;
 }
 
 /**
@@ -187,7 +241,7 @@ const Line: React.FC<LineProps> = ({
       {isShowBismillah && (
         <View style={styles.bismillahContainer}>
           <SurahHeader name={chapterName} />
-          <Basmalah />
+          <BasmalaSvg color={colors.mushafBrownDeep} />
         </View>
       )}
       {selectionMode ? (
@@ -198,6 +252,12 @@ const Line: React.FC<LineProps> = ({
               ([verseKey, verseWords], verseIndex) => {
                 const verseSelected = isVerseSelected(verseKey);
                 const versePending = isVersePending(verseKey);
+                const endpoint = verseSelected && isRangeEndpoint(verseKey, ranges);
+                const badgeState = versePending
+                  ? 'pending'
+                  : endpoint
+                    ? 'endpoint'
+                    : 'normal';
 
                 return (
                   <Pressable
@@ -208,6 +268,7 @@ const Line: React.FC<LineProps> = ({
                       verseSelected && styles.verseHighlighted,
                       versePending && styles.versePending,
                     ]}>
+                    {versePending ? <PendingDot /> : null}
                     {verseWords.map((word, wordIndex) => {
                       const shouldHighlight = isWordHighlighted(word);
                       const isFirstWordInVerse = wordIndex === 0;
@@ -228,6 +289,10 @@ const Line: React.FC<LineProps> = ({
                         />
                       );
                     })}
+                    <VerseNumberBadge
+                      number={verseNumberFromKey(verseKey)}
+                      state={badgeState}
+                    />
                   </Pressable>
                 );
               },
@@ -325,21 +390,65 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   lineHighlighted: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.rangeHighlight,
   },
   verseContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
+    alignItems: 'center',
     paddingVertical: 2,
-    paddingHorizontal: 2,
+    paddingHorizontal: 4,
     borderRadius: 4,
+    borderRightWidth: 3,
+    borderRightColor: 'transparent',
   },
   verseHighlighted: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.rangeHighlight,
   },
   versePending: {
-    backgroundColor: colors.secondary,
-    opacity: 0.5,
+    backgroundColor: 'rgba(196,154,60,0.08)',
+    borderRightColor: 'rgba(196,154,60,0.7)',
+  },
+  pendingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
+    marginHorizontal: 4,
+  },
+  verseBadge: {
+    width: 22,
+    height: 22,
+    borderRadius: radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  verseBadge_normal: {
+    borderWidth: 1,
+    borderColor: 'rgba(139,105,20,0.4)',
+  },
+  verseBadge_pending: {
+    borderWidth: 1.5,
+    borderColor: 'rgba(196,154,60,0.7)',
+  },
+  verseBadge_endpoint: {
+    backgroundColor: colors.rangeEndpointBg,
+    borderWidth: 1.5,
+    borderColor: colors.rangeEndpointBorder,
+  },
+  verseBadgeText: {
+    fontFamily: fontFamilies.cairo.bold,
+    fontSize: 10,
+  },
+  verseBadgeText_normal: {
+    color: colors.mushafBrown,
+  },
+  verseBadgeText_pending: {
+    color: colors.primary,
+  },
+  verseBadgeText_endpoint: {
+    color: colors.rangeEndpointText,
   },
   wordsContainer: {
     flexDirection: 'row',
@@ -349,12 +458,6 @@ const styles = StyleSheet.create({
   bismillahContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  chapterName: {
-    fontFamily: 'surahnames',
-    fontSize: 20,
-    color: colors.text.primary,
-    backgroundColor: colors.border,
   },
 });
 

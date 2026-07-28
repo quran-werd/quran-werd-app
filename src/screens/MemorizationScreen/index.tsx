@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {colors} from '../../styles/colors';
 import QuranPager from '../../components/QuranPager';
 import {MemorizationScreenProps} from '../../navigation/MemorizationStack';
 import {SaveMemorizationRange} from '../../types/memorization.types';
@@ -26,7 +27,7 @@ export default function MemorizationScreen({route}: MemorizationScreenProps) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <QuranPager
         initialPage={initialPage}
         fontSize={22}
@@ -34,10 +35,10 @@ export default function MemorizationScreen({route}: MemorizationScreenProps) {
         selectionMode={true}
         onSave={handleSave}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: colors.background},
 });

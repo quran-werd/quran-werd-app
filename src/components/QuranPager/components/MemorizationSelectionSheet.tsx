@@ -1,14 +1,9 @@
 import React, {useMemo} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  Pressable,
-  ScrollView,
-} from 'react-native';
-import {Icon, Button} from '@ui-kitten/components';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import BottomSheet from '../../shared/BottomSheet';
+import Button from '../../shared/Button';
+import Typography from '../../shared/Typography';
 import {colors} from '../../../styles/colors';
 import {Verse} from '../../../types/quran-pager.types';
 import {
@@ -24,7 +19,6 @@ import {
   parseVerseKey,
   getVerseTextFromWords,
   calculateRangeStats,
-  formatNumberWithCommas,
 } from '../utils/verseSelection.utils';
 import {getSurahNameArabic} from '../../../content';
 import MemorizedRangeItem from '../../MemorizedRangeItem';
@@ -34,10 +28,8 @@ interface MemorizationSelectionSheetProps {
   visible: boolean;
   onClose: () => void;
   onSave: (ranges: SaveMemorizationRange[]) => void | Promise<void>;
-  verses: Verse[]; // All verses from current page(s) for text extraction // TODO: continue here <---- verses are being passed wrong.
+  verses: Verse[]; // All verses from current page(s) for text extraction
 }
-
-const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
 
 /**
  * Bottom sheet component for displaying and managing selected memorization ranges
@@ -84,6 +76,17 @@ export const MemorizationSelectionSheet: React.FC<
     });
   }, [ranges, verses]);
 
+  // Group ranges by surah for display (docs/design.md §2.11)
+  const groupedRanges = useMemo(() => {
+    const groups = new Map<number, MemorizedRange[]>();
+    memorizedRanges.forEach(range => {
+      const group = groups.get(range.chapterNumber) ?? [];
+      group.push(range);
+      groups.set(range.chapterNumber, group);
+    });
+    return Array.from(groups.entries()).sort(([a], [b]) => a - b);
+  }, [memorizedRanges]);
+
   // Calculate summary stats
   const totalStats = useMemo(() => {
     return memorizedRanges.reduce(
@@ -112,169 +115,92 @@ export const MemorizationSelectionSheet: React.FC<
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <Pressable style={styles.overlayPressable} onPress={onClose} />
-        <View style={styles.container}>
-          {/* Handle bar */}
-          <View style={styles.handleBar} />
-
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>
-              {t('memorization.selection.title')}
-            </Text>
-            <Button
-              appearance="ghost"
-              status="basic"
-              accessoryLeft={CloseIcon}
-              onPress={onClose}
-              style={styles.closeButton}
-              size="small"
-            />
-          </View>
-
-          {/* Summary */}
-          {memorizedRanges.length > 0 && (
-            <View style={styles.summary}>
-              <Text style={styles.summaryText}>
-                {t('memorization.selection.summary', {
-                  rangeCount: memorizedRanges.length,
-                  verseCount: formatNumberWithCommas(totalStats.verseCount),
-                  wordCount: formatNumberWithCommas(totalStats.wordCount),
-                })}
-              </Text>
-            </View>
-          )}
-
-          {/* Ranges list */}
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}>
-            {memorizedRanges.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
-                  {t('memorization.selection.emptyState')}
-                </Text>
-              </View>
-            ) : (
-              memorizedRanges.map(range => (
-                <MemorizedRangeItem
-                  key={range.id}
-                  range={range}
-                  surahNumber={range.chapterNumber}
-                  onDelete={() => handleDelete(range.id)}
-                  showDeleteButton={true}
-                />
-              ))
-            )}
-          </ScrollView>
-
-          {/* Save button */}
-          {memorizedRanges.length > 0 && (
-            <View style={styles.footer}>
-              <Pressable
-                onPress={handleSave}
-                style={styles.saveButton}
-                disabled={memorizedRanges.length === 0}>
-                <Text style={styles.saveButtonText}>{t('common.save')}</Text>
-              </Pressable>
-            </View>
-          )}
+    <BottomSheet visible={visible} onClose={onClose} title={t('memorization.selection.title')}>
+      {memorizedRanges.length > 0 ? (
+        <View style={styles.summary}>
+          <Typography variant="small" color="muted">
+            {t('memorization.selection.totalSummary', {
+              rangeCount: memorizedRanges.length,
+              verseCount: totalStats.verseCount,
+            })}
+          </Typography>
         </View>
-      </View>
-    </Modal>
+      ) : null}
+
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        {memorizedRanges.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Typography variant="body" color="muted" align="center">
+              {t('memorization.selection.emptyState')}
+            </Typography>
+          </View>
+        ) : (
+          groupedRanges.map(([chapterNumber, group]) => (
+            <View key={chapterNumber} style={styles.group}>
+              <Typography variant="small" family="amiriBold" style={styles.groupLabel}>
+                {getSurahNameArabic(chapterNumber)}
+              </Typography>
+              <View style={styles.groupItems}>
+                {group.map(range => (
+                  <MemorizedRangeItem
+                    key={range.id}
+                    range={range}
+                    surahNumber={range.chapterNumber}
+                    onDelete={() => handleDelete(range.id)}
+                    showDeleteButton
+                  />
+                ))}
+              </View>
+            </View>
+          ))
+        )}
+      </ScrollView>
+
+      {memorizedRanges.length > 0 ? (
+        <View style={styles.footer}>
+          <Button
+            title={t('memorization.selection.saveButton')}
+            onPress={handleSave}
+            fullWidth
+          />
+        </View>
+      ) : null}
+    </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  overlayPressable: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '80%',
-    paddingBottom: 20,
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: colors.border,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  summary: {
     paddingHorizontal: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-  },
-  summary: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  summaryText: {
-    fontSize: 14,
-    color: colors.text.secondary,
+    borderBottomColor: colors.goldBorderFaint,
   },
   scrollView: {
-    flex: 1,
+    maxHeight: 380,
   },
   scrollContent: {
     padding: 16,
+    gap: 16,
   },
   emptyState: {
     padding: 32,
     alignItems: 'center',
   },
-  emptyStateText: {
-    fontSize: 14,
-    color: colors.text.light,
-    textAlign: 'center',
+  group: {
+    gap: 8,
+  },
+  groupLabel: {
+    paddingHorizontal: 4,
+  },
+  groupItems: {
+    gap: 8,
   },
   footer: {
     paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 4,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  saveButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+    borderTopColor: colors.goldBorderFaint,
   },
 });

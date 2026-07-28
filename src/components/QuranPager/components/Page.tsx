@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.background,
     paddingHorizontal: 16,
     gap: 8,
   },
@@ -124,11 +123,13 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(139,105,20,0.15)',
   },
   footerText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.secondary,
+    fontFamily: 'Cairo_400Regular',
+    fontSize: 12,
+    color: colors.mushafBrownFaded,
   },
 });
 

@@ -7,6 +7,7 @@
 import axios, {AxiosInstance, AxiosError} from 'axios';
 import {QURAN_CDN_API_CONFIG, QURAN_CDN_DEFAULT_VERSES_PARAMS} from '../config';
 import {getVerseTextFromWords} from '../../components/QuranPager/utils/verseSelection.utils';
+import {transformApiWord} from '../transformers';
 
 /**
  * Create axios instance with default configuration for Quran CDN
@@ -151,7 +152,9 @@ export const fetchAyahByKey = async (
   };
 
   const response = await quranCdnClient.get(path, {params});
-  const words = response.data.verse.words;
+  const words = response.data.verse.words.map((apiWord: any) =>
+    transformApiWord(apiWord, ayahKey),
+  );
   const verseText = getVerseTextFromWords(words);
   return verseText;
 };

@@ -1,20 +1,21 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, SafeAreaView, View, ActivityIndicator} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import Animated, {ZoomIn} from 'react-native-reanimated';
 import QuranPager from '../../components/QuranPager';
 import Button from '../../components/shared/Button';
 import {colors} from '../../styles/colors';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {
   completeTodayWerd,
-  skipTodayWerd,
   fetchTodayWerd,
 } from '../../features/RevisionLog/revisionLogAction';
 import {
   selectTodayWerd,
   selectRevisionLogLoading,
 } from '../../features/RevisionLog/revisionLogSlice';
+import {getPageForVerse} from '../../content';
 
 export default function RevisionScreen() {
   const {t} = useTranslation();
@@ -23,6 +24,7 @@ export default function RevisionScreen() {
   const dispatch = useAppDispatch();
   const today = useAppSelector(selectTodayWerd);
   const loading = useAppSelector(selectRevisionLogLoading);
+  const [currentPage, setCurrentPage] = useState<number | null>(null);
 
   const werd = today?.werd;
   const werdId = route.params?.werdId || werd?._id;
@@ -33,6 +35,22 @@ export default function RevisionScreen() {
     }
   }, [dispatch, werd]);
 
+  const startPage = useMemo(
+    () => (werd ? getPageForVerse(werd.surah, werd.range.from) : null),
+    [werd],
+  );
+  const lastPage = useMemo(
+    () => (werd ? getPageForVerse(werd.surah, werd.range.to) : null),
+    [werd],
+  );
+
+  const hasReachedWard = useMemo(() => {
+    if (!lastPage || currentPage === null) {
+      return false;
+    }
+    return currentPage >= lastPage;
+  }, [currentPage, lastPage]);
+
   const handleComplete = useCallback(async () => {
     if (!werdId) {
       return;
@@ -41,15 +59,7 @@ export default function RevisionScreen() {
     navigation.navigate('Home');
   }, [dispatch, werdId, navigation]);
 
-  const handleSkip = useCallback(async () => {
-    if (!werdId) {
-      return;
-    }
-    await dispatch(skipTodayWerd(werdId)).unwrap();
-    navigation.navigate('Home');
-  }, [dispatch, werdId, navigation]);
-
-  if (!werd) {
+  if (!werd || startPage === null) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -60,33 +70,30 @@ export default function RevisionScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <QuranPager
-        initialPage={1}
-        fontSize={22}
+        initialPage={startPage}
+        fontSize={21}
         showHeader={true}
         selectionMode={false}
+        onPageChange={setCurrentPage}
       />
-      <View style={styles.actions}>
-        <Button
-          title={t('revision.complete')}
-          onPress={handleComplete}
-          loading={loading}
-          fullWidth
-        />
-        <Button
-          title={t('revision.skip')}
-          onPress={handleSkip}
-          variant="outline"
-          loading={loading}
-          fullWidth
-          style={styles.skipButton}
-        />
-      </View>
+      {hasReachedWard ? (
+        <Animated.View
+          entering={ZoomIn.stiffness(260).damping(20)}
+          style={styles.actions}>
+          <Button
+            title={t('revision.complete')}
+            onPress={handleComplete}
+            loading={loading}
+            fullWidth
+          />
+        </Animated.View>
+      ) : null}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {flex: 1, backgroundColor: colors.background},
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -94,11 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   actions: {
-    padding: 16,
-    gap: 12,
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  skipButton: {marginTop: 0},
 });

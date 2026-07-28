@@ -90,6 +90,25 @@ export function getPageQCFontName(pageNumber: number): string {
 }
 
 /**
+ * Takes [surahNumber] & [verseNumber] and returns the Mushaf page number containing that verse
+ */
+export function getPageForVerse(surahNumber: number, verseNumber: number): number {
+  for (let page = 1; page <= totalPagesCount; page++) {
+    const items = getPageData(page);
+    const match = items.find(
+      item =>
+        item.surah === surahNumber &&
+        verseNumber >= item.start &&
+        verseNumber <= item.end,
+    );
+    if (match) {
+      return page;
+    }
+  }
+  return 1;
+}
+
+/**
  * Takes [surahNumber] and returns the list of page numbers of the surah
  */
 export function getSurahPages(surahNumber: number): number[] {

@@ -1,9 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
 import {Verse} from '../../../types/quran-pager.types';
 import {getPageVerses} from '../utils/transformPageData';
 import {getPageQCFontName} from '../../../content';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
+import {shadows} from '../../../styles/shadows';
 import Page from './Page';
 
 interface PageContainerProps {
@@ -77,32 +80,38 @@ export const PageContainer: React.FC<PageContainerProps> = ({
     loadPageData();
   }, [pageNumber, cachedVerses, cachedFontFamily, onDataLoaded]);
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#666" />
-      </View>
-    );
-  }
-
   return (
-    <Page
-      verses={verses}
-      pageNumber={pageNumber}
-      fontFamily={fontFamily}
-      fontSize={fontSize}
-      showPageFooter={showPageFooter}
-      selectionMode={selectionMode}
-    />
+    <LinearGradient
+      colors={[colors.mushafPageTop, colors.mushafPageBottom]}
+      style={[styles.card, shadows.mushafPage]}>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.mushafBrown} />
+        </View>
+      ) : (
+        <Page
+          verses={verses}
+          pageNumber={pageNumber}
+          fontFamily={fontFamily}
+          fontSize={fontSize}
+          showPageFooter={showPageFooter}
+          selectionMode={selectionMode}
+        />
+      )}
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.white,
     paddingHorizontal: 16,
   },
 });

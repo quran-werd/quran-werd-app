@@ -1,118 +1,95 @@
 import React from 'react';
-import {Text, StyleSheet, TextStyle} from 'react-native';
+import {Text, TextStyle, StyleProp} from 'react-native';
 import {colors} from '../../../styles/colors';
+import {fontFamilies} from '../../../styles/typography';
+
+type Variant = 'h1' | 'h2' | 'h3' | 'body' | 'caption' | 'small';
+type Family = 'amiriQuran' | 'amiri' | 'amiriBold' | 'cairo';
+type Weight = 'light' | 'regular' | 'semibold' | 'bold';
+type Color =
+  | 'foreground'
+  | 'muted'
+  | 'primary'
+  | 'destructive'
+  | 'dimmed'
+  | 'white';
 
 interface TypographyProps {
   children: React.ReactNode;
-  variant?: 'h1' | 'h2' | 'h3' | 'body' | 'caption' | 'small';
-  color?: 'primary' | 'secondary' | 'light' | 'white';
-  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  variant?: Variant;
+  family?: Family;
+  color?: Color;
+  weight?: Weight;
   align?: 'left' | 'center' | 'right';
-  style?: TextStyle;
+  style?: StyleProp<TextStyle>;
   numberOfLines?: number;
   ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
+}
+
+const VARIANT_SIZES: Record<Variant, {fontSize: number; lineHeight: number}> =
+  {
+    h1: {fontSize: 24, lineHeight: 32},
+    h2: {fontSize: 20, lineHeight: 28},
+    h3: {fontSize: 18, lineHeight: 24},
+    body: {fontSize: 16, lineHeight: 22},
+    caption: {fontSize: 14, lineHeight: 20},
+    small: {fontSize: 12, lineHeight: 16},
+  };
+
+const COLOR_MAP: Record<Color, string> = {
+  foreground: colors.foreground,
+  muted: colors.mutedForeground,
+  primary: colors.primary,
+  destructive: colors.destructive,
+  dimmed: colors.dimmedForeground,
+  white: colors.white,
+};
+
+function resolveFontFamily(family: Family, weight: Weight): string {
+  if (family === 'amiri') {
+    return weight === 'bold' || weight === 'semibold'
+      ? fontFamilies.amiriBold
+      : fontFamilies.amiri;
+  }
+  if (family === 'amiriBold') {
+    return fontFamilies.amiriBold;
+  }
+  if (family === 'amiriQuran') {
+    return fontFamilies.amiriQuran;
+  }
+  switch (weight) {
+    case 'light':
+      return fontFamilies.cairo.light;
+    case 'semibold':
+      return fontFamilies.cairo.semibold;
+    case 'bold':
+      return fontFamilies.cairo.bold;
+    default:
+      return fontFamilies.cairo.regular;
+  }
 }
 
 export default function Typography({
   children,
   variant = 'body',
-  color = 'primary',
-  weight = 'normal',
+  family = 'cairo',
+  color = 'foreground',
+  weight = 'regular',
   align = 'left',
   style,
   numberOfLines,
   ellipsizeMode,
 }: TypographyProps) {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'h1':
-        return {
-          fontSize: 24,
-          fontWeight: '700',
-          lineHeight: 32,
-        };
-      case 'h2':
-        return {
-          fontSize: 20,
-          fontWeight: '600',
-          lineHeight: 28,
-        };
-      case 'h3':
-        return {
-          fontSize: 18,
-          fontWeight: '600',
-          lineHeight: 24,
-        };
-      case 'body':
-        return {
-          fontSize: 16,
-          fontWeight: '400',
-          lineHeight: 22,
-        };
-      case 'caption':
-        return {
-          fontSize: 14,
-          fontWeight: '400',
-          lineHeight: 20,
-        };
-      case 'small':
-        return {
-          fontSize: 12,
-          fontWeight: '400',
-          lineHeight: 16,
-        };
-      default:
-        return {
-          fontSize: 16,
-          fontWeight: '400',
-          lineHeight: 22,
-        };
-    }
-  };
-
-  const getColorStyles = () => {
-    switch (color) {
-      case 'primary':
-        return colors.text.primary;
-      case 'secondary':
-        return colors.text.secondary;
-      case 'light':
-        return colors.text.light;
-      case 'white':
-        return colors.white;
-      default:
-        return colors.text.primary;
-    }
-  };
-
-  const getWeightStyles = () => {
-    switch (weight) {
-      case 'normal':
-        return '400';
-      case 'medium':
-        return '500';
-      case 'semibold':
-        return '600';
-      case 'bold':
-        return '700';
-      default:
-        return '400';
-    }
-  };
-
-  const variantStyles = getVariantStyles();
-  const colorValue = getColorStyles();
-  const fontWeight = getWeightStyles();
+  const {fontSize, lineHeight} = VARIANT_SIZES[variant];
 
   return (
     <Text
       style={[
-        styles.text,
         {
-          fontSize: variantStyles.fontSize,
-          fontWeight: fontWeight,
-          lineHeight: variantStyles.lineHeight,
-          color: colorValue,
+          fontFamily: resolveFontFamily(family, weight),
+          fontSize,
+          lineHeight,
+          color: COLOR_MAP[color],
           textAlign: align,
         },
         style,
@@ -123,9 +100,3 @@ export default function Typography({
     </Text>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-    fontFamily: 'System',
-  },
-});
