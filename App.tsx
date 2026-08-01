@@ -42,7 +42,7 @@ import {
 function AppContent(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Cairo_300Light,
     Cairo_400Regular,
     Cairo_600SemiBold,
@@ -89,7 +89,7 @@ function AppContent(): React.JSX.Element {
     return notifee.onForegroundEvent(handleNotificationEvent);
   }, [isLoading]);
 
-  if (isLoading || !fontsLoaded) {
+  if (isLoading || (!fontsLoaded && !fontError)) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
