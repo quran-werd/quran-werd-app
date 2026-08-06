@@ -80,7 +80,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
       onClose={onClose}
       title={t('memorization.selection.jumpTitle')}>
       <View style={styles.pageInputSection}>
-        <Typography variant="small" color="muted" style={styles.sectionTitle}>
+        <Typography variant="caption" color="muted" style={styles.sectionTitle}>
           {t('memorization.selection.jumpToPage')}
         </Typography>
         <View style={styles.pageInputRow}>
@@ -94,7 +94,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             onSubmitEditing={handlePageJump}
           />
           <Pressable style={styles.goButton} onPress={handlePageJump}>
-            <Typography variant="small" family="cairo" weight="bold" style={styles.goButtonText}>
+            <Typography variant="caption" family="cairo" weight="bold" style={styles.goButtonText}>
               {t('memorization.selection.go')}
             </Typography>
           </Pressable>
@@ -126,7 +126,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                 style={styles.chapterItem}
                 onPress={() => handleChapterPress(chapter.id)}>
                 <View style={styles.chapterBadge}>
-                  <Typography variant="small" family="cairo" weight="bold" color="primary">
+                  <Typography variant="caption" family="cairo" weight="bold" color="primary">
                     {chapter.id}
                   </Typography>
                 </View>
@@ -135,7 +135,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                     {chapter.arabic}
                   </Typography>
                   {startPage ? (
-                    <Typography variant="small" color="muted">
+                    <Typography variant="caption" color="muted">
                       {t('quran.ayahCountShort', {value: toArabicNumerals(chapter.aya)})}
                       {' - '}
                       {t('quran.pageShort', {page: toArabicNumerals(startPage)})}

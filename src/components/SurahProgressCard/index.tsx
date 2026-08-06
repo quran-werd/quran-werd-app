@@ -101,7 +101,7 @@ export default function SurahProgressCard({
       <Pressable style={styles.header} onPress={() => setIsExpanded(prev => !prev)}>
         <SurahNumber surahNumber={surahNumber} />
         <View style={styles.surahInfo}>
-          <Typography family="amiriBold" style={styles.surahName}>
+          <Typography variant="subtitle" family="amiriBold" style={styles.surahName}>
             {surahInfo.arabic}
           </Typography>
           <Typography family="cairo" style={styles.surahMeta}>
@@ -178,8 +178,6 @@ const styles = StyleSheet.create({
   },
   surahInfo: {flex: 1, gap: 2},
   surahName: {
-    fontSize: 20,
-    lineHeight: 20 * 1.2,
     color: colors.foreground,
   },
   surahMeta: {

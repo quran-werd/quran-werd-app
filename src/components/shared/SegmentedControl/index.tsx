@@ -31,7 +31,7 @@ export default function SegmentedControl<T extends string>({
             onPress={() => onChange(option.value)}
             style={[styles.segment, active && styles.segmentActive]}>
             <Typography
-              variant="small"
+              variant="caption"
               weight={active ? 'semibold' : 'regular'}
               color={active ? 'primary' : 'muted'}>
               {option.label}

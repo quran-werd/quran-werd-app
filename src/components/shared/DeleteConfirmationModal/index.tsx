@@ -52,6 +52,7 @@ export default function DeleteConfirmationModal({
             </Svg>
           </View>
           <Typography
+            variant="subtitle"
             family="amiri"
             weight="bold"
             align="center"
@@ -63,12 +64,12 @@ export default function DeleteConfirmationModal({
           </Typography>
           <View style={styles.actions}>
             <Pressable style={[styles.button, styles.cancelButton]} onPress={onCancel}>
-              <Typography color="muted" weight="semibold" variant="caption">
+              <Typography color="muted" weight="semibold" variant="label">
                 {cancelLabel}
               </Typography>
             </Pressable>
             <Pressable style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
-              <Typography color="destructive" weight="semibold" variant="caption">
+              <Typography color="destructive" weight="semibold" variant="label">
                 {confirmLabel}
               </Typography>
             </Pressable>
@@ -109,8 +110,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 20,
-    lineHeight: 20 * 1.4,
     marginBottom: 8,
   },
   message: {

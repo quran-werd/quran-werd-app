@@ -1,10 +1,16 @@
 import React from 'react';
 import {Text, TextStyle, StyleProp} from 'react-native';
 import {colors} from '../../../styles/colors';
-import {fontFamilies} from '../../../styles/typography';
+import {
+  fontFamilies,
+  typographyScale,
+  getLineHeight,
+  TypographyLevel,
+  TypographyFamily,
+} from '../../../styles/typography';
 
-type Variant = 'h1' | 'h2' | 'h3' | 'body' | 'caption' | 'small';
-type Family = 'amiriQuran' | 'amiri' | 'amiriBold' | 'cairo';
+type Variant = TypographyLevel;
+type Family = TypographyFamily;
 type Weight = 'light' | 'regular' | 'semibold' | 'bold';
 type Color =
   | 'foreground'
@@ -25,16 +31,6 @@ interface TypographyProps {
   numberOfLines?: number;
   ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
 }
-
-const VARIANT_SIZES: Record<Variant, {fontSize: number; lineHeight: number}> =
-  {
-    h1: {fontSize: 24, lineHeight: 32},
-    h2: {fontSize: 20, lineHeight: 28},
-    h3: {fontSize: 18, lineHeight: 24},
-    body: {fontSize: 16, lineHeight: 22},
-    caption: {fontSize: 14, lineHeight: 20},
-    small: {fontSize: 12, lineHeight: 16},
-  };
 
 const COLOR_MAP: Record<Color, string> = {
   foreground: colors.foreground,
@@ -80,7 +76,8 @@ export default function Typography({
   numberOfLines,
   ellipsizeMode,
 }: TypographyProps) {
-  const {fontSize, lineHeight} = VARIANT_SIZES[variant];
+  const fontSize = typographyScale[variant];
+  const lineHeight = getLineHeight(fontSize, family);
 
   return (
     <Text

@@ -235,7 +235,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Typography family="cairo" weight="bold" style={styles.headerTitle}>
+        <Typography variant="subtitle" family="cairo" weight="bold">
           {t('settings.title')}
         </Typography>
       </View>
@@ -393,10 +393,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[20],
     borderBottomWidth: 1,
     borderBottomColor: colors.goldTintSubtle,
-  },
-  headerTitle: {
-    fontSize: 21,
-    color: colors.foreground,
   },
   body: {
     flex: 1,

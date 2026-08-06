@@ -101,7 +101,7 @@ export default function MyMemorizationsScreen() {
       <RadialGlow />
       <View style={styles.header}>
         <View style={styles.headerTextWrap}>
-          <Typography variant="h1" family="amiriBold" style={styles.title}>
+          <Typography variant="subtitle" family="cairo" weight="bold">
             {t('memorization.screenTitle')}
           </Typography>
           {hasRanges ? (
@@ -142,11 +142,7 @@ export default function MyMemorizationsScreen() {
             <BookIcon />
           </View>
           <View style={styles.emptyTextBlock}>
-            <Typography
-              variant="h2"
-              family="amiriBold"
-              align="center"
-              style={styles.emptyTitle}>
+            <Typography variant="subtitle" family="amiriBold" align="center">
               {t('memorization.emptyTitle')}
             </Typography>
             <Typography
@@ -195,10 +191,6 @@ const styles = StyleSheet.create({
   },
   headerTextWrap: {
     flex: 1,
-  },
-  title: {
-    fontSize: 28,
-    lineHeight: 28 * 1.3,
   },
   subtitle: {
     fontSize: 13,
@@ -252,10 +244,6 @@ const styles = StyleSheet.create({
   emptyTextBlock: {
     gap: spacing[8],
     paddingHorizontal: spacing[16],
-  },
-  emptyTitle: {
-    fontSize: 22,
-    lineHeight: 22 * 1.5,
   },
   emptyBody: {
     fontSize: 14,

@@ -66,11 +66,11 @@ export default function Toast({visible, variant, title, subtitle}: ToastProps) {
             />
           </View>
           <View style={styles.textWrap}>
-            <Typography color="foreground" weight="semibold" variant="small">
+            <Typography color="foreground" weight="semibold" variant="caption">
               {title}
             </Typography>
             {subtitle ? (
-              <Typography color="muted" variant="small">
+              <Typography color="muted" variant="caption">
                 {subtitle}
               </Typography>
             ) : null}

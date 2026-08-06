@@ -118,7 +118,7 @@ export const MemorizationSelectionSheet: React.FC<
     <BottomSheet visible={visible} onClose={onClose} title={t('memorization.selection.title')}>
       {memorizedRanges.length > 0 ? (
         <View style={styles.summary}>
-          <Typography variant="small" color="muted">
+          <Typography variant="caption" color="muted">
             {t('memorization.selection.totalSummary', {
               rangeCount: memorizedRanges.length,
               verseCount: totalStats.verseCount,
@@ -137,7 +137,7 @@ export const MemorizationSelectionSheet: React.FC<
         ) : (
           groupedRanges.map(([chapterNumber, group]) => (
             <View key={chapterNumber} style={styles.group}>
-              <Typography variant="small" family="amiriBold" style={styles.groupLabel}>
+              <Typography variant="caption" family="amiriBold" style={styles.groupLabel}>
                 {getSurahNameArabic(chapterNumber)}
               </Typography>
               <View style={styles.groupItems}>

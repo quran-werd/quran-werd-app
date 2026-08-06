@@ -295,10 +295,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             <CloseIcon />
           </IconButton>
           <View style={styles.headerCenter}>
-            <Typography variant="body" family="amiriBold" style={styles.surahNameArabic}>
+            <Typography variant="subtitle" family="amiriBold">
               {surahNameArabic}
             </Typography>
-            <Typography variant="small" color="muted">
+            <Typography variant="caption" color="muted">
               {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
             </Typography>
           </View>
@@ -415,9 +415,6 @@ const styles = StyleSheet.create({
   headerCenter: {
     flex: 1,
     alignItems: 'center',
-  },
-  surahNameArabic: {
-    fontSize: 18,
   },
   headerActions: {
     flexDirection: 'row',

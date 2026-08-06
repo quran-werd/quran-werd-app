@@ -55,7 +55,7 @@ export default function BottomNav({state, navigation}: BottomTabBarProps) {
               <Pressable key={route.key} onPress={onPress} style={styles.tab}>
                 {IconComponent ? <IconComponent active={focused} /> : null}
                 <Typography
-                  variant="small"
+                  variant="caption"
                   family="cairo"
                   weight={focused ? 'semibold' : 'regular'}
                   color={focused ? 'primary' : 'muted'}

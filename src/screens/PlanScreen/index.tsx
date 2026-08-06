@@ -181,15 +181,14 @@ function EmptyState({
       </View>
       <View style={styles.emptyTextBlock}>
         <Typography
-          variant="h3"
+          variant="subtitle"
           family="amiri"
           weight="bold"
-          align="center"
-          style={styles.emptyTitle}>
+          align="center">
           {t('plan.emptyTitle')}
         </Typography>
         <Typography
-          variant="small"
+          variant="caption"
           family="cairo"
           color="muted"
           align="center"
@@ -329,7 +328,7 @@ function WerdCard({
               isToday ? styles.werdBadgeToday : styles.werdBadgeDefault,
             ]}>
             <Typography
-              variant="small"
+              variant="caption"
               family="cairo"
               weight="bold"
               style={
@@ -355,7 +354,7 @@ function WerdCard({
               {isToday ? (
                 <View style={styles.todayPill}>
                   <Typography
-                    variant="small"
+                    variant="caption"
                     family="cairo"
                     weight="semibold"
                     style={[styles.todayPillText, {fontSize: 10}]}>
@@ -514,11 +513,7 @@ export default function PlanScreen() {
         <View style={styles.header}>
           <AmbientGlow />
           <View style={styles.headerRow}>
-            <Typography
-              variant="h2"
-              family="amiri"
-              weight="bold"
-              style={styles.headerTitle}>
+            <Typography variant="subtitle" family="cairo" weight="bold">
               {t('plan.title')}
             </Typography>
           </View>
@@ -541,11 +536,7 @@ export default function PlanScreen() {
             <View style={styles.header}>
               <AmbientGlow />
               <View style={styles.headerRow}>
-                <Typography
-                  variant="h2"
-                  family="amiri"
-                  weight="bold"
-                  style={styles.headerTitle}>
+                <Typography variant="subtitle" family="cairo" weight="bold">
                   {t('plan.title')}
                 </Typography>
                 {awrad.length > 0 ? (
@@ -625,7 +616,7 @@ export default function PlanScreen() {
                     ]}>
                     {justSaved ? (
                       <Typography
-                        variant="small"
+                        variant="caption"
                         family="cairo"
                         weight="bold"
                         style={[styles.updateButtonTextSaved, {fontSize: 11}]}>
@@ -638,7 +629,7 @@ export default function PlanScreen() {
                         end={{x: 1, y: 1}}
                         style={styles.updateButtonGradient}>
                         <Typography
-                          variant="small"
+                          variant="caption"
                           family="cairo"
                           weight="bold"
                           style={[styles.updateButtonText, {fontSize: 11}]}>
@@ -721,7 +712,7 @@ export default function PlanScreen() {
                 ) : null}
 
                 {error ? (
-                  <Typography variant="small" color="muted">
+                  <Typography variant="caption" color="muted">
                     {error}
                   </Typography>
                 ) : null}
@@ -783,10 +774,6 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     justifyContent: 'space-between',
   },
-  headerTitle: {
-    fontSize: 22,
-    lineHeight: 22 * 1.2,
-  },
   werdCountLabel: {
     fontSize: 11,
   },
@@ -826,10 +813,6 @@ const styles = StyleSheet.create({
   },
   emptyTextBlock: {
     gap: spacing[8],
-  },
-  emptyTitle: {
-    fontSize: 20,
-    lineHeight: 20 * 1.3,
   },
   emptyBody: {
     fontSize: 13,

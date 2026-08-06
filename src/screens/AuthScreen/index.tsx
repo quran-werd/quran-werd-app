@@ -17,6 +17,7 @@ import BasmalaSvg from '../../components/shared/icons/BasmalaSvg';
 import AuthOrnament from '../../components/shared/icons/AuthOrnament';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
+import {getLineHeight} from '../../styles/typography';
 import {clearError, selectAuth} from '../../features/Auth/authSlice';
 import {signInWithGoogle} from '../../features/Auth/authAction';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
@@ -111,7 +112,11 @@ export default function AuthScreen() {
             .delay(150)
             .easing(EASE_OUT_EXPO)
             .withInitialValues({transform: [{translateY: 12}]})}>
-          <Typography variant="h1" family="amiriBold" align="center" style={styles.appName}>
+          <Typography
+            variant="heading"
+            family="amiriBold"
+            align="center"
+            style={styles.appName}>
             {t('auth.appName')}
           </Typography>
         </Animated.View>
@@ -160,7 +165,7 @@ export default function AuthScreen() {
         </Animated.View>
 
         {auth.error ? (
-          <Typography variant="small" color="destructive" align="center">
+          <Typography variant="caption" color="destructive" align="center">
             {auth.error}
           </Typography>
         ) : null}
@@ -242,7 +247,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 42,
-    lineHeight: 42,
+    lineHeight: getLineHeight(42, 'amiriBold'),
     letterSpacing: 0.01 * 42,
     marginBottom: 6,
   },
