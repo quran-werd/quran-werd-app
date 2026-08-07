@@ -3,7 +3,7 @@ import {View, StyleSheet, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Svg, {Path} from 'react-native-svg';
-import Typography from '../../components/shared/Typography';
+import ScreenTitle from '../../components/shared/ScreenTitle';
 import SegmentedControl from '../../components/shared/SegmentedControl';
 import {colors} from '../../styles/colors';
 import {spacing} from '../../styles/spacing';
@@ -54,9 +54,7 @@ export default function SettingsScreen() {
   return (
     <View style={styles.container}>
       <View style={[styles.header, {paddingTop: insets.top + spacing[12]}]}>
-        <Typography variant="subtitle" family="cairo" weight="bold">
-          {t('settings.title')}
-        </Typography>
+        <ScreenTitle>{t('settings.title')}</ScreenTitle>
       </View>
       <ScrollView
         style={styles.body}

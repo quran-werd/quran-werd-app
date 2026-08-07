@@ -1,10 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Pressable,
-} from 'react-native';
+import {StyleSheet, ScrollView, View, Pressable} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
@@ -18,7 +13,7 @@ import {radius} from '../../styles/radius';
 import {spacing} from '../../styles/spacing';
 import {shadows} from '../../styles/shadows';
 import Typography from '../../components/shared/Typography';
-import {SurahDetailsList} from '../../components';
+import {SurahDetailsList, ScreenTitle} from '../../components';
 import {
   fetchMemorizations,
   removeMemorizationRange,
@@ -85,14 +80,19 @@ export default function MyMemorizationsScreen() {
       <ScreenGlow
         style={StyleSheet.absoluteFillObject}
         stops={[
-          {id: 'memGlow', cx: '50%', cy: '0%', rx: '70%', ry: '30%', opacity: 0.05},
+          {
+            id: 'memGlow',
+            cx: '50%',
+            cy: '0%',
+            rx: '70%',
+            ry: '30%',
+            opacity: 0.05,
+          },
         ]}
       />
       <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
         <View style={styles.headerTextWrap}>
-          <Typography variant="subtitle" family="cairo" weight="bold">
-            {t('memorization.screenTitle')}
-          </Typography>
+          <ScreenTitle>{t('memorization.screenTitle')}</ScreenTitle>
           {hasRanges ? (
             <Typography family="cairo" style={styles.subtitle}>
               {t('memorization.subtitle', {

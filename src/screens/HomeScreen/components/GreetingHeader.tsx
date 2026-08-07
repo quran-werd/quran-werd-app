@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Typography from '../../../components/shared/Typography';
-import {colors} from '../../../styles/colors';
+import ScreenTitle from '../../../components/shared/ScreenTitle';
 import {spacing} from '../../../styles/spacing';
 import {useAppSelector} from '../../../store/hooks';
 import {selectUser} from '../../../features/Auth/authSlice';
@@ -30,18 +30,12 @@ export default function GreetingHeader() {
         style={styles.dateLabel}>
         {todayDate}
       </Typography>
-      <Typography variant="title" family="amiriBold">
-        {t('home.greeting')}
-        {'،\n'}
-        {user?.name ? (
-          <Typography
-            variant="title"
-            family="amiriBold"
-            style={styles.greetingName}>
-            {user.name}
-          </Typography>
-        ) : null}
-      </Typography>
+      <ScreenTitle>{t('home.greeting')}،</ScreenTitle>
+      {user?.name ? (
+        <Typography variant="title" family="amiriBold" color="primary">
+          {user.name}
+        </Typography>
+      ) : null}
     </View>
   );
 }
@@ -55,8 +49,5 @@ const styles = StyleSheet.create({
   dateLabel: {
     fontSize: 14,
     marginBottom: spacing[4],
-  },
-  greetingName: {
-    color: colors.primary,
   },
 });

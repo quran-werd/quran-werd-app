@@ -3,6 +3,7 @@ import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Typography from '../../components/shared/Typography';
+import ScreenTitle from '../../components/shared/ScreenTitle';
 import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
@@ -65,9 +66,7 @@ export default function PlanScreen() {
             ]}
           />
           <View style={styles.headerRow}>
-            <Typography variant="subtitle" family="cairo" weight="bold">
-              {t('plan.title')}
-            </Typography>
+            <ScreenTitle>{t('plan.title')}</ScreenTitle>
           </View>
         </View>
         <EmptyState onGenerate={handleGenerate} loading={loading} />
@@ -102,9 +101,7 @@ export default function PlanScreen() {
                 ]}
               />
               <View style={styles.headerRow}>
-                <Typography variant="subtitle" family="cairo" weight="bold">
-                  {t('plan.title')}
-                </Typography>
+                <ScreenTitle>{t('plan.title')}</ScreenTitle>
                 {awrad.length > 0 ? (
                   <Typography
                     family="cairo"

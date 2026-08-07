@@ -3,6 +3,7 @@ export {default as Button} from './Button';
 export {default as Card} from './Card';
 export {default as Icon} from './Icon';
 export {default as Typography} from './Typography';
+export {default as ScreenTitle} from './ScreenTitle';
 export {default as BottomSheet} from './BottomSheet';
 export {default as DeleteConfirmationModal} from './DeleteConfirmationModal';
 export {default as Toast} from './Toast';
