@@ -1,13 +1,16 @@
 import React from 'react';
-import {View, StyleSheet, SafeAreaView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors} from '../../styles/colors';
 import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import WordmarkHero from './components/WordmarkHero';
 import GoogleSignInSection from './components/GoogleSignInSection';
 
 export default function AuthScreen() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScreenGlow
         style={StyleSheet.absoluteFillObject}
         stops={[
@@ -26,10 +29,10 @@ export default function AuthScreen() {
 
       <WordmarkHero />
 
-      <View style={styles.lowerSection}>
+      <View style={[styles.lowerSection, {paddingBottom: 64 + insets.bottom}]}>
         <GoogleSignInSection />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -44,7 +47,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 28,
-    paddingBottom: 64,
     gap: 16,
   },
 });

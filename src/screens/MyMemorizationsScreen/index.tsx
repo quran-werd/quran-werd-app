@@ -2,10 +2,10 @@ import React, {useEffect, useMemo} from 'react';
 import {
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   View,
   Pressable,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import Svg, {Path} from 'react-native-svg';
@@ -65,6 +65,7 @@ export default function MyMemorizationsScreen() {
   const dispatch = useAppDispatch();
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     dispatch(fetchMemorizations());
@@ -80,14 +81,14 @@ export default function MyMemorizationsScreen() {
   const totals = useMemo(() => computeMemorizationTotals(ranges), [ranges]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScreenGlow
         style={StyleSheet.absoluteFillObject}
         stops={[
           {id: 'memGlow', cx: '50%', cy: '0%', rx: '70%', ry: '30%', opacity: 0.05},
         ]}
       />
-      <View style={styles.header}>
+      <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
         <View style={styles.headerTextWrap}>
           <Typography variant="subtitle" family="cairo" weight="bold">
             {t('memorization.screenTitle')}
@@ -163,7 +164,7 @@ export default function MyMemorizationsScreen() {
           </Pressable>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: spacing[24],
-    paddingTop: 40,
     paddingBottom: spacing[16],
   },
   headerTextWrap: {

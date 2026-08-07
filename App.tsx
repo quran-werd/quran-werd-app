@@ -8,6 +8,8 @@
 import React, {useEffect, useState} from 'react';
 import {DarkTheme, NavigationContainer, Theme} from '@react-navigation/native';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {StatusBar} from 'expo-status-bar';
 import notifee from '@notifee/react-native';
 import {useFonts} from 'expo-font';
 import {
@@ -38,6 +40,7 @@ import {
   handleNotificationPress,
   scheduleDailyWerdNotification,
 } from './src/services/notifications.service';
+import {useStatusBarStyle} from './src/hooks/useStatusBarStyle';
 
 function AppContent(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -110,18 +113,23 @@ const navigationTheme: Theme = {
 };
 
 function App(): React.JSX.Element {
+  const statusBarStyle = useStatusBarStyle();
+
   return (
-    <Provider store={store}>
-      <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer
-          ref={navigationRef}
-          linking={linking as any}
-          theme={navigationTheme}>
-          <AppContent />
-        </NavigationContainer>
-      </ApplicationProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <StatusBar style={statusBarStyle} translucent />
+      <Provider store={store}>
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider {...eva} theme={eva.light}>
+          <NavigationContainer
+            ref={navigationRef}
+            linking={linking as any}
+            theme={navigationTheme}>
+            <AppContent />
+          </NavigationContainer>
+        </ApplicationProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 

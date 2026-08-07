@@ -1,5 +1,6 @@
 import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
@@ -72,6 +73,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
 }) => {
   const {t} = useTranslation();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [jumpSheetVisible, setJumpSheetVisible] = useState(false);
@@ -220,9 +222,9 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   }, [fontSize, shouldRenderPage, handlePageDataLoaded, selectionMode]);
 
   const content = (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, !showHeader && {paddingTop: insets.top}]}>
       {showHeader && (
-        <View style={styles.header}>
+        <View style={[styles.header, {paddingTop: insets.top + 8}]}>
           <IconButton onPress={() => navigation.goBack()}>
             <CloseIcon />
           </IconButton>
@@ -250,7 +252,9 @@ const QuranPager: React.FC<QuranPagerProps> = ({
       )}
 
       {selectionMode ? (
-        <View style={styles.notificationsLayer} pointerEvents="box-none">
+        <View
+          style={[styles.notificationsLayer, {top: insets.top + 56}]}
+          pointerEvents="box-none">
           <Toast
             visible={!!pendingStartVerse && !mergeEvent}
             variant="pending"
@@ -289,7 +293,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
 
       {/* Bottom toolbar for selection mode */}
       {selectionMode && (
-        <View style={styles.toolbar}>
+        <View style={[styles.toolbar, {paddingBottom: 12 + insets.bottom}]}>
           <Button
             title={t('memorization.selection.jump')}
             onPress={handleOpenJumpSheet}
@@ -318,7 +322,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           onJumpToPage={handleJumpToPage}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 
   // Wrap with line selection provider (verse selection is handled by Redux)

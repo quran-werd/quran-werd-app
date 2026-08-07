@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {StyleSheet, SafeAreaView, View, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, ActivityIndicator} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import Animated, {ZoomIn} from 'react-native-reanimated';
@@ -25,6 +26,7 @@ export default function RevisionScreen() {
   const today = useAppSelector(selectTodayWerd);
   const loading = useAppSelector(selectRevisionLogLoading);
   const [currentPage, setCurrentPage] = useState<number | null>(null);
+  const insets = useSafeAreaInsets();
 
   const werd = today?.werd;
   const werdId = route.params?.werdId || werd?._id;
@@ -68,7 +70,7 @@ export default function RevisionScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <QuranPager
         initialPage={startPage}
         fontSize={21}
@@ -79,7 +81,7 @@ export default function RevisionScreen() {
       {hasReachedWard ? (
         <Animated.View
           entering={ZoomIn.stiffness(260).damping(20)}
-          style={styles.actions}>
+          style={[styles.actions, {paddingBottom: 12 + insets.bottom}]}>
           <Button
             title={t('revision.complete')}
             onPress={handleComplete}
@@ -88,7 +90,7 @@ export default function RevisionScreen() {
           />
         </Animated.View>
       ) : null}
-    </SafeAreaView>
+    </View>
   );
 }
 

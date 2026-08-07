@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, SafeAreaView, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Svg, {Path} from 'react-native-svg';
 import Typography from '../../components/shared/Typography';
@@ -44,14 +45,15 @@ export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const insets = useSafeAreaInsets();
 
   const handleSignOut = () => {
     dispatch(signOut());
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <View style={styles.container}>
+      <View style={[styles.header, {paddingTop: insets.top + spacing[12]}]}>
         <Typography variant="subtitle" family="cairo" weight="bold">
           {t('settings.title')}
         </Typography>
@@ -96,7 +98,7 @@ export default function SettingsScreen() {
           </SettingsCard>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -109,7 +111,6 @@ const styles = StyleSheet.create({
     marginTop: spacing[28],
   },
   header: {
-    paddingTop: 52,
     paddingBottom: spacing[10],
     paddingHorizontal: spacing[20],
     borderBottomWidth: 1,

@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Pressable, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BlurView} from 'expo-blur';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {useTranslation} from 'react-i18next';
@@ -31,9 +32,10 @@ const LABEL_KEYS: Record<string, string> = {
 // Floating blurred pill bottom nav — see docs/design.md §2.1.
 export default function BottomNav({state, navigation}: BottomTabBarProps) {
   const {t} = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, {marginBottom: insets.bottom + 12}]}>
       <BlurView intensity={30} tint="dark" style={styles.blur}>
         <View style={styles.tabsRow}>
           {state.routes.map((route, index) => {
@@ -78,7 +80,6 @@ const styles = StyleSheet.create({
   wrap: {
     backgroundColor: colors.background,
     marginHorizontal: 16,
-    marginBottom: 16,
     borderRadius: radius.xl,
     overflow: 'hidden',
     borderWidth: 1,

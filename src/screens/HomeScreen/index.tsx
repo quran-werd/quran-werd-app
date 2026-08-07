@@ -1,5 +1,6 @@
 import React, {useEffect, useCallback} from 'react';
-import {View, StyleSheet, SafeAreaView, RefreshControl, ScrollView} from 'react-native';
+import {View, StyleSheet, RefreshControl, ScrollView} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Typography from '../../components/shared/Typography';
 import ScreenGlow from '../../components/shared/icons/ScreenGlow';
@@ -16,6 +17,7 @@ export default function HomeScreen() {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectRevisionLogLoading);
+  const insets = useSafeAreaInsets();
 
   const loadHome = useCallback(() => {
     dispatch(fetchTodayWerd());
@@ -27,7 +29,7 @@ export default function HomeScreen() {
   }, [loadHome]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScreenGlow
         style={StyleSheet.absoluteFillObject}
         stops={[
@@ -35,7 +37,7 @@ export default function HomeScreen() {
         ]}
       />
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, {paddingTop: insets.top}]}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={loadHome} />
         }>
@@ -49,7 +51,7 @@ export default function HomeScreen() {
 
         <TodayWerdCard />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

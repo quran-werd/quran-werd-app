@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView, FlatList, RefreshControl} from 'react-native';
+import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import Typography from '../../components/shared/Typography';
 import ScreenGlow from '../../components/shared/icons/ScreenGlow';
@@ -28,6 +29,7 @@ export default function PlanScreen() {
   const plan = useAppSelector(selectRevisionPlan);
   const loading = useAppSelector(selectRevisionPlanLoading);
   const today = useAppSelector(selectTodayWerd);
+  const insets = useSafeAreaInsets();
 
   const loadPlan = useCallback(() => {
     dispatch(fetchRevisionPlan());
@@ -45,8 +47,8 @@ export default function PlanScreen() {
 
   if (!plan) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
+      <View style={styles.container}>
+        <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
           <ScreenGlow
             style={styles.ambientGlow}
             width={200}
@@ -69,12 +71,12 @@ export default function PlanScreen() {
           </View>
         </View>
         <EmptyState onGenerate={handleGenerate} loading={loading} />
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={awrad}
         keyExtractor={item => item._id}
@@ -83,7 +85,7 @@ export default function PlanScreen() {
         }
         ListHeaderComponent={
           <View>
-            <View style={styles.header}>
+            <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
               <ScreenGlow
                 style={styles.ambientGlow}
                 width={200}
@@ -146,7 +148,7 @@ export default function PlanScreen() {
         }
         contentContainerStyle={styles.list}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -155,7 +157,6 @@ const styles = StyleSheet.create({
   list: {paddingBottom: spacing[24]},
   header: {
     paddingHorizontal: spacing[20],
-    paddingTop: 40,
     paddingBottom: spacing[12],
     borderBottomWidth: 1,
     borderBottomColor: colors.goldBorderSubtle,

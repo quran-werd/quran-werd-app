@@ -12,6 +12,7 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   ['expo-font', {fonts: ['./assets/fonts/qcf/v1']}],
   '@react-native-community/datetimepicker',
   ['expo-build-properties', {android: {usesCleartextTraffic: true}}],
+  './plugins/withNotifeeAndroidMavenRepo',
 ];
 
 if (iosUrlScheme) {
@@ -47,6 +48,7 @@ const config: ExpoConfig = {
   android: {
     package: 'com.quranwerd',
     allowBackup: false,
+    edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: './assets/icon.png',
       backgroundColor: '#0C1220',
