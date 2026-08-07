@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import Svg, {Defs, RadialGradient, Stop, Rect, Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import {LinearGradient} from 'expo-linear-gradient';
 import Animated, {FadeIn, ZoomIn} from 'react-native-reanimated';
 import Typography from '../../components/shared/Typography';
 import Button from '../../components/shared/Button';
 import GeometricStar from '../../components/shared/icons/GeometricStar';
+import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import {spacing} from '../../styles/spacing';
@@ -32,24 +33,6 @@ import {
   getPageForVerse,
   toArabicNumerals,
 } from '../../content';
-
-function RadialGlow() {
-  return (
-    <Svg
-      style={StyleSheet.absoluteFillObject}
-      pointerEvents="none"
-      width="100%"
-      height="100%">
-      <Defs>
-        <RadialGradient id="homeGlow" cx="50%" cy="0%" rx="60%" ry="50%">
-          <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.07} />
-          <Stop offset="70%" stopColor={colors.primary} stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Rect x={0} y={0} width="100%" height="100%" fill="url(#homeGlow)" />
-    </Svg>
-  );
-}
 
 function CheckIcon({
   size = 14,
@@ -114,7 +97,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <RadialGlow />
+      <ScreenGlow
+        style={StyleSheet.absoluteFillObject}
+        stops={[
+          {id: 'homeGlow', cx: '50%', cy: '0%', rx: '60%', ry: '50%', opacity: 0.07},
+        ]}
+      />
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={

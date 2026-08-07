@@ -1,17 +1,14 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   FadeIn,
   FadeOut,
   LinearTransition,
 } from 'react-native-reanimated';
 import {LinearGradient} from 'expo-linear-gradient';
-import Svg, {Path} from 'react-native-svg';
 import Typography from '../shared/Typography';
+import AnimatedChevron from '../shared/icons/AnimatedChevron';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import {shadows} from '../../styles/shadows';
@@ -28,32 +25,6 @@ interface SurahProgressCardProps {
   ranges: MemorizationVerseRange[];
   surahNumber: number;
   onDeleteRange?: (range: MemorizationVerseRange) => void;
-}
-
-function ChevronDown({open}: {open: boolean}) {
-  const rotation = useSharedValue(open ? 180 : 0);
-
-  useEffect(() => {
-    rotation.value = withTiming(open ? 180 : 0, {duration: 300});
-  }, [open, rotation]);
-
-  const style = useAnimatedStyle(() => ({
-    transform: [{rotate: `${rotation.value}deg`}],
-  }));
-
-  return (
-    <Animated.View style={style}>
-      <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-        <Path
-          d="M6 9l6 6 6-6"
-          stroke={colors.mutedForeground}
-          strokeWidth={1.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </Svg>
-    </Animated.View>
-  );
 }
 
 export default function SurahProgressCard({
@@ -111,7 +82,7 @@ export default function SurahProgressCard({
             })}
           </Typography>
         </View>
-        <ChevronDown open={isExpanded} />
+        <AnimatedChevron expanded={isExpanded} />
       </Pressable>
 
       <View style={styles.progressTrack}>

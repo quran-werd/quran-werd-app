@@ -11,10 +11,11 @@ import Animated, {
   FadeInDown,
 } from 'react-native-reanimated';
 import {LinearGradient} from 'expo-linear-gradient';
-import Svg, {Defs, RadialGradient, Stop, Rect, Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import Typography from '../../components/shared/Typography';
 import BasmalaSvg from '../../components/shared/icons/BasmalaSvg';
 import AuthOrnament from '../../components/shared/icons/AuthOrnament';
+import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import {getLineHeight} from '../../styles/typography';
@@ -23,25 +24,6 @@ import {signInWithGoogle} from '../../features/Auth/authAction';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 
 const EASE_OUT_EXPO = Easing.bezier(0.16, 1, 0.3, 1).factory();
-
-function AmbientGlow() {
-  return (
-    <Svg style={StyleSheet.absoluteFillObject} pointerEvents="none" width="100%" height="100%">
-      <Defs>
-        <RadialGradient id="authGlowTop" cx="50%" cy="0%" rx="70%" ry="45%">
-          <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.09} />
-          <Stop offset="70%" stopColor={colors.primary} stopOpacity={0} />
-        </RadialGradient>
-        <RadialGradient id="authGlowBottom" cx="50%" cy="100%" rx="60%" ry="30%">
-          <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.05} />
-          <Stop offset="60%" stopColor={colors.primary} stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Rect x={0} y={0} width="100%" height="100%" fill="url(#authGlowTop)" />
-      <Rect x={0} y={0} width="100%" height="100%" fill="url(#authGlowBottom)" />
-    </Svg>
-  );
-}
 
 function GoogleLogo() {
   return (
@@ -92,7 +74,21 @@ export default function AuthScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <AmbientGlow />
+      <ScreenGlow
+        style={StyleSheet.absoluteFillObject}
+        stops={[
+          {id: 'authGlowTop', cx: '50%', cy: '0%', rx: '70%', ry: '45%', opacity: 0.09},
+          {
+            id: 'authGlowBottom',
+            cx: '50%',
+            cy: '100%',
+            rx: '60%',
+            ry: '30%',
+            opacity: 0.05,
+            fadeOffset: '60%',
+          },
+        ]}
+      />
 
       <View style={styles.upperSection}>
         <Animated.View

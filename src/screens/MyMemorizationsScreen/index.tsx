@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import Svg, {Defs, RadialGradient, Stop, Rect, Path} from 'react-native-svg';
+import Svg, {Path} from 'react-native-svg';
 import {LinearGradient} from 'expo-linear-gradient';
+import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {useAppSelector, useAppDispatch} from '../../store/hooks';
 import {selectMemorizationRanges} from '../../features/Memorization/memorizationSlice';
 import {colors} from '../../styles/colors';
@@ -25,24 +26,6 @@ import {
 import {MemorizationVerseRange} from '../../types/memorization.types';
 import {computeMemorizationTotals} from '../../utils/helpers.utils';
 import {toArabicNumerals} from '../../content';
-
-function RadialGlow() {
-  return (
-    <Svg
-      style={StyleSheet.absoluteFillObject}
-      pointerEvents="none"
-      width="100%"
-      height="100%">
-      <Defs>
-        <RadialGradient id="memGlow" cx="50%" cy="0%" rx="70%" ry="30%">
-          <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.05} />
-          <Stop offset="70%" stopColor={colors.primary} stopOpacity={0} />
-        </RadialGradient>
-      </Defs>
-      <Rect x={0} y={0} width="100%" height="100%" fill="url(#memGlow)" />
-    </Svg>
-  );
-}
 
 function PlusIcon() {
   return (
@@ -98,7 +81,12 @@ export default function MyMemorizationsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <RadialGlow />
+      <ScreenGlow
+        style={StyleSheet.absoluteFillObject}
+        stops={[
+          {id: 'memGlow', cx: '50%', cy: '0%', rx: '70%', ry: '30%', opacity: 0.05},
+        ]}
+      />
       <View style={styles.header}>
         <View style={styles.headerTextWrap}>
           <Typography variant="subtitle" family="cairo" weight="bold">
