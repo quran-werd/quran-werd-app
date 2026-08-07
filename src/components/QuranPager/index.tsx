@@ -1,10 +1,10 @@
 import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
-import {View, StyleSheet, SafeAreaView, Pressable} from 'react-native';
+import {View, StyleSheet, SafeAreaView} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
-import Svg, {Path} from 'react-native-svg';
 import {PageContainer} from './components';
+import {CloseIcon, UndoIcon, RedoIcon, IconButton} from './components/PagerIcons';
 import {
   getJuzNumber,
   getPageData,
@@ -34,74 +34,6 @@ import {
   selectMergeEvent,
   clearMergeEvent,
 } from '../../features/Memorization/memorizationSelectionSlice';
-
-function CloseIcon() {
-  return (
-    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M6 6l12 12M18 6 6 18"
-        stroke={colors.mutedForeground}
-        strokeWidth={1.5}
-        strokeLinecap="round"
-      />
-    </Svg>
-  );
-}
-
-function UndoIcon({disabled}: {disabled?: boolean}) {
-  return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M9 7 4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1"
-        stroke={disabled ? colors.mutedForeground : colors.foreground}
-        strokeOpacity={disabled ? 0.4 : 1}
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-function RedoIcon({disabled}: {disabled?: boolean}) {
-  return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h1"
-        stroke={disabled ? colors.mutedForeground : colors.foreground}
-        strokeOpacity={disabled ? 0.4 : 1}
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
-
-function IconButton({
-  onPress,
-  disabled,
-  size = 36,
-  children,
-}: {
-  onPress: () => void;
-  disabled?: boolean;
-  size?: number;
-  children: React.ReactNode;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={[
-        styles.iconButton,
-        {width: size, height: size, borderRadius: size / 2},
-        disabled && styles.iconButtonDisabled,
-      ]}>
-      {children}
-    </Pressable>
-  );
-}
 
 interface QuranPagerProps {
   initialPage?: number;
@@ -422,14 +354,6 @@ const styles = StyleSheet.create({
   },
   headerActionsSpacer: {
     width: 36,
-  },
-  iconButton: {
-    backgroundColor: colors.mutedTintSubtle,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconButtonDisabled: {
-    opacity: 0.3,
   },
   notificationsLayer: {
     position: 'absolute',
