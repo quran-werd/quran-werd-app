@@ -6,7 +6,6 @@ import BasmalaSvg from '../../shared/icons/BasmalaSvg';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
-import VerseNumberBadge from './VerseNumberBadge';
 import PendingDot from './PendingDot';
 import {useLineSelection} from '../context';
 import {useAppSelector, useAppDispatch} from '../../../store/hooks';
@@ -18,7 +17,7 @@ import {
   removeRange,
 } from '../../../features/Memorization/memorizationSelectionSlice';
 import {findSingleVerseRange} from '../utils/verseSelection.utils';
-import {verseNumberFromKey, isRangeEndpoint} from '../utils/lineHelpers';
+import {isRangeEndpoint} from '../utils/lineHelpers';
 
 interface LineProps {
   words: Word[];
@@ -201,12 +200,13 @@ const Line: React.FC<LineProps> = ({
               ([verseKey, verseWords], verseIndex) => {
                 const verseSelected = isVerseSelected(verseKey);
                 const versePending = isVersePending(verseKey);
-                const endpoint = verseSelected && isRangeEndpoint(verseKey, ranges);
+                const endpoint =
+                  verseSelected && isRangeEndpoint(verseKey, ranges);
                 const badgeState = versePending
                   ? 'pending'
                   : endpoint
-                    ? 'endpoint'
-                    : 'normal';
+                  ? 'endpoint'
+                  : 'normal';
 
                 return (
                   <Pressable
@@ -238,10 +238,6 @@ const Line: React.FC<LineProps> = ({
                         />
                       );
                     })}
-                    <VerseNumberBadge
-                      number={verseNumberFromKey(verseKey)}
-                      state={badgeState}
-                    />
                   </Pressable>
                 );
               },

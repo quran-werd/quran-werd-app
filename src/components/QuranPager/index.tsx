@@ -6,14 +6,8 @@ import {useNavigation} from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
 import {CloseIcon, UndoIcon, RedoIcon, IconButton} from './components/PagerIcons';
-import {
-  getJuzNumber,
-  getPageData,
-  getSurahNameArabic,
-  getSurahPages,
-  toArabicNumerals,
-  totalPagesCount,
-} from '../../content';
+import {getJuzNumber, toArabicNumerals, totalPagesCount} from '../../content';
+import {useMushafLocalStoreData} from '../../services/mushafLocalStore';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import Typography from '../shared/Typography';
@@ -74,6 +68,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const {t} = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const store = useMushafLocalStoreData();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [jumpSheetVisible, setJumpSheetVisible] = useState(false);
@@ -104,11 +99,11 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   );
 
   // Get chapter and Juz information for the current page
-  const currentPageData = getPageData(currentPage);
-  const firstSurah = currentPageData[0].surah;
-  const firstVerse = currentPageData[0].start;
+  const currentPageSurahRanges = store.pageMap[currentPage] ?? [];
+  const firstSurah = currentPageSurahRanges[0]?.surah ?? 1;
+  const firstVerse = currentPageSurahRanges[0]?.start ?? 1;
   const juzNumber = getJuzNumber(firstSurah, firstVerse);
-  const surahNameArabic = getSurahNameArabic(firstSurah);
+  const surahNameArabic = store.surahMap[firstSurah]?.nameArabic ?? '';
 
   // Check if a page should be rendered (within window)
   const shouldRenderPage = useCallback(
@@ -170,16 +165,15 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   // Jump to chapter
   const handleJumpToChapter = useCallback(
     (chapterNumber: number) => {
-      const surahPages = getSurahPages(chapterNumber);
-      if (surahPages.length > 0) {
-        const targetPage = surahPages[0]; // Jump to first page of the surah
+      const targetPage = store.surahMap[chapterNumber]?.startPage;
+      if (targetPage) {
         pagerRef.current?.setPage(targetPage - 1);
         setCurrentPage(targetPage);
         onPageChange?.(targetPage);
         setJumpSheetVisible(false);
       }
     },
-    [onPageChange],
+    [onPageChange, store],
   );
 
   const handleOpenJumpSheet = useCallback(() => {
@@ -197,7 +191,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     const pagesArray = [];
     for (let i = 1; i <= totalPagesCount; i++) {
       const isInWindow = shouldRenderPage(i);
-      const cachedData = pageCacheRef.current[i];
 
       pagesArray.push(
         <View key={i} style={styles.page}>
@@ -206,8 +199,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
               pageNumber={i}
               fontSize={fontSize}
               showPageFooter={true}
-              cachedVerses={cachedData?.verses}
-              cachedFontFamily={cachedData?.fontFamily}
               onDataLoaded={handlePageDataLoaded}
               selectionMode={selectionMode}
             />
