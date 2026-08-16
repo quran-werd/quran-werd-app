@@ -1,5 +1,12 @@
 import React, {useState, useMemo} from 'react';
-import {View, StyleSheet, Pressable, ScrollView, TextInput, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  TextInput,
+  Alert,
+} from 'react-native';
 import Svg, {Path, Circle} from 'react-native-svg';
 import {useTranslation} from 'react-i18next';
 import BottomSheet from '../../shared/BottomSheet';
@@ -19,7 +26,13 @@ interface JumpSheetProps {
 function SearchIcon() {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Circle cx={11} cy={11} r={7} stroke={colors.mutedForeground} strokeWidth={1.5} />
+      <Circle
+        cx={11}
+        cy={11}
+        r={7}
+        stroke={colors.mutedForeground}
+        strokeWidth={1.5}
+      />
       <Path
         d="m20 20-3.5-3.5"
         stroke={colors.mutedForeground}
@@ -101,7 +114,12 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             onSubmitEditing={handlePageJump}
           />
           <Pressable style={styles.goButton} onPress={handlePageJump}>
-            <Typography variant="caption" family="cairo" weight="bold" style={styles.goButtonText}>
+            <Typography
+              variant="caption"
+              family="cairo"
+              weight="bold"
+              align="center"
+              style={styles.goButtonText}>
               {t('memorization.selection.go')}
             </Typography>
           </Pressable>
@@ -110,7 +128,6 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
 
       <View style={styles.chaptersSection}>
         <View style={styles.searchInputContainer}>
-          <SearchIcon />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
@@ -118,6 +135,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             placeholder={t('memorization.selection.searchChapter')}
             placeholderTextColor={colors.mutedForeground}
           />
+          <SearchIcon />
         </View>
         <ScrollView
           style={styles.chaptersList}
@@ -132,7 +150,12 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                 style={styles.chapterItem}
                 onPress={() => handleChapterPress(chapter.surah)}>
                 <View style={styles.chapterBadge}>
-                  <Typography variant="caption" family="cairo" weight="bold" color="primary">
+                  <Typography
+                    variant="caption"
+                    family="cairo"
+                    weight="bold"
+                    color="primary"
+                    align="center">
                     {chapter.surah}
                   </Typography>
                 </View>
@@ -146,7 +169,9 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                         value: toArabicNumerals(chapter.ayahCount),
                       })}
                       {' - '}
-                      {t('quran.pageShort', {page: toArabicNumerals(startPage)})}
+                      {t('quran.pageShort', {
+                        page: toArabicNumerals(startPage),
+                      })}
                     </Typography>
                   ) : null}
                 </View>
@@ -211,6 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: colors.foreground,
+    textAlign: 'right',
   },
   chaptersList: {
     flexGrow: 0,
@@ -225,7 +251,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: radius.xl,
-    marginBottom: 8,
   },
   chapterBadge: {
     width: 32,
@@ -237,6 +262,5 @@ const styles = StyleSheet.create({
   },
   chapterInfo: {
     flex: 1,
-    gap: 2,
   },
 });
