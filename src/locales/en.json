@@ -10,6 +10,7 @@
     "subtitle": "Your companion on the journey of memorizing and reviewing the Quran, day by day",
     "journeyLabel": "Begin your journey",
     "googleSignIn": "Sign in with Google",
+    "mockSignIn": "Continue as Dev User",
     "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
   },
   "home": {
@@ -62,6 +63,12 @@
     "juz": "Juz {{number}}",
     "ayahCountShort": "{{value}} ayahs",
     "pageShort": "p. {{page}}"
+  },
+  "mushafStore": {
+    "title": "Preparing the Mushaf",
+    "downloading": "Downloading page data… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} pages",
+    "error": "Couldn't download the Mushaf data. Check your connection and try again."
   },
   "memorization": {
     "screenTitle": "My Memorizations",

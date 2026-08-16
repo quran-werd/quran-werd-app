@@ -10,6 +10,7 @@
     "subtitle": "رافقك في رحلة حفظ القرآن ومراجعته يوماً بيوم",
     "journeyLabel": "ابدأ رحلتك",
     "googleSignIn": "تسجيل الدخول بحساب Google",
+    "mockSignIn": "المتابعة كمستخدم تجريبي",
     "legalNote": "بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية"
   },
   "home": {
@@ -62,6 +63,12 @@
     "juz": "الجزء {{number}}",
     "ayahCountShort": "{{value}} آية",
     "pageShort": "ص {{page}}"
+  },
+  "mushafStore": {
+    "title": "جاري تجهيز المصحف",
+    "downloading": "جاري تحميل بيانات الصفحات… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} صفحة",
+    "error": "تعذّر تحميل بيانات المصحف. تحقق من الاتصال وحاول مرة أخرى."
   },
   "memorization": {
     "screenTitle": "محفوظاتي",

@@ -12,8 +12,12 @@ import Typography from '../../../components/shared/Typography';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
 import {clearError, selectAuth} from '../../../features/Auth/authSlice';
-import {signInWithGoogle} from '../../../features/Auth/authAction';
+import {
+  signInWithGoogle,
+  signInWithMock,
+} from '../../../features/Auth/authAction';
 import {useAppDispatch, useAppSelector} from '../../../store/hooks';
+import {MOCK_LOGIN_ENABLED} from '../../../services/config';
 
 const EASE_OUT_EXPO = Easing.bezier(0.16, 1, 0.3, 1).factory();
 
@@ -40,6 +44,26 @@ function GoogleLogo() {
   );
 }
 
+function FlaskIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M9 2h6M10 2v6.5L4.8 18.3a1.8 1.8 0 0 0 1.58 2.7h11.24a1.8 1.8 0 0 0 1.58-2.7L14 8.5V2"
+        stroke="#1A1A1A"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M7.5 14.5h9"
+        stroke="#1A1A1A"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
 export default function GoogleSignInSection() {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
@@ -48,6 +72,11 @@ export default function GoogleSignInSection() {
   const handleGoogleSignIn = () => {
     dispatch(clearError());
     dispatch(signInWithGoogle());
+  };
+
+  const handleMockSignIn = () => {
+    dispatch(clearError());
+    dispatch(signInWithMock());
   };
 
   return (
@@ -81,15 +110,27 @@ export default function GoogleSignInSection() {
           .delay(600)
           .easing(EASE_OUT_EXPO)
           .withInitialValues({transform: [{translateY: 16}]})}>
-        <Pressable
-          onPress={handleGoogleSignIn}
-          disabled={auth.loading}
-          style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
-          <GoogleLogo />
-          <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
-            {t('auth.googleSignIn')}
-          </Typography>
-        </Pressable>
+        {MOCK_LOGIN_ENABLED ? (
+          <Pressable
+            onPress={handleMockSignIn}
+            disabled={auth.loading}
+            style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
+            <FlaskIcon />
+            <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
+              {t('auth.mockSignIn')}
+            </Typography>
+          </Pressable>
+        ) : (
+          <Pressable
+            onPress={handleGoogleSignIn}
+            disabled={auth.loading}
+            style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
+            <GoogleLogo />
+            <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
+              {t('auth.googleSignIn')}
+            </Typography>
+          </Pressable>
+        )}
       </Animated.View>
 
       <Animated.View entering={FadeIn.duration(400).delay(750)}>
