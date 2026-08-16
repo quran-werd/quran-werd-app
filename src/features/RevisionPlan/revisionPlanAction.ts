@@ -3,7 +3,6 @@ import {
   getRevisionPlan,
   generateRevisionPlan,
   updatePlanCapacity,
-  RevisionPlan,
 } from '../../services/revisionPlan.service';
 import {ApiError} from '../../types/api.types';
 
@@ -46,4 +45,4 @@ export const updateCapacity = createAsyncThunk(
   },
 );
 
-export type {RevisionPlan};
+export type {RevisionPlan, CompletedWerd} from '../../services/revisionPlan.service';

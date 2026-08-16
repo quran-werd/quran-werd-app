@@ -7,11 +7,14 @@ export type Werd = {
   range: {from: number; to: number};
 };
 
+export type CompletedWerd = Werd & {completedAt: string};
+
 export type RevisionPlan = {
   _id: string;
   userId: string;
   dailyCapacity: number;
-  awrad: Werd[];
+  incompleteAwrad: Werd[];
+  completedAwrad: CompletedWerd[];
 };
 
 export const getRevisionPlan = () =>

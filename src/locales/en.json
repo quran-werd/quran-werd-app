@@ -53,9 +53,7 @@
     "modeWeekly": "pages / week",
     "dayLabels": ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"],
     "sectionLabel": "Werd List",
-    "verseLabelSingle": "Ayah",
-    "verseLabelFrom": "From",
-    "verseLabelTo": "To",
+    "completedSectionLabel": "Completed",
     "verseRange": "Ayahs {{from}} – {{to}} · {{n}} ayahs",
     "summaryDays": "You'll finish all your memorization in {{n}} days with this plan"
   },
@@ -94,10 +92,7 @@
       "verseRange": "Verses {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} words",
       "verseCountShort": "{{count}} verses",
-      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
-      "from": "From",
-      "to": "To",
-      "single": "Ayah"
+      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful"
     },
     "selection": {
       "title": "Memorization Ranges",
@@ -122,6 +117,9 @@
     }
   },
   "common": {
+    "from": "From",
+    "to": "To",
+    "single": "Ayah",
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",

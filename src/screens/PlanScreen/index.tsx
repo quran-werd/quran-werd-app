@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -17,19 +17,24 @@ import {
   selectRevisionPlan,
   selectRevisionPlanLoading,
 } from '../../features/RevisionPlan/revisionPlanSlice';
-import {selectTodayWerd} from '../../features/RevisionLog/revisionLogSlice';
 import {toArabicNumerals} from '../../content';
 import EmptyState from './components/EmptyState';
 import CapacityGoalCard from './components/CapacityGoalCard';
 import WerdCard from './components/WerdCard';
+import CompletedWerdRow from './components/CompletedWerdRow';
 import {DEFAULT_CAPACITY} from './hooks/usePlanCapacity';
+import type {Werd, CompletedWerd} from '../../services/revisionPlan.service';
+
+type PlanListItem =
+  | {kind: 'sectionHeader'; key: string; label: string}
+  | {kind: 'completed'; werd: CompletedWerd}
+  | {kind: 'incomplete'; werd: Werd; isToday: boolean};
 
 export default function PlanScreen() {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const plan = useAppSelector(selectRevisionPlan);
   const loading = useAppSelector(selectRevisionPlanLoading);
-  const today = useAppSelector(selectTodayWerd);
   const insets = useSafeAreaInsets();
 
   const loadPlan = useCallback(() => {
@@ -44,7 +49,31 @@ export default function PlanScreen() {
     dispatch(generatePlan(DEFAULT_CAPACITY));
   };
 
-  const awrad = plan?.awrad ?? [];
+  const completedAwrad = useMemo(() => plan?.completedAwrad ?? [], [plan]);
+  const incompleteAwrad = useMemo(() => plan?.incompleteAwrad ?? [], [plan]);
+
+  const items = useMemo<PlanListItem[]>(() => {
+    const list: PlanListItem[] = [];
+    if (completedAwrad.length > 0) {
+      list.push({
+        kind: 'sectionHeader',
+        key: 'header-completed',
+        label: t('plan.completedSectionLabel'),
+      });
+      completedAwrad.forEach(werd => list.push({kind: 'completed', werd}));
+    }
+    if (incompleteAwrad.length > 0) {
+      list.push({
+        kind: 'sectionHeader',
+        key: 'header-incomplete',
+        label: t('plan.sectionLabel'),
+      });
+      incompleteAwrad.forEach((werd, index) =>
+        list.push({kind: 'incomplete', werd, isToday: index === 0}),
+      );
+    }
+    return list;
+  }, [completedAwrad, incompleteAwrad, t]);
 
   if (!plan) {
     return (
@@ -77,14 +106,17 @@ export default function PlanScreen() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={awrad}
-        keyExtractor={item => item._id}
+        data={items}
+        keyExtractor={item =>
+          item.kind === 'sectionHeader' ? item.key : item.werd._id
+        }
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={loadPlan} />
         }
         ListHeaderComponent={
           <View>
-            <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
+            <View
+              style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
               <ScreenGlow
                 style={styles.ambientGlow}
                 width={200}
@@ -102,43 +134,58 @@ export default function PlanScreen() {
               />
               <View style={styles.headerRow}>
                 <ScreenTitle>{t('plan.title')}</ScreenTitle>
-                {awrad.length > 0 ? (
+                {incompleteAwrad.length > 0 ? (
                   <Typography
                     family="cairo"
                     color="muted"
                     style={styles.werdCountLabel}>
-                    {t('plan.werdCount', {n: toArabicNumerals(awrad.length)})}
+                    {t('plan.werdCount', {
+                      n: toArabicNumerals(incompleteAwrad.length),
+                    })}
                   </Typography>
                 ) : null}
               </View>
             </View>
 
             <CapacityGoalCard />
-
-            {awrad.length > 0 ? (
-              <Typography family="cairo" style={styles.sectionLabel}>
-                {t('plan.sectionLabel')}
-              </Typography>
-            ) : null}
           </View>
         }
-        renderItem={({item, index}) => (
-          <View style={styles.werdCardWrap}>
-            <WerdCard
-              werd={item}
-              isToday={today?.werd?._id === item._id}
-              index={index}
-            />
-          </View>
-        )}
+        renderItem={({item, index}) => {
+          if (item.kind === 'sectionHeader') {
+            return (
+              <Typography family="cairo" style={styles.sectionLabel}>
+                {item.label}
+              </Typography>
+            );
+          }
+          if (item.kind === 'completed') {
+            return (
+              <View style={styles.werdCardWrap}>
+                <CompletedWerdRow werd={item.werd} />
+              </View>
+            );
+          }
+          return (
+            <View style={styles.werdCardWrap}>
+              <WerdCard
+                werd={item.werd}
+                isToday={item.isToday}
+                completedCount={completedAwrad.length}
+                index={index}
+              />
+            </View>
+          );
+        }}
         ListFooterComponent={
-          awrad.length > 0 ? (
+          incompleteAwrad.length > 0 ? (
             <View style={styles.summaryFooter}>
               <Typography
                 family="cairo"
                 align="center"
                 style={styles.summaryText}>
-                {t('plan.summaryDays', {n: toArabicNumerals(awrad.length)})}
+                {t('plan.summaryDays', {
+                  n: toArabicNumerals(incompleteAwrad.length),
+                })}
               </Typography>
             </View>
           ) : null

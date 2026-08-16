@@ -9,6 +9,7 @@ import Animated, {
   LinearTransition,
 } from 'react-native-reanimated';
 import Typography from '../../../components/shared/Typography';
+import VerseRangeRow from '../../../components/shared/VerseRangeRow';
 import AnimatedChevron from '../../../components/shared/icons/AnimatedChevron';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
@@ -22,59 +23,19 @@ function verseCount(werd: Werd) {
   return werd.range.to - werd.range.from + 1;
 }
 
-interface VerseRowProps {
-  number: number;
-  circleBg: string;
-  numberColor: string;
-  label: string;
-  labelColor: string;
-  text: string | null;
-  textColor: string;
-}
-
-function VerseRow({
-  number,
-  circleBg,
-  numberColor,
-  label,
-  labelColor,
-  text,
-  textColor,
-}: VerseRowProps) {
-  return (
-    <View style={styles.verseRow}>
-      <View style={[styles.verseCircle, {backgroundColor: circleBg}]}>
-        <Typography
-          family="cairo"
-          weight="bold"
-          style={{fontSize: 10, color: numberColor}}>
-          {toArabicNumerals(number)}
-        </Typography>
-      </View>
-      <View style={styles.verseTextWrap}>
-        <Typography style={[styles.verseLabel, {color: labelColor}]}>
-          {label}
-        </Typography>
-        {text ? (
-          <Typography
-            family="amiriQuran"
-            numberOfLines={1}
-            style={[styles.verseText, {color: textColor}]}>
-            {text}
-          </Typography>
-        ) : null}
-      </View>
-    </View>
-  );
-}
-
 interface WerdCardProps {
   werd: Werd;
   isToday: boolean;
   index: number;
+  completedCount: number;
 }
 
-export default function WerdCard({werd, isToday, index}: WerdCardProps) {
+export default function WerdCard({
+  werd,
+  isToday,
+  completedCount,
+  index,
+}: WerdCardProps) {
   const {t} = useTranslation();
   const [open, setOpen] = useState(false);
   const [fromText, setFromText] = useState<string | null>(null);
@@ -103,7 +64,7 @@ export default function WerdCard({werd, isToday, index}: WerdCardProps) {
               : open
               ? 'rgba(196,154,60,0.28)'
               : colors.goldBorderSubtle,
-            backgroundColor: isToday ? 'rgba(30,26,20,0.6)' : colors.card,
+            backgroundColor: isToday ? 'rgba(30,26,20,1)' : colors.card,
           },
           isToday && shadows.todayWerdCard,
         ]}>
@@ -138,7 +99,7 @@ export default function WerdCard({werd, isToday, index}: WerdCardProps) {
                   ? styles.werdBadgeTextToday
                   : styles.werdBadgeTextDefault
               }>
-              {toArabicNumerals(werd.order)}
+              {toArabicNumerals(werd.order + completedCount)}
             </Typography>
           </View>
           <View style={styles.werdTextWrap}>
@@ -189,28 +150,16 @@ export default function WerdCard({werd, isToday, index}: WerdCardProps) {
             style={styles.werdExpanded}>
             <View style={styles.werdInnerCard}>
               <View style={styles.versePreviewBlock}>
-                <VerseRow
-                  number={werd.range.from}
-                  circleBg="rgba(196,154,60,0.12)"
-                  numberColor={colors.primary}
-                  label={
-                    hasRange
-                      ? t('plan.verseLabelFrom')
-                      : t('plan.verseLabelSingle')
-                  }
-                  labelColor={colors.mutedForeground}
+                <VerseRangeRow
+                  verseNumber={werd.range.from}
+                  tone={hasRange ? 'from' : 'single'}
                   text={fromText}
-                  textColor={colors.foreground}
                 />
                 {hasRange ? (
-                  <VerseRow
-                    number={werd.range.to}
-                    circleBg="rgba(138,154,184,0.1)"
-                    numberColor={colors.mutedForeground}
-                    label={t('plan.verseLabelTo')}
-                    labelColor={colors.mutedForeground}
+                  <VerseRangeRow
+                    verseNumber={werd.range.to}
+                    tone="to"
                     text={toText}
-                    textColor={colors.dimmedForeground}
                   />
                 ) : null}
               </View>
@@ -298,28 +247,5 @@ const styles = StyleSheet.create({
     padding: spacing[10],
     gap: spacing[8],
     backgroundColor: 'rgba(15,12,8,0.45)',
-  },
-  verseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing[8],
-  },
-  verseCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  verseTextWrap: {
-    flex: 1,
-    gap: 2,
-  },
-  verseLabel: {
-    fontSize: 10,
-  },
-  verseText: {
-    fontSize: 14,
-    lineHeight: 14 * 1.6,
   },
 });

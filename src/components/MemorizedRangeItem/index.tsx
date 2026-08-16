@@ -6,33 +6,14 @@ import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import {MemorizedRange} from '../../types/memorization.types';
 import Typography from '../shared/Typography';
+import VerseRangeRow from '../shared/VerseRangeRow';
 import {fetchAyahByKey} from '../../services/clients/quranCdnClient';
-import {toArabicNumerals} from '../../content';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
   surahNumber: number;
   onDelete?: () => void;
   showDeleteButton?: boolean;
-}
-
-function VerseBadge({label, tone}: {label: number; tone: 'from' | 'to'}) {
-  return (
-    <View
-      style={[
-        styles.verseBadge,
-        tone === 'from' ? styles.verseBadgeFrom : styles.verseBadgeTo,
-      ]}>
-      <Typography
-        family="cairo"
-        weight="bold"
-        style={
-          tone === 'from' ? styles.verseBadgeTextFrom : styles.verseBadgeTextTo
-        }>
-        {toArabicNumerals(label)}
-      </Typography>
-    </View>
-  );
 }
 
 function TrashIcon() {
@@ -74,33 +55,17 @@ export default function MemorizedRangeItem({
   return (
     <View style={styles.container}>
       <View style={styles.body}>
-        <View style={styles.rangeRow}>
-          <VerseBadge label={range.startVerse} tone="from" />
-          <Typography family="cairo" style={styles.rowLabel}>
-            {hasRange
-              ? t('memorization.surah.from')
-              : t('memorization.surah.single')}
-          </Typography>
-          <Typography
-            family="amiriQuran"
-            numberOfLines={1}
-            style={[styles.verseText, styles.verseTextFrom]}>
-            {startVerse}
-          </Typography>
-        </View>
+        <VerseRangeRow
+          verseNumber={range.startVerse}
+          tone={hasRange ? 'from' : 'single'}
+          text={startVerse}
+        />
         {hasRange ? (
-          <View style={styles.rangeRow}>
-            <VerseBadge label={range.endVerse} tone="to" />
-            <Typography family="cairo" style={styles.rowLabel}>
-              {t('memorization.surah.to')}
-            </Typography>
-            <Typography
-              family="amiriQuran"
-              numberOfLines={1}
-              style={[styles.verseText, styles.verseTextTo]}>
-              {endVerse}
-            </Typography>
-          </View>
+          <VerseRangeRow
+            verseNumber={range.endVerse}
+            tone="to"
+            text={endVerse}
+          />
         ) : null}
       </View>
       {showDeleteButton && onDelete ? (
@@ -135,49 +100,6 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 12,
     gap: 8,
-  },
-  rangeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  verseBadge: {
-    width: 20,
-    height: 20,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-  },
-  verseBadgeFrom: {
-    backgroundColor: 'rgba(196,154,60,0.12)',
-  },
-  verseBadgeTo: {
-    backgroundColor: colors.mutedTintSubtle,
-  },
-  verseBadgeTextFrom: {
-    color: colors.primary,
-    fontSize: 8,
-    lineHeight: 20,
-  },
-  verseBadgeTextTo: {
-    color: colors.mutedForeground,
-    fontSize: 8,
-    lineHeight: 20,
-  },
-  rowLabel: {
-    fontSize: 10,
-    color: colors.mutedForeground,
-  },
-  verseText: {
-    flex: 1,
-    fontSize: 12,
-  },
-  verseTextFrom: {
-    color: colors.dimmedForeground,
-  },
-  verseTextTo: {
-    color: colors.dimmedForeground,
   },
   footer: {
     paddingVertical: 8,
