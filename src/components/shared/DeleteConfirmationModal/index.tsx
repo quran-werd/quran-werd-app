@@ -28,7 +28,11 @@ export default function DeleteConfirmationModal({
   confirmLabel,
 }: DeleteConfirmationModalProps) {
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onCancel}>
       <Pressable style={styles.backdrop} onPress={onCancel}>
         <BlurView intensity={12} tint="dark" style={StyleSheet.absoluteFill} />
       </Pressable>
@@ -59,16 +63,20 @@ export default function DeleteConfirmationModal({
             style={styles.title}>
             {title}
           </Typography>
-          <Typography color="muted" align="center" style={styles.message}>
+          <Typography color="muted" align="center" variant="caption">
             {message}
           </Typography>
           <View style={styles.actions}>
-            <Pressable style={[styles.button, styles.cancelButton]} onPress={onCancel}>
+            <Pressable
+              style={[styles.button, styles.cancelButton]}
+              onPress={onCancel}>
               <Typography color="muted" weight="semibold" variant="label">
                 {cancelLabel}
               </Typography>
             </Pressable>
-            <Pressable style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
+            <Pressable
+              style={[styles.button, styles.confirmButton]}
+              onPress={onConfirm}>
               <Typography color="destructive" weight="semibold" variant="label">
                 {confirmLabel}
               </Typography>
@@ -107,6 +115,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(212,24,61,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
     marginBottom: 16,
   },
   title: {
@@ -123,7 +132,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderRadius: radius.md,
     alignItems: 'center',
   },

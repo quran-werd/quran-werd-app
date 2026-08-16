@@ -26,7 +26,9 @@ function VerseBadge({label, tone}: {label: number; tone: 'from' | 'to'}) {
       <Typography
         family="cairo"
         weight="bold"
-        style={tone === 'from' ? styles.verseBadgeTextFrom : styles.verseBadgeTextTo}>
+        style={
+          tone === 'from' ? styles.verseBadgeTextFrom : styles.verseBadgeTextTo
+        }>
         {toArabicNumerals(label)}
       </Typography>
     </View>
@@ -75,7 +77,9 @@ export default function MemorizedRangeItem({
         <View style={styles.rangeRow}>
           <VerseBadge label={range.startVerse} tone="from" />
           <Typography family="cairo" style={styles.rowLabel}>
-            {hasRange ? t('memorization.surah.from') : t('memorization.surah.single')}
+            {hasRange
+              ? t('memorization.surah.from')
+              : t('memorization.surah.single')}
           </Typography>
           <Typography
             family="amiriQuran"
@@ -108,7 +112,9 @@ export default function MemorizedRangeItem({
           </Typography>
           <Pressable style={styles.deleteButton} onPress={onDelete}>
             <TrashIcon />
-            <Typography style={styles.deleteLabel}>{t('common.delete')}</Typography>
+            <Typography style={styles.deleteLabel}>
+              {t('common.delete')}
+            </Typography>
           </Pressable>
         </View>
       ) : null}
@@ -136,11 +142,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   verseBadge: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'red',
   },
   verseBadgeFrom: {
     backgroundColor: 'rgba(196,154,60,0.12)',
@@ -150,11 +157,13 @@ const styles = StyleSheet.create({
   },
   verseBadgeTextFrom: {
     color: colors.primary,
-    fontSize: 10,
+    fontSize: 8,
+    lineHeight: 20,
   },
   verseBadgeTextTo: {
     color: colors.mutedForeground,
-    fontSize: 10,
+    fontSize: 8,
+    lineHeight: 20,
   },
   rowLabel: {
     fontSize: 10,
@@ -162,11 +171,10 @@ const styles = StyleSheet.create({
   },
   verseText: {
     flex: 1,
-    fontSize: 15,
-    lineHeight: 15 * 1.6,
+    fontSize: 12,
   },
   verseTextFrom: {
-    color: colors.foreground,
+    color: colors.dimmedForeground,
   },
   verseTextTo: {
     color: colors.dimmedForeground,
@@ -188,7 +196,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: radius.xxs,
     backgroundColor: colors.deleteButtonBg,

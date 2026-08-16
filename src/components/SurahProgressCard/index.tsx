@@ -53,7 +53,9 @@ export default function SurahProgressCard({
       style={[
         styles.container,
         {
-          borderColor: isExpanded ? colors.goldBorderStrong : 'rgba(196,154,60,0.14)',
+          borderColor: isExpanded
+            ? colors.goldBorderStrong
+            : 'rgba(196,154,60,0.14)',
         },
         isExpanded ? shadows.surahCardExpanded : shadows.surahCardDefault,
       ]}>
@@ -69,10 +71,15 @@ export default function SurahProgressCard({
         end={{x: 1, y: 0}}
         style={styles.hairline}
       />
-      <Pressable style={styles.header} onPress={() => setIsExpanded(prev => !prev)}>
+      <Pressable
+        style={styles.header}
+        onPress={() => setIsExpanded(prev => !prev)}>
         <SurahNumber surahNumber={surahNumber} />
         <View style={styles.surahInfo}>
-          <Typography variant="subtitle" family="amiriBold" style={styles.surahName}>
+          <Typography
+            variant="body"
+            family="amiriBold"
+            style={styles.surahName}>
             {surahInfo.arabic}
           </Typography>
           <Typography family="cairo" style={styles.surahMeta}>
@@ -94,7 +101,10 @@ export default function SurahProgressCard({
           }
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          style={[styles.progressFill, {width: `${Math.min(progressPercentage, 100)}%`}]}
+          style={[
+            styles.progressFill,
+            {width: `${Math.min(progressPercentage, 100)}%`},
+          ]}
         />
       </View>
 
@@ -143,11 +153,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
-  surahInfo: {flex: 1, gap: 2},
+  surahInfo: {flex: 1},
   surahName: {
     color: colors.foreground,
   },
