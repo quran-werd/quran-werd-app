@@ -9,13 +9,13 @@ import Button from '../../components/shared/Button';
 import {colors} from '../../styles/colors';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {
-  completeTodayWerd,
+  completeWerd,
   fetchTodayWerd,
-} from '../../features/RevisionLog/revisionLogAction';
+} from '../../features/RevisionSession/revisionSessionAction';
 import {
-  selectTodayWerd,
-  selectRevisionLogLoading,
-} from '../../features/RevisionLog/revisionLogSlice';
+  selectRevisionSessionWerd,
+  selectRevisionSessionLoading,
+} from '../../features/RevisionSession/revisionSessionSlice';
 import {getPageForVerse} from '../../content';
 
 export default function RevisionScreen() {
@@ -23,12 +23,11 @@ export default function RevisionScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
-  const today = useAppSelector(selectTodayWerd);
-  const loading = useAppSelector(selectRevisionLogLoading);
+  const werd = useAppSelector(selectRevisionSessionWerd);
+  const loading = useAppSelector(selectRevisionSessionLoading);
   const [currentPage, setCurrentPage] = useState<number | null>(null);
   const insets = useSafeAreaInsets();
 
-  const werd = today?.werd;
   const werdId = route.params?.werdId || werd?._id;
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function RevisionScreen() {
     if (!werdId) {
       return;
     }
-    await dispatch(completeTodayWerd(werdId)).unwrap();
+    await dispatch(completeWerd(werdId)).unwrap();
     navigation.navigate('Home');
   }, [dispatch, werdId, navigation]);
 

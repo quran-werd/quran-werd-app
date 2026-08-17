@@ -31,3 +31,25 @@ export const updatePlanCapacity = (dailyCapacity: number) =>
     method: 'PUT',
     data: {dailyCapacity},
   });
+
+export type WerdStatus = 'pending' | 'completed' | 'finished';
+
+export type TodayWerdResponse = {
+  werd: Werd | CompletedWerd | null;
+  status: WerdStatus;
+};
+
+export type CompleteWerdResponse = {
+  werd: Werd | CompletedWerd;
+  status: 'completed';
+  alreadyCompleted: boolean;
+};
+
+export const getTodayWerd = () =>
+  werdApiRequest<TodayWerdResponse>('/revision-plan/today');
+
+export const completeWerd = (werdId: string) =>
+  werdApiRequest<CompleteWerdResponse>('/revision-plan/complete', {
+    method: 'POST',
+    data: {werdId},
+  });

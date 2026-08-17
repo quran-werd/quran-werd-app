@@ -1,16 +1,19 @@
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from '../../../store/hooks';
-import {selectTodayWerd} from '../../../features/RevisionLog/revisionLogSlice';
+import {
+  selectRevisionSessionWerd,
+  selectRevisionSessionStatus,
+} from '../../../features/RevisionSession/revisionSessionSlice';
 import {getJuzNumber, getPageForVerse, toArabicNumerals} from '../../../content';
 
 export function useTodayWerdSummary() {
   const {i18n} = useTranslation();
-  const today = useAppSelector(selectTodayWerd);
+  const werd = useAppSelector(selectRevisionSessionWerd);
+  const status = useAppSelector(selectRevisionSessionStatus);
 
-  const werd = today?.werd;
-  const status = today?.status || 'pending';
   const isCompleted = status === 'completed';
+  const isFinished = status === 'finished';
 
   const ayahCount = werd ? werd.range.to - werd.range.from + 1 : 0;
   const juzNumber = werd ? getJuzNumber(werd.surah, werd.range.from) : 0;
@@ -26,6 +29,7 @@ export function useTodayWerdSummary() {
     werd,
     status,
     isCompleted,
+    isFinished,
     ayahCount,
     juzNumber,
     pageNumber,

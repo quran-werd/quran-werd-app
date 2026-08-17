@@ -3,7 +3,7 @@ import memorizationSlice from '../features/Memorization/memorizationSlice';
 import memorizationSelectionSlice from '../features/Memorization/memorizationSelectionSlice';
 import authSlice from '../features/Auth/authSlice';
 import revisionPlanSlice from '../features/RevisionPlan/revisionPlanSlice';
-import revisionLogSlice from '../features/RevisionLog/revisionLogSlice';
+import revisionSessionSlice from '../features/RevisionSession/revisionSessionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +11,7 @@ export const store = configureStore({
     memorizationSelection: memorizationSelectionSlice,
     auth: authSlice,
     revisionPlan: revisionPlanSlice,
-    revisionLog: revisionLogSlice,
+    revisionSession: revisionSessionSlice,
   },
 });
 

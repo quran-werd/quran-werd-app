@@ -38,8 +38,16 @@ function CheckIcon({
 export default function TodayWerdCard() {
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
-  const {werd, status, isCompleted, ayahCount, juzNumber, pageNumber, formatNumber} =
-    useTodayWerdSummary();
+  const {
+    werd,
+    status,
+    isCompleted,
+    isFinished,
+    ayahCount,
+    juzNumber,
+    pageNumber,
+    formatNumber,
+  } = useTodayWerdSummary();
 
   if (!werd) {
     return (
@@ -84,9 +92,11 @@ export default function TodayWerdCard() {
             entering={FadeIn.duration(250)}
             style={[
               styles.statusPill,
-              isCompleted ? styles.statusPillCompleted : styles.statusPillPending,
+              isCompleted || isFinished
+                ? styles.statusPillCompleted
+                : styles.statusPillPending,
             ]}>
-            {isCompleted ? (
+            {isCompleted || isFinished ? (
               <CheckIcon size={14} color={colors.primary} />
             ) : (
               <View style={styles.statusDot} />
@@ -96,9 +106,15 @@ export default function TodayWerdCard() {
               family="cairo"
               weight="semibold"
               style={
-                isCompleted ? styles.statusTextCompleted : styles.statusTextPending
+                isCompleted || isFinished
+                  ? styles.statusTextCompleted
+                  : styles.statusTextPending
               }>
-              {isCompleted ? t('home.statusCompleted') : t('home.statusPending')}
+              {isFinished
+                ? t('home.statusFinished')
+                : isCompleted
+                ? t('home.statusCompleted')
+                : t('home.statusPending')}
             </Typography>
           </Animated.View>
 
@@ -188,6 +204,29 @@ export default function TodayWerdCard() {
               style={styles.ctaHint}>
               {t('home.hint')}
             </Typography>
+          </Animated.View>
+        ) : isFinished ? (
+          <Animated.View
+            entering={FadeIn.duration(350)}
+            style={styles.completionWrap}>
+            <Animated.View
+              entering={ZoomIn.stiffness(200).damping(15).delay(100)}
+              style={styles.completionBadge}>
+              <CheckIcon size={28} color={colors.primary} />
+            </Animated.View>
+            <Typography variant="subtitle" family="amiriBold" align="center">
+              {t('home.finished')}
+            </Typography>
+            <Typography variant="body" family="cairo" color="muted" align="center">
+              {t('home.finishedSubMessage')}
+            </Typography>
+            <Button
+              title={t('home.viewPlan')}
+              onPress={() => navigation.navigate('Plan')}
+              variant="secondary"
+              fullWidth
+              style={styles.finishedButton}
+            />
           </Animated.View>
         ) : (
           <Animated.View
@@ -326,5 +365,8 @@ const styles = StyleSheet.create({
   },
   emptyButton: {
     marginTop: spacing[8],
+  },
+  finishedButton: {
+    marginTop: spacing[12],
   },
 });

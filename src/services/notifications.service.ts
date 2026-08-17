@@ -9,7 +9,7 @@ import notifee, {
 import i18n from '../i18n';
 import {navigationRef} from '../navigation/navigationRef';
 import {store} from '../store';
-import {fetchTodayWerd} from '../features/RevisionLog/revisionLogAction';
+import {fetchTodayWerd} from '../features/RevisionSession/revisionSessionAction';
 import {selectIsAuthenticated} from '../features/Auth/authSlice';
 import {getDevNotificationTimeOverride} from './config';
 import {

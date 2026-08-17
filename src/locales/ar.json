@@ -21,13 +21,16 @@
     "statusLabel": "الحالة",
     "statusPending": "لم يبدأ",
     "statusCompleted": "مكتمل",
-    "statusSkipped": "تم التخطي",
+    "statusFinished": "اكتملت الدورة",
     "startRevision": "ابدأ المراجعة",
     "hint": "يُستحسن التسميع في وقت الصباح",
     "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
     "addMemorization": "إضافة حفظ",
     "completed": "أتممت ورد اليوم",
     "completedSubMessage": "بارك الله فيك 🤲",
+    "finished": "أتممت هذه الدورة من المراجعة",
+    "finishedSubMessage": "تقبل الله منك 🤲",
+    "viewPlan": "عرض الخطة",
     "stats": {
       "ayahCount": "عدد الآيات",
       "juz": "الجزء",
@@ -35,8 +38,7 @@
     }
   },
   "revision": {
-    "complete": "إتمام",
-    "skip": "تخطي"
+    "complete": "إتمام"
   },
   "plan": {
     "title": "خطة المراجعة",

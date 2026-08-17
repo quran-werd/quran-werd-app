@@ -21,13 +21,16 @@
     "statusLabel": "Status",
     "statusPending": "Not started",
     "statusCompleted": "Completed",
-    "statusSkipped": "Skipped",
+    "statusFinished": "Cycle complete",
     "startRevision": "Start Revision",
     "hint": "Recitation is best done in the morning",
     "noWerd": "No werd today. Add memorization or generate a plan.",
     "addMemorization": "Add Memorization",
     "completed": "Today's werd is complete",
     "completedSubMessage": "May Allah bless you 🤲",
+    "finished": "You've completed this revision cycle",
+    "finishedSubMessage": "May Allah accept it from you 🤲",
+    "viewPlan": "View Plan",
     "stats": {
       "ayahCount": "Ayah count",
       "juz": "Juz",
@@ -35,8 +38,7 @@
     }
   },
   "revision": {
-    "complete": "Complete",
-    "skip": "Skip"
+    "complete": "Complete"
   },
   "plan": {
     "title": "Revision Plan",
