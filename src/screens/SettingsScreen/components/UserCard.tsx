@@ -44,15 +44,15 @@ export default function UserCard({user}: UserCardProps) {
             family="cairo"
             weight="bold"
             color="primary"
-            style={styles.avatarInitial}>
+            variant="subtitle">
             {initial}
           </Typography>
         </LinearGradient>
         <View style={styles.userTextWrap}>
-          <Typography family="cairo" weight="bold" style={styles.userName}>
+          <Typography family="cairo" weight="bold" variant="body">
             {user?.name}
           </Typography>
-          <Typography family="cairo" style={styles.userSublabel}>
+          <Typography family="cairo" color="muted" variant="caption">
             {t('settings.editProfile')}
           </Typography>
         </View>
@@ -82,18 +82,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarInitial: {
-    fontSize: 18,
-  },
   userTextWrap: {
     flex: 1,
-    gap: 2,
   },
   userName: {
     fontSize: 16,
   },
   userSublabel: {
     fontSize: 12,
-    color: 'rgba(138,154,184,0.6)',
+    color: '',
   },
 });
