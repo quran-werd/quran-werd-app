@@ -10,10 +10,10 @@ import {colors} from '../../styles/colors';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
 import {
   completeWerd,
-  fetchTodayWerd,
+  fetchCurrentWerd,
 } from '../../features/RevisionSession/revisionSessionAction';
 import {
-  selectRevisionSessionWerd,
+  selectRevisionSessionCurrent,
   selectRevisionSessionLoading,
 } from '../../features/RevisionSession/revisionSessionSlice';
 import {getPageForVerse} from '../../content';
@@ -23,18 +23,31 @@ export default function RevisionScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const dispatch = useAppDispatch();
-  const werd = useAppSelector(selectRevisionSessionWerd);
+  const current = useAppSelector(selectRevisionSessionCurrent);
   const loading = useAppSelector(selectRevisionSessionLoading);
   const [currentPage, setCurrentPage] = useState<number | null>(null);
   const insets = useSafeAreaInsets();
 
+  const paramWerd = useMemo(
+    () =>
+      route.params?.werdId && route.params?.surah && route.params?.range
+        ? {
+            _id: route.params.werdId as string,
+            surah: route.params.surah as number,
+            range: route.params.range as {from: number; to: number},
+          }
+        : null,
+    [route.params?.werdId, route.params?.surah, route.params?.range],
+  );
+
+  const werd = paramWerd ?? current?.werd ?? null;
   const werdId = route.params?.werdId || werd?._id;
 
   useEffect(() => {
-    if (!werd) {
-      dispatch(fetchTodayWerd());
+    if (!paramWerd && !current) {
+      dispatch(fetchCurrentWerd());
     }
-  }, [dispatch, werd]);
+  }, [dispatch, paramWerd, current]);
 
   const startPage = useMemo(
     () => (werd ? getPageForVerse(werd.surah, werd.range.from) : null),
@@ -57,6 +70,7 @@ export default function RevisionScreen() {
       return;
     }
     await dispatch(completeWerd(werdId)).unwrap();
+    await dispatch(fetchCurrentWerd()).unwrap();
     navigation.navigate('Home');
   }, [dispatch, werdId, navigation]);
 

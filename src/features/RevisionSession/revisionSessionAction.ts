@@ -1,20 +1,22 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {
-  getTodayWerd,
+  getCurrentWerd,
   completeWerd as completeWerdRequest,
-  TodayWerdResponse,
+  CurrentWerdResponse,
   CompleteWerdResponse,
 } from '../../services/revisionPlan.service';
 import {ApiError} from '../../types/api.types';
 
-export const fetchTodayWerd = createAsyncThunk<TodayWerdResponse>(
-  'revisionSession/fetchToday',
+export const fetchCurrentWerd = createAsyncThunk<CurrentWerdResponse>(
+  'revisionSession/fetchCurrent',
   async (_, {rejectWithValue}) => {
     try {
-      return await getTodayWerd();
+      return await getCurrentWerd();
     } catch (error) {
       const message =
-        error instanceof ApiError ? error.message : 'Failed to fetch today werd';
+        error instanceof ApiError
+          ? error.message
+          : 'Failed to fetch current werd';
       return rejectWithValue(message);
     }
   },

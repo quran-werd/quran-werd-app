@@ -32,11 +32,12 @@ export const updatePlanCapacity = (dailyCapacity: number) =>
     data: {dailyCapacity},
   });
 
-export type WerdStatus = 'pending' | 'completed' | 'finished';
+export type PlanStatus = 'active' | 'finished' | 'no-plan';
 
-export type TodayWerdResponse = {
-  werd: Werd | CompletedWerd | null;
-  status: WerdStatus;
+export type CurrentWerdResponse = {
+  current: {werd: Werd | CompletedWerd; isCompleted: boolean} | null;
+  next: Werd | null;
+  planStatus: PlanStatus;
 };
 
 export type CompleteWerdResponse = {
@@ -45,8 +46,8 @@ export type CompleteWerdResponse = {
   alreadyCompleted: boolean;
 };
 
-export const getTodayWerd = () =>
-  werdApiRequest<TodayWerdResponse>('/revision-plan/today');
+export const getCurrentWerd = () =>
+  werdApiRequest<CurrentWerdResponse>('/revision-plan/current');
 
 export const completeWerd = (werdId: string) =>
   werdApiRequest<CompleteWerdResponse>('/revision-plan/complete', {

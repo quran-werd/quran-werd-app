@@ -14,7 +14,7 @@
     "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
   },
   "home": {
-    "title": "Today's Werd",
+    "title": "Current Werd",
     "greeting": "Peace be upon you",
     "range": "Ayahs {{from}} — {{to}}",
     "status": "Status: {{status}}",
@@ -26,11 +26,13 @@
     "hint": "Recitation is best done in the morning",
     "noWerd": "No werd today. Add memorization or generate a plan.",
     "addMemorization": "Add Memorization",
-    "completed": "Today's werd is complete",
-    "completedSubMessage": "May Allah bless you 🤲",
-    "finished": "You've completed this revision cycle",
-    "finishedSubMessage": "May Allah accept it from you 🤲",
+    "completedMessage": "Today's werd is complete · may Allah bless you",
+    "finishedMessage": "You've completed this cycle · may Allah accept it",
     "viewPlan": "View Plan",
+    "nextWerdLabel": "Next Werd",
+    "planCompleteTitle": "Plan complete!",
+    "planCompleteMessage": "You've finished every werd in your plan · may Allah accept it",
+    "generateNewPlan": "Generate a New Plan",
     "stats": {
       "ayahCount": "Ayah count",
       "juz": "Juz",

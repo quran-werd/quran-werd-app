@@ -7,9 +7,8 @@ import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {colors} from '../../styles/colors';
 import {spacing} from '../../styles/spacing';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
-import {fetchTodayWerd} from '../../features/RevisionSession/revisionSessionAction';
+import {fetchCurrentWerd} from '../../features/RevisionSession/revisionSessionAction';
 import {selectRevisionSessionLoading} from '../../features/RevisionSession/revisionSessionSlice';
-import {fetchRevisionPlan} from '../../features/RevisionPlan/revisionPlanAction';
 import GreetingHeader from './components/GreetingHeader';
 import TodayWerdCard from './components/TodayWerdCard';
 
@@ -20,8 +19,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
 
   const loadHome = useCallback(() => {
-    dispatch(fetchTodayWerd());
-    dispatch(fetchRevisionPlan());
+    dispatch(fetchCurrentWerd());
   }, [dispatch]);
 
   useEffect(() => {

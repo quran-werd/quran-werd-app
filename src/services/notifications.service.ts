@@ -9,7 +9,7 @@ import notifee, {
 import i18n from '../i18n';
 import {navigationRef} from '../navigation/navigationRef';
 import {store} from '../store';
-import {fetchTodayWerd} from '../features/RevisionSession/revisionSessionAction';
+import {fetchCurrentWerd} from '../features/RevisionSession/revisionSessionAction';
 import {selectIsAuthenticated} from '../features/Auth/authSlice';
 import {getDevNotificationTimeOverride} from './config';
 import {
@@ -65,7 +65,7 @@ export const handleNotificationPress = async (notification?: Notification) => {
   }
 
   try {
-    await store.dispatch(fetchTodayWerd()).unwrap();
+    await store.dispatch(fetchCurrentWerd()).unwrap();
   } catch {
     // navigation still attempted; RevisionScreen will retry fetch
   }

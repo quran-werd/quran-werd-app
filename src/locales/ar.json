@@ -14,7 +14,7 @@
     "legalNote": "بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية"
   },
   "home": {
-    "title": "ورد اليوم",
+    "title": "الورد الحالي",
     "greeting": "السلام عليكم",
     "range": "الآيات {{from}} — {{to}}",
     "status": "الحالة: {{status}}",
@@ -26,11 +26,13 @@
     "hint": "يُستحسن التسميع في وقت الصباح",
     "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
     "addMemorization": "إضافة حفظ",
-    "completed": "أتممت ورد اليوم",
-    "completedSubMessage": "بارك الله فيك 🤲",
-    "finished": "أتممت هذه الدورة من المراجعة",
-    "finishedSubMessage": "تقبل الله منك 🤲",
+    "completedMessage": "أتممت ورد اليوم · بارك الله فيك",
+    "finishedMessage": "أتممت هذه الدورة · تقبل الله منك",
     "viewPlan": "عرض الخطة",
+    "nextWerdLabel": "الورد التالي",
+    "planCompleteTitle": "اكتملت الخطة!",
+    "planCompleteMessage": "أتممت جميع أوراد خطتك · تقبل الله منك",
+    "generateNewPlan": "إنشاء خطة جديدة",
     "stats": {
       "ayahCount": "عدد الآيات",
       "juz": "الجزء",

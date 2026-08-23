@@ -1,16 +1,22 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
-import type {Werd, CompletedWerd, WerdStatus} from '../../services/revisionPlan.service';
-import {fetchTodayWerd, completeWerd} from './revisionSessionAction';
+import type {
+  Werd,
+  CompletedWerd,
+  PlanStatus,
+} from '../../services/revisionPlan.service';
+import {fetchCurrentWerd, completeWerd} from './revisionSessionAction';
 
 const initialState: {
-  werd: Werd | CompletedWerd | null;
-  status: WerdStatus;
+  current: {werd: Werd | CompletedWerd; isCompleted: boolean} | null;
+  next: Werd | null;
+  planStatus: PlanStatus;
   isLoading: boolean;
   error: string | null;
 } = {
-  werd: null,
-  status: 'pending',
+  current: null,
+  next: null,
+  planStatus: 'no-plan',
   isLoading: false,
   error: null,
 };
@@ -21,16 +27,17 @@ export const revisionSessionSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(fetchTodayWerd.pending, state => {
+      .addCase(fetchCurrentWerd.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchTodayWerd.fulfilled, (state, action) => {
+      .addCase(fetchCurrentWerd.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.werd = action.payload.werd;
-        state.status = action.payload.status;
+        state.current = action.payload.current;
+        state.next = action.payload.next;
+        state.planStatus = action.payload.planStatus;
       })
-      .addCase(fetchTodayWerd.rejected, (state, action) => {
+      .addCase(fetchCurrentWerd.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })
@@ -40,8 +47,7 @@ export const revisionSessionSlice = createSlice({
       })
       .addCase(completeWerd.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.werd = action.payload.werd;
-        state.status = action.payload.status;
+        state.current = {werd: action.payload.werd, isCompleted: true};
       })
       .addCase(completeWerd.rejected, (state, action) => {
         state.isLoading = false;
@@ -50,10 +56,12 @@ export const revisionSessionSlice = createSlice({
   },
 });
 
-export const selectRevisionSessionWerd = (state: RootState) =>
-  state.revisionSession.werd;
-export const selectRevisionSessionStatus = (state: RootState) =>
-  state.revisionSession.status;
+export const selectRevisionSessionCurrent = (state: RootState) =>
+  state.revisionSession.current;
+export const selectRevisionSessionNext = (state: RootState) =>
+  state.revisionSession.next;
+export const selectRevisionSessionPlanStatus = (state: RootState) =>
+  state.revisionSession.planStatus;
 export const selectRevisionSessionLoading = (state: RootState) =>
   state.revisionSession.isLoading;
 export const selectRevisionSessionError = (state: RootState) =>
