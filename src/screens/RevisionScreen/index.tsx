@@ -3,7 +3,7 @@ import {StyleSheet, View, ActivityIndicator} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import Animated, {ZoomIn} from 'react-native-reanimated';
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import QuranPager from '../../components/QuranPager';
 import Button from '../../components/shared/Button';
 import {colors} from '../../styles/colors';
@@ -17,6 +17,11 @@ import {
   selectRevisionSessionLoading,
 } from '../../features/RevisionSession/revisionSessionSlice';
 import {getPageForVerse} from '../../content';
+
+const ACTIONS_VERTICAL_PADDING = 12;
+// Rough estimate of the CTA button's rendered height, used only until the
+// first onLayout measurement lands, so the wrapper never starts at 0.
+const ESTIMATED_BUTTON_HEIGHT = 56;
 
 export default function RevisionScreen() {
   const {t} = useTranslation();
@@ -65,6 +70,16 @@ export default function RevisionScreen() {
     return currentPage >= lastPage;
   }, [currentPage, lastPage]);
 
+  const actionsAnimatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: withTiming(hasReachedWard ? 1 : 0, {duration: 200}),
+    }),
+    [hasReachedWard],
+  );
+
+  const actionsWrapperHeight =
+    ESTIMATED_BUTTON_HEIGHT + ACTIONS_VERTICAL_PADDING * 2 + insets.bottom;
+
   const handleComplete = useCallback(async () => {
     if (!werdId) {
       return;
@@ -91,18 +106,23 @@ export default function RevisionScreen() {
         selectionMode={false}
         onPageChange={setCurrentPage}
       />
-      {hasReachedWard ? (
+      <View style={[styles.actionsWrapper, {height: actionsWrapperHeight}]}>
         <Animated.View
-          entering={ZoomIn.stiffness(260).damping(20)}
-          style={[styles.actions, {paddingBottom: 12 + insets.bottom}]}>
+          pointerEvents={hasReachedWard ? 'auto' : 'none'}
+          style={[
+            styles.actions,
+            {bottom: ACTIONS_VERTICAL_PADDING + insets.bottom},
+            actionsAnimatedStyle,
+          ]}>
           <Button
             title={t('revision.complete')}
             onPress={handleComplete}
             loading={loading}
+            disabled={!hasReachedWard}
             fullWidth
           />
         </Animated.View>
-      ) : null}
+      </View>
     </View>
   );
 }
@@ -115,8 +135,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.background,
   },
+  actionsWrapper: {
+    width: '100%',
+  },
   actions: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    position: 'absolute',
+    left: 16,
+    right: 16,
   },
 });
