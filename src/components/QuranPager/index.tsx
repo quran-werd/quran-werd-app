@@ -1,19 +1,25 @@
-import React, {useState, useRef, useCallback, useMemo} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
+import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
-import {Icon} from '@ui-kitten/components';
+import {useNavigation} from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
 import {
-  getJuzNumber,
-  getPageData,
-  getSurahNameArabic,
-  getSurahPages,
-  toArabicNumerals,
-  totalPagesCount,
-} from '../../content';
+  CloseIcon,
+  SearchIcon,
+  UndoIcon,
+  RedoIcon,
+  IconButton,
+} from './components/PagerIcons';
+import {getJuzNumber, toArabicNumerals, totalPagesCount} from '../../content';
+import {useMushafLocalStoreData} from '../../services/mushafLocalStore';
 import {colors} from '../../styles/colors';
-import type {Verse} from './types';
+import {radius} from '../../styles/radius';
+import Typography from '../shared/Typography';
+import Button from '../shared/Button';
+import Toast from '../shared/Toast';
+import type {Verse} from '../../types/quran-pager.types';
 import {LineSelectionProvider} from './context';
 import {MemorizationSelectionSheet} from './components/MemorizationSelectionSheet';
 import {JumpSheet} from './components/JumpSheet';
@@ -24,15 +30,11 @@ import {
   redo,
   selectCanUndo,
   selectCanRedo,
+  selectPendingStartVerse,
+  selectSelectedVerseKeys,
+  selectMergeEvent,
+  clearMergeEvent,
 } from '../../features/Memorization/memorizationSelectionSlice';
-
-// Icon wrapper components for UI Kitten
-const UndoIcon = (props: any) => (
-  <Icon {...props} name="corner-up-left-outline" />
-);
-const RedoIcon = (props: any) => (
-  <Icon {...props} name="corner-up-right-outline" />
-);
 
 interface QuranPagerProps {
   initialPage?: number;
@@ -70,6 +72,9 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   onSave,
 }) => {
   const {t} = useTranslation();
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const store = useMushafLocalStoreData();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [jumpSheetVisible, setJumpSheetVisible] = useState(false);
@@ -100,11 +105,11 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   );
 
   // Get chapter and Juz information for the current page
-  const currentPageData = getPageData(currentPage);
-  const firstSurah = currentPageData[0].surah;
-  const firstVerse = currentPageData[0].start;
+  const currentPageSurahRanges = store.pageMap[currentPage] ?? [];
+  const firstSurah = currentPageSurahRanges[0]?.surah ?? 1;
+  const firstVerse = currentPageSurahRanges[0]?.start ?? 1;
   const juzNumber = getJuzNumber(firstSurah, firstVerse);
-  const surahNameArabic = getSurahNameArabic(firstSurah);
+  const surahNameArabic = store.surahMap[firstSurah]?.nameArabic ?? '';
 
   // Check if a page should be rendered (within window)
   const shouldRenderPage = useCallback(
@@ -132,12 +137,24 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const dispatch = useAppDispatch();
   const canUndo = useAppSelector(selectCanUndo);
   const canRedo = useAppSelector(selectCanRedo);
+  const pendingStartVerse = useAppSelector(selectPendingStartVerse);
+  const selectedVerseKeys = useAppSelector(selectSelectedVerseKeys);
+  const mergeEvent = useAppSelector(selectMergeEvent);
   const handleUndo = useCallback(() => {
     dispatch(undo());
   }, [dispatch]);
   const handleRedo = useCallback(() => {
     dispatch(redo());
   }, [dispatch]);
+
+  // Auto-dismiss the merge-success toast (docs/design.md §4.4)
+  useEffect(() => {
+    if (!mergeEvent) {
+      return;
+    }
+    const timeout = setTimeout(() => dispatch(clearMergeEvent()), 2800);
+    return () => clearTimeout(timeout);
+  }, [mergeEvent, dispatch]);
 
   // Jump to page
   const handleJumpToPage = useCallback(
@@ -154,16 +171,15 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   // Jump to chapter
   const handleJumpToChapter = useCallback(
     (chapterNumber: number) => {
-      const surahPages = getSurahPages(chapterNumber);
-      if (surahPages.length > 0) {
-        const targetPage = surahPages[0]; // Jump to first page of the surah
+      const targetPage = store.surahMap[chapterNumber]?.startPage;
+      if (targetPage) {
         pagerRef.current?.setPage(targetPage - 1);
         setCurrentPage(targetPage);
         onPageChange?.(targetPage);
         setJumpSheetVisible(false);
       }
     },
-    [onPageChange],
+    [onPageChange, store],
   );
 
   const handleOpenJumpSheet = useCallback(() => {
@@ -181,7 +197,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     const pagesArray = [];
     for (let i = 1; i <= totalPagesCount; i++) {
       const isInWindow = shouldRenderPage(i);
-      const cachedData = pageCacheRef.current[i];
 
       pagesArray.push(
         <View key={i} style={styles.page}>
@@ -190,8 +205,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
               pageNumber={i}
               fontSize={fontSize}
               showPageFooter={true}
-              cachedVerses={cachedData?.verses}
-              cachedFontFamily={cachedData?.fontFamily}
               onDataLoaded={handlePageDataLoaded}
               selectionMode={selectionMode}
             />
@@ -206,22 +219,43 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   }, [fontSize, shouldRenderPage, handlePageDataLoaded, selectionMode]);
 
   const content = (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, !showHeader && {paddingTop: insets.top}]}>
       {showHeader && (
-        <View style={styles.header}>
-          {/* Left: Chapter name in Arabic */}
-          <View style={styles.headerLeft}>
-            <Text style={styles.surahNameArabic}>{surahNameArabic}</Text>
-          </View>
-
-          {/* Right: Juz and page number */}
-          <View style={styles.headerRight}>
-            <Text style={styles.juzText}>
-              {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
-            </Text>
-          </View>
+        <View style={[styles.topBar, {paddingTop: insets.top + 4}]}>
+          <IconButton onPress={() => navigation.goBack()} size={28}>
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            variant="label"
+            family="amiriBold"
+            style={styles.topBarSurah}>
+            {surahNameArabic}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="muted"
+            style={styles.topBarJuz}>
+            {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
+          </Typography>
         </View>
       )}
+
+      {selectionMode ? (
+        <View
+          style={[styles.notificationsLayer, {top: insets.top + 44}]}
+          pointerEvents="box-none">
+          <Toast
+            visible={!!pendingStartVerse && !mergeEvent}
+            variant="pending"
+            title={t('memorization.selection.pendingToastTitle')}
+          />
+          <Toast
+            visible={!!mergeEvent}
+            variant="merge"
+            title={t('memorization.selection.mergeToastTitle')}
+          />
+        </View>
+      ) : null}
 
       <View style={styles.pagerContainer}>
         <PagerView
@@ -237,7 +271,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
       </View>
 
       {/* Bottom sheet for selection mode */}
-      {selectionMode && (
+      {selectionMode && onSave && (
         <MemorizationSelectionSheet
           visible={bottomSheetVisible}
           onClose={() => setBottomSheetVisible(false)}
@@ -246,45 +280,37 @@ const QuranPager: React.FC<QuranPagerProps> = ({
         />
       )}
 
-      {/* Action buttons for selection mode */}
+      {/* Bottom toolbar for selection mode */}
       {selectionMode && (
-        <View style={styles.selectionActions}>
-          <Pressable
-            style={[styles.undoButton, !canUndo && styles.undoButtonDisabled]}
-            onPress={handleUndo}
-            disabled={!canUndo}>
-            <UndoIcon
-              style={[
-                styles.icon,
-                {tintColor: !canUndo ? colors.text.secondary : colors.white},
-              ]}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.redoButton, !canRedo && styles.redoButtonDisabled]}
-            onPress={handleRedo}
-            disabled={!canRedo}>
-            <RedoIcon
-              style={[
-                styles.icon,
-                {tintColor: !canRedo ? colors.text.secondary : colors.white},
-              ]}
-            />
-          </Pressable>
-          <Pressable style={styles.jumpButton} onPress={handleOpenJumpSheet}>
-            <Text style={styles.jumpButtonText}>
-              {t('memorization.selection.jump', 'Jump')}
-            </Text>
-          </Pressable>
-          <Pressable
-            style={styles.toggleSheetButton}
-            onPress={() => setBottomSheetVisible(!bottomSheetVisible)}>
-            <Text style={styles.toggleSheetButtonText}>
-              {bottomSheetVisible
-                ? t('memorization.selection.hideSelection')
-                : t('memorization.selection.showSelection')}
-            </Text>
-          </Pressable>
+        <View
+          style={[
+            styles.toolbar,
+            {paddingTop: 12, paddingBottom: 4 + insets.bottom},
+          ]}>
+          <View style={styles.toolbarActionsGroup}>
+            <IconButton onPress={handleOpenJumpSheet} size={34}>
+              <SearchIcon />
+            </IconButton>
+            <IconButton onPress={handleUndo} disabled={!canUndo} size={34}>
+              <UndoIcon disabled={!canUndo} />
+            </IconButton>
+            <IconButton onPress={handleRedo} disabled={!canRedo} size={34}>
+              <RedoIcon disabled={!canRedo} />
+            </IconButton>
+          </View>
+          <Button
+            title={
+              selectedVerseKeys.size > 0
+                ? t('memorization.selection.showSelectionCount', {
+                    count: selectedVerseKeys.size,
+                  })
+                : t('memorization.selection.showSelection')
+            }
+            onPress={() => setBottomSheetVisible(!bottomSheetVisible)}
+            variant={bottomSheetVisible ? 'ghostActive' : 'ghost'}
+            style={styles.toolbarShowSelectionButton}
+            textStyle={styles.toolbarShowSelectionText}
+          />
         </View>
       )}
 
@@ -297,7 +323,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           onJumpToPage={handleJumpToPage}
         />
       )}
-    </SafeAreaView>
+    </View>
   );
 
   // Wrap with line selection provider (verse selection is handled by Redux)
@@ -314,35 +340,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
+  topBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    backgroundColor: colors.background,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 4,
+    gap: 8,
   },
-  headerLeft: {
-    flex: 1,
-    alignItems: 'flex-start',
+  topBarSurah: {
+    marginStart: 4,
   },
-  headerRight: {
-    alignItems: 'flex-end',
+  topBarJuz: {
+    marginStart: 'auto',
   },
-  surahNameArabic: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.text.primary,
-    textAlign: 'left',
-  },
-  juzText: {
-    fontSize: 16,
-    fontWeight: '400',
-    color: colors.text.primary,
-    textAlign: 'right',
+  notificationsLayer: {
+    position: 'absolute',
+    top: 56,
+    left: 12,
+    right: 12,
+    zIndex: 40,
   },
   pagerContainer: {
     flex: 1,
+    marginHorizontal: 12,
+    marginVertical: 0,
+    overflow: 'hidden',
   },
   pagerView: {
     flex: 1,
@@ -352,88 +374,28 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.mushafPageTop,
+    borderRadius: radius.xl,
   },
-  selectionActions: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
+  toolbar: {
     flexDirection: 'row',
-    gap: 10,
-  },
-  undoButton: {
-    backgroundColor: colors.primary,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    paddingHorizontal: 16,
+    paddingVertical: 2,
+    gap: 8,
   },
-  undoButtonDisabled: {
-    backgroundColor: colors.border,
-    opacity: 0.5,
+  toolbarActionsGroup: {
+    flexDirection: 'row',
+    gap: 8,
   },
-  redoButton: {
-    backgroundColor: colors.primary,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+  toolbarShowSelectionButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minHeight: 34,
   },
-  redoButtonDisabled: {
-    backgroundColor: colors.border,
-    opacity: 0.5,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-  },
-  toggleSheetButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  toggleSheetButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  jumpButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 24,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  jumpButtonText: {
-    color: colors.white,
-    fontSize: 14,
-    fontWeight: '600',
+  toolbarShowSelectionText: {
+    fontSize: 13,
   },
 });
 

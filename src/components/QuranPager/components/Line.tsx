@@ -2,10 +2,11 @@ import React, {memo, useMemo} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
 import {colors} from '../../../styles/colors';
 import {Word} from '../../../types/quran-pager.types';
-import Basmalah from './Basmalah';
+import BasmalaSvg from '../../shared/icons/BasmalaSvg';
 import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
+import PendingDot from './PendingDot';
 import {useLineSelection} from '../context';
 import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
@@ -175,8 +176,9 @@ const Line: React.FC<LineProps> = ({
       return highlightedWordIds.has(word.id);
     }
     if (selectionMode) {
-      // In selection mode, highlight based on verse selection
-      return isVerseSelected(word.verseKey);
+      // In selection mode, the verse container already shows the highlight
+      // background, so words shouldn't double it up.
+      return false;
     }
     // If no specific word IDs provided, use line highlighting for words
     return isLineHighlighted;
@@ -187,7 +189,7 @@ const Line: React.FC<LineProps> = ({
       {isShowBismillah && (
         <View style={styles.bismillahContainer}>
           <SurahHeader name={chapterName} />
-          <Basmalah />
+          <BasmalaSvg color={colors.mushafBrownDeep} />
         </View>
       )}
       {selectionMode ? (
@@ -198,6 +200,9 @@ const Line: React.FC<LineProps> = ({
               ([verseKey, verseWords], verseIndex) => {
                 const verseSelected = isVerseSelected(verseKey);
                 const versePending = isVersePending(verseKey);
+                const isVerseStartLine = verseWords.some(
+                  word => word.position === 1,
+                );
 
                 return (
                   <Pressable
@@ -207,7 +212,11 @@ const Line: React.FC<LineProps> = ({
                       styles.verseContainer,
                       verseSelected && styles.verseHighlighted,
                       versePending && styles.versePending,
+                      versePending &&
+                        isVerseStartLine &&
+                        styles.versePendingStart,
                     ]}>
+                    {versePending && isVerseStartLine ? <PendingDot /> : null}
                     {verseWords.map((word, wordIndex) => {
                       const shouldHighlight = isWordHighlighted(word);
                       const isFirstWordInVerse = wordIndex === 0;
@@ -325,21 +334,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   lineHighlighted: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.rangeHighlight,
   },
   verseContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    paddingVertical: 2,
-    paddingHorizontal: 2,
+    alignItems: 'center',
+    paddingVertical: 1,
+    paddingHorizontal: 4,
     borderRadius: 4,
   },
   verseHighlighted: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.rangeHighlight,
   },
   versePending: {
-    backgroundColor: colors.secondary,
-    opacity: 0.5,
+    backgroundColor: 'rgba(196,154,60,0.08)',
+  },
+  versePendingStart: {
+    borderRightWidth: 3,
+    borderRightColor: 'rgba(196,154,60,0.7)',
   },
   wordsContainer: {
     flexDirection: 'row',
@@ -349,12 +362,6 @@ const styles = StyleSheet.create({
   bismillahContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  chapterName: {
-    fontFamily: 'surahnames',
-    fontSize: 20,
-    color: colors.text.primary,
-    backgroundColor: colors.border,
   },
 });
 

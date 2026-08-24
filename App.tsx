@@ -6,10 +6,22 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {DarkTheme, NavigationContainer, Theme} from '@react-navigation/native';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {StatusBar} from 'expo-status-bar';
 import notifee from '@notifee/react-native';
+import {useFonts} from 'expo-font';
+import {
+  Cairo_300Light,
+  Cairo_400Regular,
+  Cairo_600SemiBold,
+  Cairo_700Bold,
+} from '@expo-google-fonts/cairo';
+import {Amiri_400Regular, Amiri_700Bold} from '@expo-google-fonts/amiri';
+import {AmiriQuran_400Regular} from '@expo-google-fonts/amiri-quran';
 import RootNavigator, {linking} from './src/navigation';
+import MushafLocalStoreGate from './src/components/MushafLocalStoreGate';
 import {navigationRef} from './src/navigation/navigationRef';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
@@ -29,10 +41,20 @@ import {
   handleNotificationPress,
   scheduleDailyWerdNotification,
 } from './src/services/notifications.service';
+import {useStatusBarStyle} from './src/hooks/useStatusBarStyle';
 
 function AppContent(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(true);
+  const [fontsLoaded, fontError] = useFonts({
+    Cairo_300Light,
+    Cairo_400Regular,
+    Cairo_600SemiBold,
+    Cairo_700Bold,
+    Amiri_400Regular,
+    Amiri_700Bold,
+    AmiriQuran_400Regular,
+  });
 
   useEffect(() => {
     configureRTL();
@@ -71,7 +93,7 @@ function AppContent(): React.JSX.Element {
     return notifee.onForegroundEvent(handleNotificationEvent);
   }, [isLoading]);
 
-  if (isLoading) {
+  if (isLoading || (!fontsLoaded && !fontError)) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -79,19 +101,40 @@ function AppContent(): React.JSX.Element {
     );
   }
 
-  return <RootNavigator />;
+  return (
+    <MushafLocalStoreGate>
+      <RootNavigator />
+    </MushafLocalStoreGate>
+  );
 }
 
+const navigationTheme: Theme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: colors.background,
+    card: colors.background,
+  },
+};
+
 function App(): React.JSX.Element {
+  const statusBarStyle = useStatusBarStyle();
+
   return (
-    <Provider store={store}>
-      <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider {...eva} theme={eva.light}>
-        <NavigationContainer ref={navigationRef} linking={linking as any}>
-          <AppContent />
-        </NavigationContainer>
-      </ApplicationProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <StatusBar style={statusBarStyle} translucent />
+      <Provider store={store}>
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider {...eva} theme={eva.light}>
+          <NavigationContainer
+            ref={navigationRef}
+            linking={linking as any}
+            theme={navigationTheme}>
+            <AppContent />
+          </NavigationContainer>
+        </ApplicationProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 

@@ -12,6 +12,7 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   ['expo-font', {fonts: ['./assets/fonts/qcf/v1']}],
   '@react-native-community/datetimepicker',
   ['expo-build-properties', {android: {usesCleartextTraffic: true}}],
+  './plugins/withNotifeeAndroidMavenRepo',
 ];
 
 if (iosUrlScheme) {
@@ -47,6 +48,7 @@ const config: ExpoConfig = {
   android: {
     package: 'com.quranwerd',
     allowBackup: false,
+    edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: './assets/icon.png',
       backgroundColor: '#0C1220',
@@ -58,6 +60,10 @@ const config: ExpoConfig = {
     googleIosClientId: GOOGLE_IOS_CLIENT_ID,
     googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID,
     devNotificationTime: process.env.DEV_NOTIFICATION_TIME,
+    authMockLogin: process.env.AUTH_MOCK_LOGIN,
+    authMockEmail: process.env.AUTH_MOCK_EMAIL,
+    authMockName: process.env.AUTH_MOCK_NAME,
+    authMockGoogleId: process.env.AUTH_MOCK_GOOGLE_ID,
     eas: {
       projectId: 'e5d14982-53b5-4aff-91e8-1997cef3235d',
     },

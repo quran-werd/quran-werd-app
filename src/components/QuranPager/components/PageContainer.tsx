@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import React, {useEffect, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
 import {Verse} from '../../../types/quran-pager.types';
-import {getPageVerses} from '../utils/transformPageData';
+import {groupMushafWordsIntoVerses} from '../utils/mushafWordsToVerses';
 import {getPageQCFontName} from '../../../content';
+import {useMushafLocalStoreData} from '../../../services/mushafLocalStore';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
+import {shadows} from '../../../styles/shadows';
 import Page from './Page';
 
 interface PageContainerProps {
   pageNumber: number;
   fontSize?: number;
   showPageFooter?: boolean;
-  cachedVerses?: Verse[];
-  cachedFontFamily?: string;
   onDataLoaded?: (
     pageNumber: number,
     verses: Verse[],
@@ -21,88 +23,55 @@ interface PageContainerProps {
 }
 
 /**
- * PageContainer - Fetches and prepares verse data for a single page
- * Matches quran.com-frontend-next ReadingView/PageContainer.tsx
- *
- * This component handles:
- * - Fetching data from Quran.com API
- * - Transforming API response into verse/word structure
- * - Providing the correct font for the page
- * - Showing loading states
- * - Uses REAL line numbers from API (not simulated)
+ * PageContainer - Prepares verse data for a single page from the Mushaf
+ * Local Store. The store is fully built and in memory by the time this
+ * renders (QuranPager only mounts under MushafLocalStoreGate once ready),
+ * so this is a synchronous lookup, not a fetch.
  */
 export const PageContainer: React.FC<PageContainerProps> = ({
   pageNumber,
   fontSize,
   showPageFooter = true,
-  cachedVerses,
-  cachedFontFamily,
   onDataLoaded,
   selectionMode = false,
 }) => {
-  const [verses, setVerses] = useState<Verse[]>(cachedVerses || []);
-  const [isLoading, setIsLoading] = useState(!cachedVerses);
-  const [fontFamily, setFontFamily] = useState<string>(cachedFontFamily || '');
+  const store = useMushafLocalStoreData();
 
+  const fontFamily = useMemo(() => getPageQCFontName(pageNumber), [pageNumber]);
+
+  const verses = useMemo(
+    () => groupMushafWordsIntoVerses(store.pages[pageNumber] ?? []),
+    [store, pageNumber],
+  );
+
+  // Notify the parent's page cache, matching the previous fetch-based
+  // contract so callers (QuranPager's windowing/allVerses cache) don't need
+  // to change.
   useEffect(() => {
-    // If we have cached data, use it and don't fetch
-    if (cachedVerses && cachedFontFamily) {
-      setVerses(cachedVerses);
-      setFontFamily(cachedFontFamily);
-      setIsLoading(false);
-      return;
-    }
-
-    const loadPageData = async () => {
-      try {
-        setIsLoading(true);
-
-        // Get the font name for this page
-        const pageFontName = getPageQCFontName(pageNumber);
-        setFontFamily(pageFontName);
-
-        // Fetch verses from API
-        const pageVerses = await getPageVerses(pageNumber);
-        setVerses(pageVerses);
-
-        // Cache the data for future use
-        onDataLoaded?.(pageNumber, pageVerses, pageFontName);
-      } catch (error) {
-        console.error(`Failed to load page ${pageNumber}:`, error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPageData();
-  }, [pageNumber, cachedVerses, cachedFontFamily, onDataLoaded]);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#666" />
-      </View>
-    );
-  }
+    onDataLoaded?.(pageNumber, verses, fontFamily);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageNumber, verses, fontFamily]);
 
   return (
-    <Page
-      verses={verses}
-      pageNumber={pageNumber}
-      fontFamily={fontFamily}
-      fontSize={fontSize}
-      showPageFooter={showPageFooter}
-      selectionMode={selectionMode}
-    />
+    <LinearGradient
+      colors={[colors.mushafPageTop, colors.mushafPageBottom]}
+      style={[styles.card, shadows.mushafPage]}>
+      <Page
+        verses={verses}
+        pageNumber={pageNumber}
+        fontFamily={fontFamily}
+        fontSize={fontSize}
+        showPageFooter={showPageFooter}
+        selectionMode={selectionMode}
+      />
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  card: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    paddingHorizontal: 16,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
   },
 });

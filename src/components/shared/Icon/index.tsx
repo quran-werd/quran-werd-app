@@ -17,7 +17,7 @@ export default function Icon({
   name,
   children,
   size = 32,
-  backgroundColor = colors.light,
+  backgroundColor = colors.mutedTintSubtle,
   color = colors.primary,
   style,
   circular = false,

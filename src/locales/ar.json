@@ -6,58 +6,85 @@
     "settings": "الإعدادات"
   },
   "auth": {
-    "title": "مرحباً",
-    "subtitle": "سجّل الدخول للمتابعة",
-    "googleSignIn": "تسجيل الدخول عبر Google"
+    "appName": "وِرد",
+    "subtitle": "رافقك في رحلة حفظ القرآن ومراجعته يوماً بيوم",
+    "journeyLabel": "ابدأ رحلتك",
+    "googleSignIn": "تسجيل الدخول بحساب Google",
+    "mockSignIn": "المتابعة كمستخدم تجريبي",
+    "legalNote": "بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية"
   },
   "home": {
-    "title": "ورد اليوم",
-    "subtitle": "مراجعة يومية للحفظ",
-    "range": "من آية {{from}} إلى {{to}}",
+    "title": "الورد الحالي",
+    "greeting": "السلام عليكم",
+    "range": "الآيات {{from}} — {{to}}",
     "status": "الحالة: {{status}}",
-    "statusPending": "قيد الانتظار",
+    "statusLabel": "الحالة",
+    "statusPending": "لم يبدأ",
     "statusCompleted": "مكتمل",
-    "statusSkipped": "تم التخطي",
-    "startRevision": "بدء المراجعة",
+    "statusFinished": "اكتملت الدورة",
+    "startRevision": "ابدأ المراجعة",
+    "hint": "يُستحسن التسميع في وقت الصباح",
     "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
     "addMemorization": "إضافة حفظ",
-    "nextWerdTitle": "الورد القادم",
-    "nextWerdSubtitle": "في دورة خطتك",
-    "reminderTime": "وقت التذكير: {{time}}"
+    "completedMessage": "أتممت ورد اليوم · بارك الله فيك",
+    "finishedMessage": "أتممت هذه الدورة · تقبل الله منك",
+    "viewPlan": "عرض الخطة",
+    "nextWerdLabel": "الورد التالي",
+    "planCompleteTitle": "اكتملت الخطة!",
+    "planCompleteMessage": "أتممت جميع أوراد خطتك · تقبل الله منك",
+    "generateNewPlan": "إنشاء خطة جديدة",
+    "stats": {
+      "ayahCount": "عدد الآيات",
+      "juz": "الجزء",
+      "page": "الصفحة"
+    }
   },
   "revision": {
-    "complete": "إتمام",
-    "skip": "تخطي"
+    "complete": "إتمام"
   },
   "plan": {
     "title": "خطة المراجعة",
-    "subtitle": "أوردتك اليومية",
-    "capacity": "القدرة اليومية (آيات)",
-    "generate": "إنشاء الخطة",
-    "updateCapacity": "تحديث القدرة",
-    "empty": "لا توجد أوردة. أنشئ خطة بعد إضافة حفظ.",
-    "werdOrder": "الورد {{order}}"
+    "werdCount": "{{n}} ورد",
+    "generate": "توليد الخطة",
+    "updateCapacity": "تحديث الخطة",
+    "updated": "✓ تم",
+    "emptyTitle": "لم يتم توليد خطة بعد",
+    "emptyBodyLine1": "أضف محفوظاتك أولاً من شاشة المحفوظات",
+    "emptyBodyLine2": "ثم قم بتوليد خطة المراجعة",
+    "werdOrder": "الورد {{order}}",
+    "today": "اليوم",
+    "modeDaily": "صفحة / يوم",
+    "modeWeekly": "صفحة / أسبوع",
+    "dayLabels": ["س", "ح", "ن", "ث", "ر", "خ", "ج"],
+    "sectionLabel": "قائمة الأوراد",
+    "completedSectionLabel": "مكتمل",
+    "verseRange": "الآيات {{from}} – {{to}} · {{n}} آية",
+    "summaryDays": "ستُنهي كل محفوظاتك خلال {{n}} يوم بهذه الخطة"
   },
   "quran": {
-    "juz": "الجزء {{number}}"
+    "juz": "الجزء {{number}}",
+    "ayahCountShort": "{{value}} آية",
+    "pageShort": "ص {{page}}"
+  },
+  "mushafStore": {
+    "title": "جاري تجهيز المصحف",
+    "downloading": "جاري تحميل بيانات الصفحات… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} صفحة",
+    "error": "تعذّر تحميل بيانات المصحف. تحقق من الاتصال وحاول مرة أخرى."
   },
   "memorization": {
+    "screenTitle": "محفوظاتي",
+    "addButton": "إضافة",
+    "subtitle": "{{verses}} آية · {{surahs}} سورة",
+    "emptyTitle": "لم تُضِف محفوظاتك بعد",
+    "emptyBodyLine1": "ابدأ بتحديد الآيات التي تحفظها",
+    "emptyBodyLine2": "مباشرة من صفحات المصحف",
+    "emptyCta": "أضف أول محفوظاتك",
     "delete": {
       "title": "حذف النطاق",
-      "message": "هل أنت متأكد من حذف هذا النطاق؟"
-    },
-    "progress": {
-      "title": "تقدم الحفظ",
-      "subtitle": "رحلة حفظ القرآن الكريم",
-      "totalMemorizedVerses": "من {{total}} آية محفوظة {{memorized}}",
-      "memorizedVersesValue": "{{count}} آية محفوظة",
-      "completedSurahs": "سورة مكتملة",
-      "inProgressSurahs": "قيد الحفظ",
-      "recentActivity": "النشاط الأخير",
-      "lastReviewToday": "آخر مراجعة اليوم",
-      "tapForDetails": "انقر على السور لرؤية التفاصيل",
-      "surahDetails": "تفصيل السور",
-      "addRange": "إضافة نطاقات حفظ"
+      "messagePrefix": "سيُحذف نطاق الآيات",
+      "messageSuffix": "من سورة {{surah}} بشكل نهائي",
+      "cancel": "تراجع"
     },
     "surah": {
       "verseCount": "آية {{memorized}} / {{total}}",
@@ -69,16 +96,19 @@
       "verseRange": "آية {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} كلمة",
       "verseCountShort": "{{count}} آية",
-      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ",
-      "from": "من",
-      "to": "إلى"
+      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ"
     },
     "selection": {
       "title": "نطاقات الحفظ",
       "emptyState": "لم يتم تحديد نطاقات. انقر على الآيات لإنشاء نطاقات.",
       "summary": "{{rangeCount}} نطاق • {{verseCount}} آية • {{wordCount}} كلمة",
       "showSelection": "إظهار التحديد",
+      "showSelectionCount": "إظهار التحديد ({{count}})",
       "hideSelection": "إخفاء التحديد",
+      "pendingToastTitle": "حدد نهاية النطاق",
+      "mergeToastTitle": "تم دمج النطاقات",
+      "saveButton": "حفظ المحفوظات",
+      "totalSummary": "{{rangeCount}} نطاق • {{verseCount}} آية",
       "jump": "انتقل",
       "jumpTitle": "الانتقال إلى صفحة أو سورة",
       "jumpToPage": "الانتقال إلى صفحة",
@@ -91,6 +121,9 @@
     }
   },
   "common": {
+    "from": "من",
+    "to": "إلى",
+    "single": "الآية",
     "loading": "جاري التحميل...",
     "error": "حدث خطأ",
     "retry": "إعادة المحاولة",
@@ -119,10 +152,25 @@
   },
   "settings": {
     "title": "الإعدادات",
-    "subtitle": "تخصيص تذكير وردك اليومي",
-    "notificationTime": "وقت التذكير اليومي",
-    "save": "حفظ",
-    "saved": "تم حفظ وقت التذكير",
-    "devOverride": "وضع التطوير: وقت التذكير مُعرَّف في .env ({{time}})"
+    "editProfile": "تعديل الملف الشخصي",
+    "themeLabel": "الثيم",
+    "notificationTime": "وقت التنبيه",
+    "notificationsEnabled": "تنبيه المراجعة اليومية",
+    "devOverride": "وضع التطوير: وقت التذكير مُعرَّف في .env ({{time}})",
+    "sections": {
+      "customization": "التخصيص",
+      "notifications": "التنبيهات",
+      "app": "التطبيق"
+    },
+    "theme": {
+      "light": "الوضع الفاتح",
+      "dark": "الوضع الداكن"
+    },
+    "app": {
+      "rate": "تقييم التطبيق",
+      "contact": "تواصل معنا",
+      "versionLabel": "نسخة التطبيق"
+    },
+    "signOut": "تسجيل الخروج"
   }
 }

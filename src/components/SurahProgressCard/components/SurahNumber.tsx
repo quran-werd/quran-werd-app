@@ -1,13 +1,17 @@
 import React from 'react';
-import {Badge, Typography} from '../../shared';
-import {colors} from '../../../styles/colors';
 import {StyleSheet} from 'react-native';
+import {Badge, Typography} from '../../shared';
+import {radius} from '../../../styles/radius';
+import {toArabicNumerals} from '../../../content';
 
 export default function SurahNumber({surahNumber}: {surahNumber: number}) {
   return (
-    <Badge variant="light" size="medium" style={styles.surahNumber}>
-      <Typography variant="small" weight="semibold" color="primary">
-        {surahNumber}
+    <Badge
+      size={28}
+      backgroundColor="rgba(196,154,60,0.1)"
+      style={styles.surahNumber}>
+      <Typography family="cairo" color="primary" variant="caption">
+        {toArabicNumerals(surahNumber)}
       </Typography>
     </Badge>
   );
@@ -15,8 +19,6 @@ export default function SurahNumber({surahNumber}: {surahNumber: number}) {
 
 const styles = StyleSheet.create({
   surahNumber: {
-    backgroundColor: colors.background,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: radius.full,
   },
 });

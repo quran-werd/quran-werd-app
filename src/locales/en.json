@@ -6,58 +6,85 @@
     "settings": "Settings"
   },
   "auth": {
-    "title": "Welcome",
-    "subtitle": "Sign in to continue",
-    "googleSignIn": "Sign in with Google"
+    "appName": "Werd",
+    "subtitle": "Your companion on the journey of memorizing and reviewing the Quran, day by day",
+    "journeyLabel": "Begin your journey",
+    "googleSignIn": "Sign in with Google",
+    "mockSignIn": "Continue as Dev User",
+    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
   },
   "home": {
-    "title": "Today's Werd",
-    "subtitle": "Daily revision",
-    "range": "Ayah {{from}} to {{to}}",
+    "title": "Current Werd",
+    "greeting": "Peace be upon you",
+    "range": "Ayahs {{from}} — {{to}}",
     "status": "Status: {{status}}",
-    "statusPending": "Pending",
+    "statusLabel": "Status",
+    "statusPending": "Not started",
     "statusCompleted": "Completed",
-    "statusSkipped": "Skipped",
+    "statusFinished": "Cycle complete",
     "startRevision": "Start Revision",
+    "hint": "Recitation is best done in the morning",
     "noWerd": "No werd today. Add memorization or generate a plan.",
     "addMemorization": "Add Memorization",
-    "nextWerdTitle": "Next werd",
-    "nextWerdSubtitle": "Next in your plan",
-    "reminderTime": "Daily reminder: {{time}}"
+    "completedMessage": "Today's werd is complete · may Allah bless you",
+    "finishedMessage": "You've completed this cycle · may Allah accept it",
+    "viewPlan": "View Plan",
+    "nextWerdLabel": "Next Werd",
+    "planCompleteTitle": "Plan complete!",
+    "planCompleteMessage": "You've finished every werd in your plan · may Allah accept it",
+    "generateNewPlan": "Generate a New Plan",
+    "stats": {
+      "ayahCount": "Ayah count",
+      "juz": "Juz",
+      "page": "Page"
+    }
   },
   "revision": {
-    "complete": "Complete",
-    "skip": "Skip"
+    "complete": "Complete"
   },
   "plan": {
     "title": "Revision Plan",
-    "subtitle": "Your daily awrad",
-    "capacity": "Daily capacity (ayahs)",
+    "werdCount": "{{n}} awrad",
     "generate": "Generate Plan",
-    "updateCapacity": "Update Capacity",
-    "empty": "No awrad yet. Generate a plan after adding memorization.",
-    "werdOrder": "Werd {{order}}"
+    "updateCapacity": "Update Plan",
+    "updated": "✓ Saved",
+    "emptyTitle": "No plan generated yet",
+    "emptyBodyLine1": "Add your memorizations first from the Memorizations screen",
+    "emptyBodyLine2": "then generate a revision plan",
+    "werdOrder": "Werd {{order}}",
+    "today": "Today",
+    "modeDaily": "pages / day",
+    "modeWeekly": "pages / week",
+    "dayLabels": ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"],
+    "sectionLabel": "Werd List",
+    "completedSectionLabel": "Completed",
+    "verseRange": "Ayahs {{from}} – {{to}} · {{n}} ayahs",
+    "summaryDays": "You'll finish all your memorization in {{n}} days with this plan"
   },
   "quran": {
-    "juz": "Juz {{number}}"
+    "juz": "Juz {{number}}",
+    "ayahCountShort": "{{value}} ayahs",
+    "pageShort": "p. {{page}}"
+  },
+  "mushafStore": {
+    "title": "Preparing the Mushaf",
+    "downloading": "Downloading page data… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} pages",
+    "error": "Couldn't download the Mushaf data. Check your connection and try again."
   },
   "memorization": {
+    "screenTitle": "My Memorizations",
+    "addButton": "Add",
+    "subtitle": "{{verses}} ayahs · {{surahs}} surahs",
+    "emptyTitle": "You haven't added memorizations yet",
+    "emptyBodyLine1": "Start by selecting the ayahs you memorize",
+    "emptyBodyLine2": "directly from the Mushaf pages",
+    "emptyCta": "Add your first memorization",
     "delete": {
       "title": "Delete Range",
-      "message": "Are you sure you want to delete this range?"
-    },
-    "progress": {
-      "title": "Memorization Progress",
-      "subtitle": "Quran Memorization Journey",
-      "totalMemorizedVerses": "{{memorized}} out of {{total}} verses memorized",
-      "memorizedVersesValue": "{{count}} verses memorized",
-      "completedSurahs": "Completed Surahs",
-      "inProgressSurahs": "In Progress",
-      "recentActivity": "Recent Activity",
-      "lastReviewToday": "Last review today",
-      "tapForDetails": "Tap on surahs to see details",
-      "surahDetails": "Surah Details",
-      "addRange": "Add Memorization Range"
+      "messagePrefix": "The verse range",
+      "messageSuffix": "from Surah {{surah}} will be permanently deleted",
+      "cancel": "Undo"
     },
     "surah": {
       "verseCount": "{{memorized}} / {{total}} verses",
@@ -69,16 +96,19 @@
       "verseRange": "Verses {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} words",
       "verseCountShort": "{{count}} verses",
-      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
-      "from": "From",
-      "to": "To"
+      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful"
     },
     "selection": {
       "title": "Memorization Ranges",
       "emptyState": "No ranges selected. Tap verses to create ranges.",
       "summary": "{{rangeCount}} range{{rangeCount, plural, one {} other {s}}} • {{verseCount}} verses • {{wordCount}} words",
       "showSelection": "Show Selection",
+      "showSelectionCount": "Show Selection ({{count}})",
       "hideSelection": "Hide Selection",
+      "pendingToastTitle": "Select the end of the range",
+      "mergeToastTitle": "Ranges merged",
+      "saveButton": "Save Memorization",
+      "totalSummary": "{{rangeCount}} ranges • {{verseCount}} verses",
       "jump": "Jump",
       "jumpTitle": "Jump to Page or Chapter",
       "jumpToPage": "Jump to Page",
@@ -91,6 +121,9 @@
     }
   },
   "common": {
+    "from": "From",
+    "to": "To",
+    "single": "Ayah",
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",
@@ -119,11 +152,26 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Customize your daily werd reminder",
-    "notificationTime": "Daily reminder time",
-    "save": "Save",
-    "saved": "Reminder time saved",
-    "devOverride": "Dev mode: reminder time is set in .env ({{time}})"
+    "editProfile": "Edit profile",
+    "themeLabel": "Theme",
+    "notificationTime": "Reminder time",
+    "notificationsEnabled": "Daily revision reminder",
+    "devOverride": "Dev mode: reminder time is set in .env ({{time}})",
+    "sections": {
+      "customization": "Customization",
+      "notifications": "Notifications",
+      "app": "App"
+    },
+    "theme": {
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "app": {
+      "rate": "Rate the app",
+      "contact": "Contact us",
+      "versionLabel": "App version"
+    },
+    "signOut": "Sign out"
   },
   "login": {
     "title": "Welcome",

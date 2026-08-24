@@ -1,13 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {Icon, Button} from '@ui-kitten/components';
+import Svg, {Path} from 'react-native-svg';
 import {colors} from '../../styles/colors';
+import {radius} from '../../styles/radius';
 import {MemorizedRange} from '../../types/memorization.types';
-import Card from '../shared/Card';
 import Typography from '../shared/Typography';
-import Badge from '../shared/Badge';
-import {formatNumberWithCommas} from '../QuranPager/utils/verseSelection.utils';
+import VerseRangeRow from '../shared/VerseRangeRow';
 import {fetchAyahByKey} from '../../services/clients/quranCdnClient';
 
 interface MemorizedRangeItemProps {
@@ -17,7 +16,19 @@ interface MemorizedRangeItemProps {
   showDeleteButton?: boolean;
 }
 
-const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
+function TrashIcon() {
+  return (
+    <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-.8 12.1a2 2 0 0 1-2 1.9H9.8a2 2 0 0 1-2-1.9L7 7"
+        stroke={colors.destructive}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
 
 export default function MemorizedRangeItem({
   range,
@@ -27,143 +38,94 @@ export default function MemorizedRangeItem({
 }: MemorizedRangeItemProps) {
   const [startVerse, setStartVerse] = useState<string | null>(null);
   const [endVerse, setEndVerse] = useState<string | null>(null);
+  const hasRange = range.startVerse !== range.endVerse;
 
   const {t} = useTranslation();
 
-  const handleDelete = () => {
-    onDelete?.();
-  };
-
   useEffect(() => {
     fetchAyahByKey(surahNumber, range.startVerse).then(setStartVerse);
-  }, [range.startVerse]);
+  }, [surahNumber, range.startVerse]);
 
   useEffect(() => {
-    fetchAyahByKey(surahNumber, range.endVerse).then(setEndVerse);
-  }, [range.endVerse]);
+    if (hasRange) {
+      fetchAyahByKey(surahNumber, range.endVerse).then(setEndVerse);
+    }
+  }, [surahNumber, range.endVerse, hasRange]);
 
   return (
-    <Card style={styles.container} padding={12} margin={8} shadow={false}>
-      <View style={styles.rangeHeader}>
-        <View style={styles.headerLeft}>
-          <Badge variant="light" size="medium" style={styles.rangeBadge}>
-            <Typography variant="small" weight="bold" color="primary">
-              {t('memorization.surah.verseRange', {
-                startVerse: range.startVerse,
-                endVerse: range.endVerse,
-              })}
-            </Typography>
-          </Badge>
-          <View style={styles.stats}>
-            <Typography
-              variant="small"
-              color="secondary"
-              style={styles.wordCount}>
-              {t('memorization.surah.wordCount', {
-                count: range.wordsCount,
-              }).replace(
-                range.wordsCount.toString(),
-                formatNumberWithCommas(range.wordsCount),
-              )}
-            </Typography>
-            <Typography
-              variant="small"
-              color="secondary"
-              style={styles.verseCount}>
-              {t('memorization.surah.verseCountShort', {
-                count: range.endVerse - range.startVerse + 1,
-              }).replace(
-                (range.endVerse - range.startVerse + 1).toString(),
-                formatNumberWithCommas(range.endVerse - range.startVerse + 1),
-              )}
-            </Typography>
-          </View>
-        </View>
-        {showDeleteButton && onDelete && (
-          <Button
-            appearance="ghost"
-            status="danger"
-            accessoryLeft={CloseIcon}
-            onPress={handleDelete}
-            style={styles.deleteButton}
-            size="small"
+    <View style={styles.container}>
+      <View style={styles.body}>
+        <VerseRangeRow
+          verseNumber={range.startVerse}
+          tone={hasRange ? 'from' : 'single'}
+          text={startVerse}
+        />
+        {hasRange ? (
+          <VerseRangeRow
+            verseNumber={range.endVerse}
+            tone="to"
+            text={endVerse}
           />
-        )}
+        ) : null}
       </View>
-      <View style={styles.textContainer}>
-        <Typography
-          variant="caption"
-          style={styles.startText}
-          numberOfLines={1}
-          ellipsizeMode="tail">
-          <Text style={styles.prefixText}>
-            {t('memorization.surah.from')}
-            {': '}
-          </Text>
-          {startVerse}
-        </Typography>
-        <Typography
-          variant="caption"
-          style={styles.endText}
-          numberOfLines={1}
-          ellipsizeMode="tail">
-          <Text style={styles.prefixText}>
-            {t('memorization.surah.to')}
-            {': '}
-          </Text>
-          {endVerse}
-        </Typography>
-      </View>
-    </Card>
+      {showDeleteButton && onDelete ? (
+        <View style={styles.footer}>
+          <Typography family="cairo" style={styles.verseCountLabel}>
+            {t('memorization.surah.verseCountShort', {
+              count: range.endVerse - range.startVerse + 1,
+            })}
+          </Typography>
+          <Pressable style={styles.deleteButton} onPress={onDelete}>
+            <TrashIcon />
+            <Typography style={styles.deleteLabel}>
+              {t('common.delete')}
+            </Typography>
+          </Pressable>
+        </View>
+      ) : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background,
+    borderRadius: radius.md,
+    backgroundColor: colors.insetSubCard,
+    borderWidth: 1,
+    borderColor: colors.goldBorderSubtle,
+    overflow: 'hidden',
   },
-  rangeHeader: {
+  body: {
+    paddingTop: 12,
+    paddingBottom: 8,
+    paddingHorizontal: 12,
+    gap: 8,
+  },
+  footer: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.goldBorderFaint,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  headerLeft: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flexWrap: 'wrap',
-  },
-  rangeBadge: {
-    // Badge component handles styling
-  },
-  stats: {
-    flexDirection: 'row',
-    gap: 8,
+  verseCountLabel: {
+    fontSize: 11,
+    color: colors.mutedForeground,
   },
   deleteButton: {
-    width: 32,
-    height: 32,
-    marginLeft: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    borderRadius: radius.xxs,
+    backgroundColor: colors.deleteButtonBg,
+    borderWidth: 1,
+    borderColor: colors.deleteButtonBorder,
   },
-  wordCount: {
-    // Typography component handles styling
-  },
-  verseCount: {
-    // Typography component handles styling
-  },
-  textContainer: {
-    gap: 6,
-    marginTop: 4,
-  },
-  startText: {
-    // Typography component handles styling
-  },
-  endText: {
-    // Typography component handles styling
-  },
-  prefixText: {
-    color: colors.text.light,
+  deleteLabel: {
+    color: colors.destructive,
+    fontSize: 11,
   },
 });
