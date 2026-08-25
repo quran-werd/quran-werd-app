@@ -108,6 +108,8 @@
       "pendingToastTitle": "Select the end of the range",
       "mergeToastTitle": "Ranges merged",
       "saveButton": "Save Memorization",
+      "successTitle": "Saved Successfully",
+      "successMessage": "Your memorization ranges have been saved.",
       "totalSummary": "{{rangeCount}} ranges • {{verseCount}} verses",
       "jump": "Jump",
       "jumpTitle": "Jump to Page or Chapter",

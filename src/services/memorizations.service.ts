@@ -6,18 +6,16 @@ export type VerseRange = {
 };
 
 export type MemorizationData = {
-  _id: string;
-  userId: string;
   ranges: Record<string, VerseRange[]>;
 };
 
 export const getMemorizations = (): Promise<MemorizationData> =>
   werdApiRequest<MemorizationData>('/memorizations');
 
-export const addRange = (surah: number, from: number, to: number) =>
-  werdApiRequest<MemorizationData>('/memorizations/range', {
+export const addRanges = (ranges: {surah: number; from: number; to: number}[]) =>
+  werdApiRequest<MemorizationData>('/memorizations/ranges', {
     method: 'POST',
-    data: {surah, from, to},
+    data: {ranges},
   });
 
 export const deleteRange = (surah: number, from: number, to: number) =>

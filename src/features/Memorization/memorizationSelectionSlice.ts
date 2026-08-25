@@ -103,6 +103,12 @@ export const memorizationSelectionSlice = createSlice({
     clearMergeEvent: state => {
       state.mergeEvent = null;
     },
+    clearRanges: state => {
+      state.ranges = [];
+      state.pendingStartVerse = null;
+      state.history = [];
+      state.future = [];
+    },
     removeRange: (state, action: PayloadAction<string>) => {
       saveToHistory(state);
       state.ranges = state.ranges.filter(range => range.id !== action.payload);
@@ -147,6 +153,7 @@ export const {
   undo,
   redo,
   clearMergeEvent,
+  clearRanges,
 } = memorizationSelectionSlice.actions;
 
 // Selectors

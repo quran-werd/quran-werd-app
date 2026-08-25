@@ -108,6 +108,8 @@
       "pendingToastTitle": "حدد نهاية النطاق",
       "mergeToastTitle": "تم دمج النطاقات",
       "saveButton": "حفظ المحفوظات",
+      "successTitle": "تم الحفظ بنجاح",
+      "successMessage": "تم حفظ نطاقات الحفظ الخاصة بك.",
       "totalSummary": "{{rangeCount}} نطاق • {{verseCount}} آية",
       "jump": "انتقل",
       "jumpTitle": "الانتقال إلى صفحة أو سورة",

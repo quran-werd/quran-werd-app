@@ -276,6 +276,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           visible={bottomSheetVisible}
           onClose={() => setBottomSheetVisible(false)}
           onSave={onSave}
+          onSaved={() => navigation.goBack()}
           verses={allVerses}
         />
       )}
