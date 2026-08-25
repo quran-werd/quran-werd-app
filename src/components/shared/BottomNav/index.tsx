@@ -68,9 +68,6 @@ export default function BottomNav({state, navigation}: BottomTabBarProps) {
             );
           })}
         </View>
-        <View style={styles.homeIndicatorWrap}>
-          <View style={styles.homeIndicator} />
-        </View>
       </BlurView>
     </View>
   );
@@ -104,15 +101,5 @@ const styles = StyleSheet.create({
   },
   labelInactive: {
     opacity: 0.45,
-  },
-  homeIndicatorWrap: {
-    alignItems: 'center',
-    paddingBottom: 4,
-  },
-  homeIndicator: {
-    width: 112,
-    height: 3,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(255,255,255,0.15)',
   },
 });
