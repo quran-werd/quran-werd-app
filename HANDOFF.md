@@ -37,10 +37,21 @@ npx jest __tests__/verseSelection.utils.test.ts __tests__/memorizationSelectionS
 
 ## Still to test
 
-- A cross-surah range picked start-first.
-- Undo/redo after a cross-surah range.
-- Ranges that cross page boundaries.
-- Whether the merge toast appears on every merge (screenshots were too slow to catch it).
+- Whether the merge toast appears on *every* merge, or just some. Confirmed it fires on at least one case (two adjacent single-verse taps). Couldn't cleanly re-test multiple non-adjacent singles merging via a middle tap — see note below.
+
+## Verified in the Android emulator (2026-11-04)
+
+Same branch, tested via `adb` scripted taps against a Windows machine (no Mac/iOS simulator available there) after pulling the server's `refactor` branch forward 8 commits to pick up `AUTH_MOCK_GOOGLE` support (not present when this handoff was first written) and fixing a stale local `AUTH_MOCK_LOGIN` wiring.
+
+| Scenario | Result |
+|---|---|
+| 1:7 → 2:1-3 (cross-surah, start-first) | 2 ranges, 4 verses, stored start-first — matches the already-verified end-first case |
+| Undo then redo on the above | Undo cleared the whole selection in one step (not incremental); redo fully restored both ranges correctly |
+| 2:4 → 2:8 (crosses the page 2/3 boundary, same surah) | 1 range, 5 verses — merged correctly across the page break |
+
+## New observation: scripted-tap unreliability near the pending banner
+
+When a verse tap starts a pending range, a "حدد نهاية النطاق" banner slides in at the top and pushes all page content down (~140px). A second tap issued at the *same* screen coordinate right after lands on a different verse than intended, because the content has shifted. This produced confusing results in scripted testing (e.g. a confirmed single-verse selection appearing to vanish when a new tap-pair was issued nearby). This is very likely a scripted-tap artifact (instant taps at fixed coordinates, not a real timed human gesture) rather than an app bug, but it's worth a human re-check of "add several single verses in sequence, including near a just-selected one" on a real device/simulator, since the shift itself is real and a fast human tap could plausibly hit it too.
 
 ## Known UX issues (not fixed)
 
