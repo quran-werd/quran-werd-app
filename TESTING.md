@@ -12,7 +12,7 @@ Manual test log for every screen/component in the app. Branch: `ui-refactor-test
 |---|---|
 | AuthScreen | ⬜ |
 | HomeScreen | ⬜ |
-| MyMemorizationsScreen | ⬜ |
+| MyMemorizationsScreen | 🟡 partial |
 | MemorizationScreen (QuranPager, selection) | 🟡 partial |
 | PlanScreen | ⬜ |
 | SettingsScreen | ⬜ |
@@ -46,12 +46,12 @@ Manual test log for every screen/component in the app. Branch: `ui-refactor-test
 
 | # | Test | Status |
 |---|---|---|
-| 1 | Surah list + progress bars correct | ⬜ |
-| 2 | Expand/collapse row shows memorized ranges | ⬜ |
-| 3 | "Add" button opens selection screen | ⬜ |
-| 4 | Empty state (nothing memorized) | ⬜ |
-| 5 | Delete a range works, asks to confirm | ⬜ |
-| 6 | Header totals match sum of rows | ⬜ |
+| 1 | Surah list + progress bars correct | ✅ |
+| 2 | Expand/collapse row shows memorized ranges | ✅ |
+| 3 | "Add" button opens selection screen | ✅ |
+| 4 | Empty state (nothing memorized) | ⬜ needs a clean account |
+| 5 | Delete a range works, asks to confirm | ⬜ holding off — destructive on real dev data |
+| 6 | Header totals match sum of rows | ✅ verified against DB directly (15 surahs, 369 verses) |
 
 ## MemorizationScreen (verse selection)
 
@@ -59,16 +59,16 @@ Manual test log for every screen/component in the app. Branch: `ui-refactor-test
 |---|---|---|
 | 1 | Bismillah shown once per surah, incl. long verse-1 surahs | ✅ |
 | 2 | At-Tawbah has no Bismillah | ✅ |
-| 3 | Basic tap-tap range select (start-first) | ⬜ |
-| 4 | Single verse select / deselect / remove | ⬜ |
-| 5 | Cross-surah range | ⬜ |
-| 6 | Range crossing a page boundary | ⬜ |
-| 7 | Adjacent-range merge + toast every time | ⬜ |
-| 8 | Undo/redo (incl. after merge) | ⬜ |
-| 9 | Jump to page (valid + invalid: 0, negative, >604) | ⬜ |
-| 10 | Jump to chapter (tap + search) | ⬜ |
-| 11 | Selection sheet: counts correct, delete row, Save | ⬜ |
-| 12 | Swipe performance across pages | ⬜ |
+| 3 | Basic tap-tap range select (start-first) | ✅ |
+| 4 | Single verse select / deselect / remove | ✅ |
+| 5 | Cross-surah range | ✅ |
+| 6 | Range crossing a page boundary | ✅ |
+| 7 | Adjacent-range merge + toast every time | 🟡 toast confirmed once; flaky to reproduce via scripted taps, needs a human re-check |
+| 8 | Undo/redo (incl. after merge) | ✅ |
+| 9 | Jump to page (valid + invalid: 0, negative, >604) | ✅ |
+| 10 | Jump to chapter (tap + search) | ✅ |
+| 11 | Selection sheet: counts correct, delete row, Save | 🟡 counts/delete ✅, Save not tested (writes to real backend) |
+| 12 | Swipe performance across pages | ✅ no stutter observed |
 
 ## PlanScreen
 
