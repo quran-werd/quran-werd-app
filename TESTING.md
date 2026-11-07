@@ -32,7 +32,7 @@ the bottom.
 |---|---|---|---|
 | 1 | Google sign-in button works | Not tested — can't drive the real Google OAuth flow from this environment | ⚪ Pending |
 | 2 | Mock sign-in (dev) works | No issues | 🟢 Passed |
-| 3 | Sign-in failure shows error, no crash | Not tested | ⚪ Pending |
+| 3 | Sign-in failure shows error, no crash | **Issue found → fixed** (#6): going offline and attempting mock sign-in leaked a raw developer-facing string straight into the UI — "Network error connecting to http://192.168.31.83:3001. Check API_BASE_URL in .env and rebuild the app." — in English, overlapping the Arabic UI, exposing the backend's LAN IP/port. Replaced with a localized "couldn't reach the server" message; no crash either way | 🟢 Passed |
 | 4 | Layout OK on small/large screens | Not tested | ⚪ Pending |
 | 5 | Already-signed-in skips this screen | No issues — observed every app relaunch this session | 🟢 Passed |
 
@@ -45,7 +45,7 @@ the bottom.
 | 3 | "Start revision" opens RevisionScreen at right page | No issues | 🟢 Passed |
 | 4 | Empty state (no werd yet) | Not tested — needs a clean account | ⚪ Pending |
 | 5 | Card updates after completing a werd | No issues — status badge, congratulatory message, and next-werd preview all appeared correctly | 🟢 Passed |
-| 6 | Bottom nav tabs all work | Not tested yet (used directly so far, haven't tried every tab from here) | ⚪ Pending |
+| 6 | Bottom nav tabs all work | No issues — all four tabs (Home, Hafth, Plan, Settings) reachable from each other throughout this session | 🟢 Passed |
 
 ## MyMemorizationsScreen
 
@@ -140,5 +140,6 @@ the bottom.
 | 3 | Settings → light theme toggle does nothing app-wide | None yet — no light palette/theme context exists in the codebase | 🟡 Open — feature to build later, not a regression |
 | 4 | Deep links never navigated anywhere (`quranwerd://` scheme wasn't registered natively) | Added `scheme: 'quranwerd'` to `app.config.ts`; rebuilt native project | 🟢 Fixed — verified `quranwerd://home` and `quranwerd://plan` |
 | 5 | PlanScreen showed the "no plan yet" empty state on a failed first fetch (e.g. no network), indistinguishable from a genuinely empty account even though the plan was never lost | Added an `error` variant to `EmptyState` with a distinct message + Retry button, wired to `PlanScreen`'s `loadError`/`loadPlan` | 🟢 Fixed — verified offline shows "couldn't load your plan" + Retry, and Retry recovers the real plan once network returns |
+| 6 | Sign-in failure (e.g. offline) showed a raw English developer error — server IP/port, ".env", "rebuild the app" — directly in the AuthScreen UI | `getApiErrorMessage` in `werdApi.ts` now returns a localized `auth.networkError` message for network/timeout failures; the technical detail is only `console.warn`'d in `__DEV__` | 🟢 Fixed — verified offline mock sign-in now shows the friendly localized message |
 
 <!-- Add new rows here as new issues are found. -->

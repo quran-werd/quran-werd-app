@@ -11,7 +11,8 @@
     "journeyLabel": "Begin your journey",
     "googleSignIn": "Sign in with Google",
     "mockSignIn": "Continue as Dev User",
-    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
+    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy",
+    "networkError": "Couldn't reach the server. Check your internet connection and try again."
   },
   "home": {
     "title": "Current Werd",
