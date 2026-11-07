@@ -121,7 +121,7 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 | # | Scenario | Result |
 |---|---|---|
 | 1 | Cold-start Mushaf build progress screen | Not tested |
-| 2 | Deep links (home/memorization/plan/revision) | **Issue found → fixed** (#4): `quranwerd://` was never a registered app scheme (native manifest had `com.quranwerd` and `exp+quranwerd` instead), so every deep link silently went nowhere. Added `scheme: 'quranwerd'` to `app.config.ts`, rebuilt, and confirmed `quranwerd://home` and `quranwerd://plan` both navigate correctly now. |
+| 2 | Deep links (home/memorization/plan/revision) | **Issue found → fixed** (#4): `quranwerd://` was never a registered app scheme (native manifest had `com.quranwerd` and `exp+quranwerd` instead), so every deep link silently went nowhere. Added `scheme: 'quranwerd'` to `app.config.ts`, rebuilt, and confirmed `quranwerd://home`, `quranwerd://plan`, and `quranwerd://memorization` all navigate correctly now. (`revision` wasn't tried since it needs a `werdId` param to be meaningful.) |
 | 3 | Daily notification fires + opens right screen | Not tested |
 | 4 | RTL layout correctness throughout | No issues observed in passing — every screen tested so far is correctly mirrored/aligned |
 | 5 | Network-loss handling per screen | Not tested |
