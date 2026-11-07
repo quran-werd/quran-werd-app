@@ -2,7 +2,9 @@
 
 Manual test log for every screen/component in the app. Branch: `ui-refactor-test`.
 
-**Status:** ⬜ not tested · ✅ passed · 🔴 failed (see Issues)
+Each row is one tested scenario and its result in plain words. "No issues"
+means it was actually exercised and worked. "Not tested" means it hasn't
+been touched yet. Issue numbers link to the Issues table at the bottom.
 
 ---
 
@@ -10,118 +12,119 @@ Manual test log for every screen/component in the app. Branch: `ui-refactor-test
 
 | Screen | Status |
 |---|---|
-| AuthScreen | ⬜ |
-| HomeScreen | ⬜ |
-| MyMemorizationsScreen | 🟡 partial |
-| MemorizationScreen (QuranPager, selection) | 🟡 partial |
-| PlanScreen | ⬜ |
-| SettingsScreen | ⬜ |
-| RevisionScreen (QuranPager, read) | ⬜ |
-| Shared components | ⬜ |
+| AuthScreen | Not started |
+| HomeScreen | Not started |
+| MyMemorizationsScreen | In progress |
+| MemorizationScreen (QuranPager, selection) | In progress |
+| PlanScreen | Not started |
+| SettingsScreen | Not started |
+| RevisionScreen (QuranPager, read) | Not started |
+| Shared components | Not started |
 
 ---
 
 ## AuthScreen
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Google sign-in button works | ⬜ |
-| 2 | Mock sign-in (dev) works | ⬜ |
-| 3 | Sign-in failure shows error, no crash | ⬜ |
-| 4 | Layout OK on small/large screens | ⬜ |
-| 5 | Already-signed-in skips this screen | ⬜ |
+| 1 | Google sign-in button works | Not tested |
+| 2 | Mock sign-in (dev) works | Not tested |
+| 3 | Sign-in failure shows error, no crash | Not tested |
+| 4 | Layout OK on small/large screens | Not tested |
+| 5 | Already-signed-in skips this screen | Not tested |
 
 ## HomeScreen
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Greeting/date shows correctly | ⬜ |
-| 2 | Today's werd card shows correct surah/range/status | ⬜ |
-| 3 | "Start revision" opens RevisionScreen at right page | ⬜ |
-| 4 | Empty state (no werd yet) | ⬜ |
-| 5 | Card updates after completing a werd | ⬜ |
-| 6 | Bottom nav tabs all work | ⬜ |
+| 1 | Greeting/date shows correctly | Not tested |
+| 2 | Today's werd card shows correct surah/range/status | Not tested |
+| 3 | "Start revision" opens RevisionScreen at right page | Not tested |
+| 4 | Empty state (no werd yet) | Not tested |
+| 5 | Card updates after completing a werd | Not tested |
+| 6 | Bottom nav tabs all work | Not tested |
 
 ## MyMemorizationsScreen
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Surah list + progress bars correct | ✅ |
-| 2 | Expand/collapse row shows memorized ranges | ✅ |
-| 3 | "Add" button opens selection screen | ✅ |
-| 4 | Empty state (nothing memorized) | ⬜ needs a clean account |
-| 5 | Delete a range works, asks to confirm | ⬜ holding off — destructive on real dev data |
-| 6 | Header totals match sum of rows | ✅ verified against DB directly (15 surahs, 369 verses) |
+| 1 | Surah list + progress bars show correct counts | No issues — spot-checked several surahs' memorized/total against canonical verse counts |
+| 2 | Expand a surah row | No issues — shows the memorized range, verse snippets, and a delete button |
+| 3 | "Add" button opens the verse-selection screen | No issues |
+| 4 | Empty state (nothing memorized) | Not tested — needs a clean account |
+| 5 | Delete a range, with confirm prompt | Not tested — holding off, would delete real dev data |
+| 6 | Header's total ayat/surah count matches the data | No issues — cross-checked directly against the database (15 surahs, 369 verses); my first pass misread the surah-count digit as 10 instead of 15, which was my mistake, not a bug |
 
 ## MemorizationScreen (verse selection)
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Bismillah shown once per surah, incl. long verse-1 surahs | ✅ |
-| 2 | At-Tawbah has no Bismillah | ✅ |
-| 3 | Basic tap-tap range select (start-first) | ✅ |
-| 4 | Single verse select / deselect / remove | ✅ |
-| 5 | Cross-surah range | ✅ |
-| 6 | Range crossing a page boundary | ✅ |
-| 7 | Adjacent-range merge + toast every time | 🟡 toast confirmed once; flaky to reproduce via scripted taps, needs a human re-check |
-| 8 | Undo/redo (incl. after merge) | ✅ |
-| 9 | Jump to page (valid + invalid: 0, negative, >604) | ✅ |
-| 10 | Jump to chapter (tap + search) | ✅ |
-| 11 | Selection sheet: counts correct, delete row, Save | 🟡 counts/delete ✅, Save not tested (writes to real backend) |
-| 12 | Swipe performance across pages | ✅ no stutter observed |
+| 1 | Bismillah shown once per surah, including surahs whose verse 1 spans multiple lines | **Issue found → fixed** (#2) |
+| 2 | At-Tawbah shows no Bismillah | **Issue found → fixed** (#1) |
+| 3 | Tap-tap range select, start-first | No issues |
+| 4 | Single verse select / deselect / remove on third tap | No issues |
+| 5 | Cross-surah range select | No issues |
+| 6 | Range selection crossing a page boundary | No issues |
+| 7 | Adjacent-range merge, toast shown | Saw it fire once; couldn't reliably reproduce via scripted taps to confirm it fires on *every* merge — needs a human re-check, not marked as a confirmed issue |
+| 8 | Undo/redo, including after a merge | No issues |
+| 9 | Jump to page — valid page, and invalid (0, 605) | No issues — invalid pages correctly rejected with an alert |
+| 10 | Jump to chapter — tap in list, and via search | No issues |
+| 11 | Selection sheet — verse counts, delete a row | No issues |
+| 12 | Selection sheet — Save button | Not tested — writes to the real backend |
+| 13 | Swipe performance across many pages | No issues observed |
 
 ## PlanScreen
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Capacity card shows/edits correctly | ⬜ |
-| 2 | Upcoming werd list in correct order | ⬜ |
-| 3 | Completed werd row styled distinctly | ⬜ |
-| 4 | Empty state | ⬜ |
-| 5 | Create/edit/delete round-trips to backend | ⬜ |
+| 1 | Capacity card shows/edits correctly | Not tested |
+| 2 | Upcoming werd list order | Not tested |
+| 3 | Completed werd row styling | Not tested |
+| 4 | Empty state | Not tested |
+| 5 | Create/edit/delete round-trips to backend | Not tested |
 
 ## SettingsScreen
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | User card shows correct account | ⬜ |
-| 2 | Notification toggle + time picker persist | ⬜ |
-| 3 | Other toggles persist | ⬜ |
-| 4 | App version/info correct | ⬜ |
-| 5 | Sign-out returns to AuthScreen, clears session | ⬜ |
+| 1 | User card shows correct account | Not tested |
+| 2 | Notification toggle + time picker persist | Not tested |
+| 3 | Other toggles persist | Not tested |
+| 4 | App version/info correct | Not tested |
+| 5 | Sign-out returns to AuthScreen, clears session | Not tested |
 
 ## RevisionScreen (read mode)
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Opens at correct page for the werd | ⬜ |
-| 2 | Swipe through full werd range | ⬜ |
-| 3 | "Complete" button enables only at last page | ⬜ |
-| 4 | Completing navigates to Home + updates card | ⬜ |
-| 5 | No selection UI shown in this mode | ⬜ |
-| 6 | Bismillah correctness (spot-check) | ⬜ |
+| 1 | Opens at correct page for the werd | Not tested |
+| 2 | Swipe through full werd range | Not tested |
+| 3 | "Complete" button enables only at last page | Not tested |
+| 4 | Completing navigates to Home + updates card | Not tested |
+| 5 | No selection UI shown in this mode | Not tested |
+| 6 | Bismillah correctness (shares code with selection mode) | Not tested here specifically, but fix in #1/#2 applies to both modes |
 
 ## Shared components
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Button variants (primary/ghost/disabled/loading) | ⬜ |
-| 2 | BottomSheet open/close/backdrop/swipe-down | ⬜ |
-| 3 | Toast variants + auto-dismiss timing | ⬜ |
-| 4 | DeleteConfirmationModal cancel/confirm | ⬜ |
-| 5 | BottomNav active state, hidden on MemorizationScreen | ⬜ |
-| 6 | Badge renders correctly everywhere used | ⬜ |
-| 7 | VerseRangeRow consistent in both places it's used | ⬜ |
+| 1 | Button variants (primary/ghost/disabled/loading) | Not tested |
+| 2 | BottomSheet open/close/backdrop/swipe-down | Not tested |
+| 3 | Toast variants + auto-dismiss timing | Not tested |
+| 4 | DeleteConfirmationModal cancel/confirm | Not tested |
+| 5 | BottomNav active state, hidden on MemorizationScreen | Not tested |
+| 6 | Badge renders correctly everywhere used | Not tested |
+| 7 | VerseRangeRow consistent in both places it's used | Not tested |
 
 ## App-wide
 
-| # | Test | Status |
+| # | Scenario | Result |
 |---|---|---|
-| 1 | Cold-start Mushaf build progress screen | ⬜ |
-| 2 | Deep links (home/memorization/plan/revision) | ⬜ |
-| 3 | Daily notification fires + opens right screen | ⬜ |
-| 4 | RTL layout correctness throughout | ⬜ |
-| 5 | Network-loss handling per screen | ⬜ |
+| 1 | Cold-start Mushaf build progress screen | Not tested |
+| 2 | Deep links (home/memorization/plan/revision) | Not tested |
+| 3 | Daily notification fires + opens right screen | Not tested |
+| 4 | RTL layout correctness throughout | Not tested |
+| 5 | Network-loss handling per screen | Not tested |
 
 ---
 
@@ -129,5 +132,7 @@ Manual test log for every screen/component in the app. Branch: `ui-refactor-test
 
 | # | Issue | Fix | Status |
 |---|---|---|---|
-| 1 | Bismillah shown twice on Al-Fatiha; wrongly shown on At-Tawbah | `Line.tsx` excludes chapters 1 & 9 from the decorative Bismillah | ✅ `f6b5c8a` |
-| 2 | Bismillah/header repeated on every line of a long verse 1 (e.g. An-Nisa, 27 surahs affected) | Added `wordPosition === 1` check so only the verse's true first line counts | ✅ `1fc55bf`, tests in `7084ca9` |
+| 1 | Bismillah shown twice on Al-Fatiha; wrongly shown on At-Tawbah | `Line.tsx` excludes chapters 1 & 9 from the decorative Bismillah | Fixed — `f6b5c8a` |
+| 2 | Bismillah/header repeated on every line of a long verse 1 (e.g. An-Nisa; 27 surahs affected) | Added a `wordPosition === 1` check so only the verse's true first line counts as the surah start | Fixed — `1fc55bf`, regression tests in `7084ca9` |
+
+<!-- Add new rows here as new issues are found. -->
