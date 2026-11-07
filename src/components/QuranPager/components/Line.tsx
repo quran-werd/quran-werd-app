@@ -69,9 +69,13 @@ const Line: React.FC<LineProps> = ({
   const pendingStartVerse = useAppSelector(selectPendingStartVerse);
   const ranges = useAppSelector(selectRanges);
 
-  const isSurahStart = isSurahStartLine(words[0].verseNumber);
+  const isSurahStart = isSurahStartLine(
+    words[0].verseNumber,
+    words[0].position,
+  );
   const isShowBismillah = shouldShowBismillah(
     words[0].verseNumber,
+    words[0].position,
     words[0].chapterId,
   );
 

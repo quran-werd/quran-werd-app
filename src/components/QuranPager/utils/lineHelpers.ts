@@ -8,12 +8,18 @@ export function verseNumberFromKey(verseKey: string): number {
 }
 
 /**
- * True when a line is the first line of a surah (i.e. starts with that
- * surah's verse 1), regardless of which surah it is. The surah name header
- * should always be shown on this line.
+ * True when a line is the first line of a surah: it must start with that
+ * surah's verse 1, AND with that verse's first word. Checking verseNumber
+ * alone is not enough — a long verse 1 (e.g. An-Nisa's) wraps across
+ * several lines, and every one of them "starts with verse 1"; only the
+ * line that starts with word position 1 is the surah's actual first line.
+ * The surah name header should always be shown on this line.
  */
-export function isSurahStartLine(verseNumber: number | undefined): boolean {
-  return verseNumber === 1;
+export function isSurahStartLine(
+  verseNumber: number | undefined,
+  wordPosition: number | undefined,
+): boolean {
+  return verseNumber === 1 && wordPosition === 1;
 }
 
 /**
@@ -24,10 +30,11 @@ export function isSurahStartLine(verseNumber: number | undefined): boolean {
  */
 export function shouldShowBismillah(
   verseNumber: number | undefined,
+  wordPosition: number | undefined,
   chapterId: number,
 ): boolean {
   return (
-    isSurahStartLine(verseNumber) &&
+    isSurahStartLine(verseNumber, wordPosition) &&
     !CHAPTERS_WITHOUT_DECORATIVE_BISMILLAH.has(chapterId)
   );
 }
