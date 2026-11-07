@@ -43,7 +43,7 @@ the bottom.
 | 1 | Greeting/date shows correctly | No issues — verified "السبت، 7 نوفمبر" against real calendar (Nov 7 2026 is a Saturday) | 🟢 Passed |
 | 2 | Today's werd card shows correct surah/range/status | No issues | 🟢 Passed |
 | 3 | "Start revision" opens RevisionScreen at right page | No issues | 🟢 Passed |
-| 4 | Empty state (no werd yet) | Not tested — needs a clean account | ⚪ Pending |
+| 4 | Empty state (no werd yet) | No issues — cleared all memorization/plan data on the test account; shows "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة." with an add-memorization CTA, no crash | 🟢 Passed |
 | 5 | Card updates after completing a werd | No issues — status badge, congratulatory message, and next-werd preview all appeared correctly | 🟢 Passed |
 | 6 | Bottom nav tabs all work | No issues — all four tabs (Home, Hafth, Plan, Settings) reachable from each other throughout this session | 🟢 Passed |
 
@@ -54,7 +54,7 @@ the bottom.
 | 1 | Surah list + progress bars show correct counts | No issues — spot-checked several surahs' memorized/total against canonical verse counts | 🟢 Passed |
 | 2 | Expand a surah row | No issues — shows the memorized range, verse snippets, and a delete button | 🟢 Passed |
 | 3 | "Add" button opens the verse-selection screen | No issues | 🟢 Passed |
-| 4 | Empty state (nothing memorized) | Not tested — needs a clean account | ⚪ Pending |
+| 4 | Empty state (nothing memorized) | No issues — shows "لم تُضِف محفوظاتك بعد" with a clear CTA; no header/count row is rendered when empty rather than showing a broken "0/0" | 🟢 Passed |
 | 5 | Delete a range, with confirm prompt | No issues — deleted Al-Anfal's 1-7 range on the real test account; confirm modal showed the exact range and surah name, header correctly dropped from 15/369 to 14/362 verses | 🟢 Passed |
 | 6 | Header's total ayat/surah count matches the data | No issues — cross-checked directly against the database (15 surahs, 369 verses); my first pass misread the surah-count digit as 10 instead of 15, which was my mistake, not a bug | 🟢 Passed |
 
@@ -83,7 +83,7 @@ the bottom.
 | 1 | Capacity card: tap to expand daily → weekly breakdown with per-day toggles | No issues | 🟢 Passed |
 | 2 | Upcoming werd list order | No issues — sequential, "اليوم" (today) badge correctly on the next werd, matching Home's preview | 🟢 Passed |
 | 3 | Completed / today / upcoming row styling | No issues — visually distinct (green check / gold outline / plain) | 🟢 Passed |
-| 4 | Empty state | Not tested — needs a clean account | ⚪ Pending |
+| 4 | Empty state | **Issue found → fixed** (#7): with a genuinely empty account, the backend correctly returns 404 "Plan not found," but the app's error-handling (added for #5) treated that 404 the same as a real network failure, so the empty state always showed "couldn't load your plan" instead of "no plan yet." Added 404 detection (covering both the `ApiError` and raw `AxiosError` cases) so a 404 resolves to a real empty plan, not an error | 🟢 Passed |
 | 5 | Create/edit/delete round-trips to backend | No issues — changed pages/day from 2 to 3, tapped "تحديث الخطة", werd count correctly dropped from 25 to 21; force-stopped and relaunched the app and the new value (3) and count (21) both persisted | 🟢 Passed |
 
 ## SettingsScreen
@@ -141,5 +141,6 @@ the bottom.
 | 4 | Deep links never navigated anywhere (`quranwerd://` scheme wasn't registered natively) | Added `scheme: 'quranwerd'` to `app.config.ts`; rebuilt native project | 🟢 Fixed — verified `quranwerd://home` and `quranwerd://plan` |
 | 5 | PlanScreen showed the "no plan yet" empty state on a failed first fetch (e.g. no network), indistinguishable from a genuinely empty account even though the plan was never lost | Added an `error` variant to `EmptyState` with a distinct message + Retry button, wired to `PlanScreen`'s `loadError`/`loadPlan` | 🟢 Fixed — verified offline shows "couldn't load your plan" + Retry, and Retry recovers the real plan once network returns |
 | 6 | Sign-in failure (e.g. offline) showed a raw English developer error — server IP/port, ".env", "rebuild the app" — directly in the AuthScreen UI | `getApiErrorMessage` in `werdApi.ts` now returns a localized `auth.networkError` message for network/timeout failures; the technical detail is only `console.warn`'d in `__DEV__` | 🟢 Fixed — verified offline mock sign-in now shows the friendly localized message |
+| 7 | Regression introduced by fixing #5: PlanScreen's backend-expected 404 "Plan not found" (a genuinely empty account) was caught by the new error handling and shown as a load failure, not the real empty state | `fetchRevisionPlan` now detects a 404 (`ApiError.status` or raw `AxiosError.response.status`) and resolves to `null` instead of rejecting, so the slice treats it as "no plan," not an error | 🟢 Fixed — verified a cleared account shows "no plan yet" + Generate, while an actual offline failure still shows "couldn't load" + Retry |
 
 <!-- Add new rows here as new issues are found. -->
