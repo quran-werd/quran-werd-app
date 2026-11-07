@@ -26,6 +26,7 @@ const config: ExpoConfig = {
   name: 'QuranWerd',
   slug: 'quranwerd',
   version: '1.0.0',
+  scheme: 'quranwerd',
   orientation: 'default',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',

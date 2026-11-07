@@ -19,7 +19,7 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 | PlanScreen | In progress |
 | SettingsScreen | In progress |
 | RevisionScreen (QuranPager, read) | In progress |
-| Shared components | Not started |
+| Shared components | In progress |
 
 ---
 
@@ -108,22 +108,22 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | Button variants (primary/ghost/disabled/loading) | Not tested |
-| 2 | BottomSheet open/close/backdrop/swipe-down | Not tested |
-| 3 | Toast variants + auto-dismiss timing | Not tested |
-| 4 | DeleteConfirmationModal cancel/confirm | Not tested |
-| 5 | BottomNav active state, hidden on MemorizationScreen | Not tested |
-| 6 | Badge renders correctly everywhere used | Not tested |
-| 7 | VerseRangeRow consistent in both places it's used | Not tested |
+| 1 | Button variants (primary/ghost/disabled/loading) | No issues — seen in context across screens (ابدأ المراجعة, إتمام, تحديث الخطة, Save/Cancel on modal, etc.), all render correctly |
+| 2 | BottomSheet open/close (JumpSheet, MemorizationSelectionSheet) | No issues |
+| 3 | Toast variants + auto-dismiss timing | 🟡 pending toast confirmed; merge toast seen once, timing not precisely measured |
+| 4 | DeleteConfirmationModal cancel/confirm | No issues on render + cancel path. Confirm (actual delete) not exercised — would permanently delete real dev data |
+| 5 | BottomNav active state, hidden on MemorizationScreen | No issues — confirmed hidden on the verse-selection screen, active-tab highlight correct elsewhere |
+| 6 | Badge renders correctly everywhere used | No issues — spot-checked (surah number badges, status badges) |
+| 7 | VerseRangeRow consistent in both places it's used | No issues — same look in MyMemorizationsScreen's expanded row and the selection sheet |
 
 ## App-wide
 
 | # | Scenario | Result |
 |---|---|---|
 | 1 | Cold-start Mushaf build progress screen | Not tested |
-| 2 | Deep links (home/memorization/plan/revision) | Not tested |
+| 2 | Deep links (home/memorization/plan/revision) | **Issue found → fixed** (#4): `quranwerd://` was never a registered app scheme (native manifest had `com.quranwerd` and `exp+quranwerd` instead), so every deep link silently went nowhere. Added `scheme: 'quranwerd'` to `app.config.ts`, rebuilt, and confirmed `quranwerd://home` and `quranwerd://plan` both navigate correctly now. |
 | 3 | Daily notification fires + opens right screen | Not tested |
-| 4 | RTL layout correctness throughout | Not tested |
+| 4 | RTL layout correctness throughout | No issues observed in passing — every screen tested so far is correctly mirrored/aligned |
 | 5 | Network-loss handling per screen | Not tested |
 
 ---
@@ -135,5 +135,6 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 | 1 | Bismillah shown twice on Al-Fatiha; wrongly shown on At-Tawbah | `Line.tsx` excludes chapters 1 & 9 from the decorative Bismillah | Fixed — `f6b5c8a` |
 | 2 | Bismillah/header repeated on every line of a long verse 1 (e.g. An-Nisa; 27 surahs affected) | Added a `wordPosition === 1` check so only the verse's true first line counts as the surah start | Fixed — `1fc55bf`, regression tests in `7084ca9` |
 | 3 | Settings → light theme toggle does nothing app-wide | None yet — no light palette/theme context exists in the codebase | Open — feature to build later, not a regression |
+| 4 | Deep links never navigated anywhere (`quranwerd://` scheme wasn't registered natively) | Added `scheme: 'quranwerd'` to `app.config.ts`; rebuilt native project | Fixed — verified `quranwerd://home` and `quranwerd://plan` |
 
 <!-- Add new rows here as new issues are found. -->
