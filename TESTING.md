@@ -13,12 +13,12 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 | Screen | Status |
 |---|---|
 | AuthScreen | Not started |
-| HomeScreen | Not started |
+| HomeScreen | In progress |
 | MyMemorizationsScreen | In progress |
 | MemorizationScreen (QuranPager, selection) | In progress |
 | PlanScreen | Not started |
 | SettingsScreen | Not started |
-| RevisionScreen (QuranPager, read) | Not started |
+| RevisionScreen (QuranPager, read) | In progress |
 | Shared components | Not started |
 
 ---
@@ -37,12 +37,12 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | Greeting/date shows correctly | Not tested |
-| 2 | Today's werd card shows correct surah/range/status | Not tested |
-| 3 | "Start revision" opens RevisionScreen at right page | Not tested |
-| 4 | Empty state (no werd yet) | Not tested |
-| 5 | Card updates after completing a werd | Not tested |
-| 6 | Bottom nav tabs all work | Not tested |
+| 1 | Greeting/date shows correctly | No issues — verified "السبت، 7 نوفمبر" against real calendar (Nov 7 2026 is a Saturday) |
+| 2 | Today's werd card shows correct surah/range/status | No issues |
+| 3 | "Start revision" opens RevisionScreen at right page | No issues |
+| 4 | Empty state (no werd yet) | Not tested — needs a clean account |
+| 5 | Card updates after completing a werd | No issues — status badge, congratulatory message, and next-werd preview all appeared correctly |
+| 6 | Bottom nav tabs all work | Not tested yet (used directly so far, haven't tried every tab from here) |
 
 ## MyMemorizationsScreen
 
@@ -97,11 +97,11 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | Opens at correct page for the werd | Not tested |
-| 2 | Swipe through full werd range | Not tested |
-| 3 | "Complete" button enables only at last page | Not tested |
-| 4 | Completing navigates to Home + updates card | Not tested |
-| 5 | No selection UI shown in this mode | Not tested |
+| 1 | Opens at correct page for the werd | No issues — opened at page 11 matching the werd's start page |
+| 2 | Swipe through full werd range | No issues |
+| 3 | "Complete" button enables only at last page | No issues — hidden on page 11, appeared on page 12 at verse 83 |
+| 4 | Completing navigates to Home + updates card | No issues |
+| 5 | No selection UI shown in this mode | No issues |
 | 6 | Bismillah correctness (shares code with selection mode) | Not tested here specifically, but fix in #1/#2 applies to both modes |
 
 ## Shared components
