@@ -56,4 +56,22 @@ describe('shouldShowBismillah', () => {
     expect(shouldShowBismillah(1, 12, 4)).toBe(false);
     expect(shouldShowBismillah(1, 25, 4)).toBe(false);
   });
+
+  // Every chapter (other than 1 and 9) whose verse 1 spans multiple mushaf
+  // lines, per the live Quran CDN word data (checked 2026-11-07). Each of
+  // these showed the duplicated header + Bismillah before the position
+  // check was added, since isSurahStartLine used to fire on every line.
+  const CHAPTERS_WITH_MULTILINE_VERSE_ONE = [
+    4, 5, 6, 8, 13, 14, 16, 17, 22, 24, 25, 33, 34, 35, 49, 58, 59, 60, 61,
+    62, 63, 64, 65, 66, 71, 72, 98,
+  ];
+
+  it.each(CHAPTERS_WITH_MULTILINE_VERSE_ONE)(
+    'shows the Bismillah only on the true first line of chapter %i, not later lines of its verse 1',
+    chapterId => {
+      expect(shouldShowBismillah(1, 1, chapterId)).toBe(true);
+      expect(shouldShowBismillah(1, 2, chapterId)).toBe(false);
+      expect(shouldShowBismillah(1, 10, chapterId)).toBe(false);
+    },
+  );
 });
