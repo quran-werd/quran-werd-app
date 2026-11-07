@@ -12,12 +12,12 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | Screen | Status |
 |---|---|
-| AuthScreen | Not started |
+| AuthScreen | In progress |
 | HomeScreen | In progress |
 | MyMemorizationsScreen | In progress |
 | MemorizationScreen (QuranPager, selection) | In progress |
-| PlanScreen | Not started |
-| SettingsScreen | Not started |
+| PlanScreen | In progress |
+| SettingsScreen | In progress |
 | RevisionScreen (QuranPager, read) | In progress |
 | Shared components | Not started |
 
@@ -27,11 +27,11 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | Google sign-in button works | Not tested |
-| 2 | Mock sign-in (dev) works | Not tested |
+| 1 | Google sign-in button works | Not tested — can't drive the real Google OAuth flow from this environment |
+| 2 | Mock sign-in (dev) works | No issues |
 | 3 | Sign-in failure shows error, no crash | Not tested |
 | 4 | Layout OK on small/large screens | Not tested |
-| 5 | Already-signed-in skips this screen | Not tested |
+| 5 | Already-signed-in skips this screen | No issues — observed every app relaunch this session |
 
 ## HomeScreen
 
@@ -77,21 +77,21 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | Capacity card shows/edits correctly | Not tested |
-| 2 | Upcoming werd list order | Not tested |
-| 3 | Completed werd row styling | Not tested |
-| 4 | Empty state | Not tested |
-| 5 | Create/edit/delete round-trips to backend | Not tested |
+| 1 | Capacity card: tap to expand daily → weekly breakdown with per-day toggles | No issues |
+| 2 | Upcoming werd list order | No issues — sequential, "اليوم" (today) badge correctly on the next werd, matching Home's preview |
+| 3 | Completed / today / upcoming row styling | No issues — visually distinct (green check / gold outline / plain) |
+| 4 | Empty state | Not tested — needs a clean account |
+| 5 | Create/edit/delete round-trips to backend | Not tested — "تحديث الخطة" (update plan) button clicked and showed a success state, but didn't verify a specific edit round-tripped |
 
 ## SettingsScreen
 
 | # | Scenario | Result |
 |---|---|---|
-| 1 | User card shows correct account | Not tested |
-| 2 | Notification toggle + time picker persist | Not tested |
-| 3 | Other toggles persist | Not tested |
-| 4 | App version/info correct | Not tested |
-| 5 | Sign-out returns to AuthScreen, clears session | Not tested |
+| 1 | User card shows correct account | No issues — shows "Dev User" |
+| 2 | Notification toggle + time picker | No issues — OFF hides the time row, ON shows it with the default 08:00 |
+| 3 | Theme toggle (dark/light) | **Open issue — not a bug, unfinished feature** (#3): switching to "الوضع الفاتح" doesn't change anything app-wide; no light palette or theme context exists in the code yet. Per user: leave as-is, build later. |
+| 4 | App version/info correct | No issues — shows 0.0.1 |
+| 5 | Sign-out returns to AuthScreen, clears session | No issues — signed out, AuthScreen shown, signed back in with mock login cleanly |
 
 ## RevisionScreen (read mode)
 
@@ -134,5 +134,6 @@ been touched yet. Issue numbers link to the Issues table at the bottom.
 |---|---|---|---|
 | 1 | Bismillah shown twice on Al-Fatiha; wrongly shown on At-Tawbah | `Line.tsx` excludes chapters 1 & 9 from the decorative Bismillah | Fixed — `f6b5c8a` |
 | 2 | Bismillah/header repeated on every line of a long verse 1 (e.g. An-Nisa; 27 surahs affected) | Added a `wordPosition === 1` check so only the verse's true first line counts as the surah start | Fixed — `1fc55bf`, regression tests in `7084ca9` |
+| 3 | Settings → light theme toggle does nothing app-wide | None yet — no light palette/theme context exists in the codebase | Open — feature to build later, not a regression |
 
 <!-- Add new rows here as new issues are found. -->
