@@ -36,10 +36,19 @@ function EmptyIcon() {
 interface EmptyStateProps {
   onGenerate: () => void;
   loading: boolean;
+  /** 'error' renders a load-failed/retry message instead of the true empty state. */
+  variant?: 'empty' | 'error';
+  onRetry?: () => void;
 }
 
-export default function EmptyState({onGenerate, loading}: EmptyStateProps) {
+export default function EmptyState({
+  onGenerate,
+  loading,
+  variant = 'empty',
+  onRetry,
+}: EmptyStateProps) {
   const {t} = useTranslation();
+  const isError = variant === 'error';
   return (
     <View style={styles.emptyState}>
       <View style={styles.emptyCircleWrap}>
@@ -54,7 +63,7 @@ export default function EmptyState({onGenerate, loading}: EmptyStateProps) {
           family="amiri"
           weight="bold"
           align="center">
-          {t('plan.emptyTitle')}
+          {isError ? t('plan.loadErrorTitle') : t('plan.emptyTitle')}
         </Typography>
         <Typography
           variant="caption"
@@ -62,13 +71,19 @@ export default function EmptyState({onGenerate, loading}: EmptyStateProps) {
           color="muted"
           align="center"
           style={styles.emptyBody}>
-          {t('plan.emptyBodyLine1')}
-          {'\n'}
-          {t('plan.emptyBodyLine2')}
+          {isError ? (
+            t('plan.loadErrorBody')
+          ) : (
+            <>
+              {t('plan.emptyBodyLine1')}
+              {'\n'}
+              {t('plan.emptyBodyLine2')}
+            </>
+          )}
         </Typography>
       </View>
       <Pressable
-        onPress={onGenerate}
+        onPress={isError ? onRetry : onGenerate}
         disabled={loading}
         style={styles.emptyCta}>
         <LinearGradient
@@ -81,7 +96,7 @@ export default function EmptyState({onGenerate, loading}: EmptyStateProps) {
             family="cairo"
             weight="semibold"
             style={[styles.emptyCtaText, {fontSize: 15}]}>
-            {t('plan.generate')}
+            {isError ? t('plan.retry') : t('plan.generate')}
           </Typography>
         </LinearGradient>
       </Pressable>

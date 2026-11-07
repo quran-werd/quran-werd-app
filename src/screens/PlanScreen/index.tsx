@@ -16,6 +16,7 @@ import {
 import {
   selectRevisionPlan,
   selectRevisionPlanLoading,
+  selectRevisionPlanError,
 } from '../../features/RevisionPlan/revisionPlanSlice';
 import {toArabicNumerals} from '../../content';
 import EmptyState from './components/EmptyState';
@@ -35,6 +36,7 @@ export default function PlanScreen() {
   const dispatch = useAppDispatch();
   const plan = useAppSelector(selectRevisionPlan);
   const loading = useAppSelector(selectRevisionPlanLoading);
+  const loadError = useAppSelector(selectRevisionPlanError);
   const insets = useSafeAreaInsets();
 
   const loadPlan = useCallback(() => {
@@ -98,7 +100,12 @@ export default function PlanScreen() {
             <ScreenTitle>{t('plan.title')}</ScreenTitle>
           </View>
         </View>
-        <EmptyState onGenerate={handleGenerate} loading={loading} />
+        <EmptyState
+          onGenerate={handleGenerate}
+          onRetry={loadPlan}
+          loading={loading}
+          variant={loadError && !loading ? 'error' : 'empty'}
+        />
       </View>
     );
   }

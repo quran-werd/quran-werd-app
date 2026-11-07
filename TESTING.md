@@ -55,7 +55,7 @@ the bottom.
 | 2 | Expand a surah row | No issues — shows the memorized range, verse snippets, and a delete button | 🟢 Passed |
 | 3 | "Add" button opens the verse-selection screen | No issues | 🟢 Passed |
 | 4 | Empty state (nothing memorized) | Not tested — needs a clean account | ⚪ Pending |
-| 5 | Delete a range, with confirm prompt | Not tested — holding off, would delete real dev data | ⚪ Pending |
+| 5 | Delete a range, with confirm prompt | No issues — deleted Al-Anfal's 1-7 range on the real test account; confirm modal showed the exact range and surah name, header correctly dropped from 15/369 to 14/362 verses | 🟢 Passed |
 | 6 | Header's total ayat/surah count matches the data | No issues — cross-checked directly against the database (15 surahs, 369 verses); my first pass misread the surah-count digit as 10 instead of 15, which was my mistake, not a bug | 🟢 Passed |
 
 ## MemorizationScreen (verse selection)
@@ -73,7 +73,7 @@ the bottom.
 | 9 | Jump to page — valid page, and invalid (0, 605) | No issues — invalid pages correctly rejected with an alert | 🟢 Passed |
 | 10 | Jump to chapter — tap in list, and via search | No issues | 🟢 Passed |
 | 11 | Selection sheet — verse counts, delete a row | No issues | 🟢 Passed |
-| 12 | Selection sheet — Save button | Not tested — writes to the real backend | ⚪ Pending |
+| 12 | Selection sheet — Save button | No issues — selected Al-Ikhlas 1-3 on the real test account and saved; database confirmed the new range (14→15 surahs, 362→365 verses) | 🟢 Passed |
 | 13 | Swipe performance across many pages | No issues observed | 🟢 Passed |
 
 ## PlanScreen
@@ -84,7 +84,7 @@ the bottom.
 | 2 | Upcoming werd list order | No issues — sequential, "اليوم" (today) badge correctly on the next werd, matching Home's preview | 🟢 Passed |
 | 3 | Completed / today / upcoming row styling | No issues — visually distinct (green check / gold outline / plain) | 🟢 Passed |
 | 4 | Empty state | Not tested — needs a clean account | ⚪ Pending |
-| 5 | Create/edit/delete round-trips to backend | Not tested — "تحديث الخطة" (update plan) button clicked and showed a success state, but didn't verify a specific edit round-tripped | 🟡 Needs action |
+| 5 | Create/edit/delete round-trips to backend | No issues — changed pages/day from 2 to 3, tapped "تحديث الخطة", werd count correctly dropped from 25 to 21; force-stopped and relaunched the app and the new value (3) and count (21) both persisted | 🟢 Passed |
 
 ## SettingsScreen
 
@@ -114,7 +114,7 @@ the bottom.
 | 1 | Button variants (primary/ghost/disabled/loading) | No issues — seen in context across screens (ابدأ المراجعة, إتمام, تحديث الخطة, Save/Cancel on modal, etc.), all render correctly | 🟢 Passed |
 | 2 | BottomSheet open/close (JumpSheet, MemorizationSelectionSheet) | No issues | 🟢 Passed |
 | 3 | Toast variants + auto-dismiss timing | Merge toast seen once, timing not precisely measured | 🟡 Needs action |
-| 4 | DeleteConfirmationModal cancel/confirm | No issues on render + cancel path. Confirm (actual delete) not exercised — would permanently delete real dev data | 🟡 Needs action |
+| 4 | DeleteConfirmationModal cancel/confirm | No issues — cancel path keeps the data; confirm path (exercised via MyMemorizationsScreen's range delete) removes it and updates counts correctly | 🟢 Passed |
 | 5 | BottomNav active state, hidden on MemorizationScreen | No issues — confirmed hidden on the verse-selection screen, active-tab highlight correct elsewhere | 🟢 Passed |
 | 6 | Badge renders correctly everywhere used | No issues — spot-checked (surah number badges, status badges) | 🟢 Passed |
 | 7 | VerseRangeRow consistent in both places it's used | No issues — same look in MyMemorizationsScreen's expanded row and the selection sheet | 🟢 Passed |
@@ -123,11 +123,11 @@ the bottom.
 
 | # | Scenario | Result | Status |
 |---|---|---|---|
-| 1 | Cold-start Mushaf build progress screen | Not tested | ⚪ Pending |
+| 1 | Cold-start Mushaf build progress screen | No issues — observed the real "جاري تجهيز المصحف" progress screen (0/604 pages) on a cold start where the local store needed rebuilding; it downloaded and completed cleanly, landing on Home. (On some restarts the store is already valid and this screen is skipped entirely — that's expected, not a bug.) | 🟢 Passed |
 | 2 | Deep links (home/memorization/plan/revision) | **Issue found → fixed** (#4): `quranwerd://` was never a registered app scheme (native manifest had `com.quranwerd` and `exp+quranwerd` instead), so every deep link silently went nowhere. Added `scheme: 'quranwerd'` to `app.config.ts`, rebuilt, and confirmed `quranwerd://home`, `quranwerd://plan`, and `quranwerd://memorization` all navigate correctly now. (`revision` wasn't tried since it needs a `werdId` param to be meaningful.) | 🟢 Passed |
-| 3 | Daily notification fires + opens right screen | Not tested | ⚪ Pending |
+| 3 | Daily notification fires + opens right screen | No issues — set notification time to 2 minutes ahead, backgrounded the app, notification fired exactly on time with the correct Arabic text, and tapping it opened RevisionScreen at the exact current-werd page (Al-Baqarah 72-83) | 🟢 Passed |
 | 4 | RTL layout correctness throughout | No issues observed in passing — every screen tested so far is correctly mirrored/aligned | 🟢 Passed |
-| 5 | Network-loss handling per screen | Not tested | ⚪ Pending |
+| 5 | Network-loss handling per screen | Home and RevisionScreen degrade gracefully (serve cached data, no crash). **Issue found → fixed** (#5): PlanScreen used to render the "no plan generated yet" empty state on a failed first fetch — identical to a real empty account, even though the plan was never lost. Now shows a distinct "couldn't load your plan" message with a Retry button | 🟢 Passed |
 
 ---
 
@@ -139,5 +139,6 @@ the bottom.
 | 2 | Bismillah/header repeated on every line of a long verse 1 (e.g. An-Nisa; 27 surahs affected) | Added a `wordPosition === 1` check so only the verse's true first line counts as the surah start | 🟢 Fixed — `1fc55bf`, regression tests in `7084ca9` |
 | 3 | Settings → light theme toggle does nothing app-wide | None yet — no light palette/theme context exists in the codebase | 🟡 Open — feature to build later, not a regression |
 | 4 | Deep links never navigated anywhere (`quranwerd://` scheme wasn't registered natively) | Added `scheme: 'quranwerd'` to `app.config.ts`; rebuilt native project | 🟢 Fixed — verified `quranwerd://home` and `quranwerd://plan` |
+| 5 | PlanScreen showed the "no plan yet" empty state on a failed first fetch (e.g. no network), indistinguishable from a genuinely empty account even though the plan was never lost | Added an `error` variant to `EmptyState` with a distinct message + Retry button, wired to `PlanScreen`'s `loadError`/`loadPlan` | 🟢 Fixed — verified offline shows "couldn't load your plan" + Retry, and Retry recovers the real plan once network returns |
 
 <!-- Add new rows here as new issues are found. -->
