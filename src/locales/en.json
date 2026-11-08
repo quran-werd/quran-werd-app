@@ -11,7 +11,8 @@
     "journeyLabel": "Begin your journey",
     "googleSignIn": "Sign in with Google",
     "mockSignIn": "Continue as Dev User",
-    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
+    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy",
+    "networkError": "Couldn't reach the server. Check your internet connection and try again."
   },
   "home": {
     "title": "Current Werd",
@@ -51,6 +52,9 @@
     "emptyTitle": "No plan generated yet",
     "emptyBodyLine1": "Add your memorizations first from the Memorizations screen",
     "emptyBodyLine2": "then generate a revision plan",
+    "loadErrorTitle": "Couldn't load your plan",
+    "loadErrorBody": "Check your internet connection",
+    "retry": "Retry",
     "werdOrder": "Werd {{order}}",
     "today": "Today",
     "modeDaily": "pages / day",

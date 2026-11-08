@@ -17,6 +17,7 @@ import {
   removeRange,
 } from '../../../features/Memorization/memorizationSelectionSlice';
 import {findSingleVerseRange} from '../utils/verseSelection.utils';
+import {isSurahStartLine, shouldShowBismillah} from '../utils/lineHelpers';
 
 interface LineProps {
   words: Word[];
@@ -68,7 +69,15 @@ const Line: React.FC<LineProps> = ({
   const pendingStartVerse = useAppSelector(selectPendingStartVerse);
   const ranges = useAppSelector(selectRanges);
 
-  const isShowBismillah = words[0].verseNumber === 1;
+  const isSurahStart = isSurahStartLine(
+    words[0].verseNumber,
+    words[0].position,
+  );
+  const isShowBismillah = shouldShowBismillah(
+    words[0].verseNumber,
+    words[0].position,
+    words[0].chapterId,
+  );
 
   const chapterName = useMemo(
     () => getSurahNameArabic(words[0].chapterId),
@@ -186,10 +195,12 @@ const Line: React.FC<LineProps> = ({
 
   return (
     <React.Fragment key={lineKey}>
-      {isShowBismillah && (
+      {isSurahStart && (
         <View style={styles.bismillahContainer}>
           <SurahHeader name={chapterName} />
-          <BasmalaSvg color={colors.mushafBrownDeep} />
+          {isShowBismillah && (
+            <BasmalaSvg color={colors.mushafBrownDeep} />
+          )}
         </View>
       )}
       {selectionMode ? (
