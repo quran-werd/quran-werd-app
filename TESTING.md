@@ -15,14 +15,15 @@ the bottom.
 
 | Screen | Status |
 |---|---|
-| AuthScreen | In progress |
-| HomeScreen | In progress |
-| MyMemorizationsScreen | In progress |
-| MemorizationScreen (QuranPager, selection) | In progress |
-| PlanScreen | In progress |
-| SettingsScreen | In progress |
-| RevisionScreen (QuranPager, read) | In progress |
-| Shared components | In progress |
+| AuthScreen | 🟡 Needs action (2 pending: Google OAuth, screen-size layout) |
+| HomeScreen | 🟢 Passed |
+| MyMemorizationsScreen | 🟢 Passed |
+| MemorizationScreen (QuranPager, selection) | 🟢 Passed |
+| PlanScreen | 🟢 Passed |
+| SettingsScreen | 🟡 Needs action (1 open feature: light theme) |
+| RevisionScreen (QuranPager, read) | 🟢 Passed |
+| Shared components | 🟢 Passed |
+| App-wide | 🟢 Passed |
 
 ---
 
@@ -68,7 +69,7 @@ the bottom.
 | 4 | Single verse select / deselect / remove on third tap | No issues | 🟢 Passed |
 | 5 | Cross-surah range select | No issues | 🟢 Passed |
 | 6 | Range selection crossing a page boundary | No issues | 🟢 Passed |
-| 7 | Adjacent-range merge, toast shown | Saw it fire once; couldn't reliably reproduce via scripted taps to confirm it fires on *every* merge — needs a human re-check, not marked as a confirmed issue | 🟡 Needs action |
+| 7 | Adjacent-range merge, toast shown | No issues — confirmed working by user | 🟢 Passed |
 | 8 | Undo/redo, including after a merge | No issues | 🟢 Passed |
 | 9 | Jump to page — valid page, and invalid (0, 605) | No issues — invalid pages correctly rejected with an alert | 🟢 Passed |
 | 10 | Jump to chapter — tap in list, and via search | No issues | 🟢 Passed |
@@ -113,7 +114,7 @@ the bottom.
 |---|---|---|---|
 | 1 | Button variants (primary/ghost/disabled/loading) | No issues — seen in context across screens (ابدأ المراجعة, إتمام, تحديث الخطة, Save/Cancel on modal, etc.), all render correctly | 🟢 Passed |
 | 2 | BottomSheet open/close (JumpSheet, MemorizationSelectionSheet) | No issues | 🟢 Passed |
-| 3 | Toast variants + auto-dismiss timing | Merge toast seen once, timing not precisely measured | 🟡 Needs action |
+| 3 | Toast variants + auto-dismiss timing | No issues — confirmed working by user | 🟢 Passed |
 | 4 | DeleteConfirmationModal cancel/confirm | No issues — cancel path keeps the data; confirm path (exercised via MyMemorizationsScreen's range delete) removes it and updates counts correctly | 🟢 Passed |
 | 5 | BottomNav active state, hidden on MemorizationScreen | No issues — confirmed hidden on the verse-selection screen, active-tab highlight correct elsewhere | 🟢 Passed |
 | 6 | Badge renders correctly everywhere used | No issues — spot-checked (surah number badges, status badges) | 🟢 Passed |
