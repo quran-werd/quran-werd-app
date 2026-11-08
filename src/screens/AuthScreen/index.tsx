@@ -1,46 +1,38 @@
 import React from 'react';
-import {View, StyleSheet, SafeAreaView} from 'react-native';
-import {useTranslation} from 'react-i18next';
-import Typography from '../../components/shared/Typography';
-import Button from '../../components/shared/Button';
+import {View, StyleSheet} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {colors} from '../../styles/colors';
-import {clearError, selectAuth} from '../../features/Auth/authSlice';
-import {signInWithGoogle} from '../../features/Auth/authAction';
-import {useAppDispatch, useAppSelector} from '../../store/hooks';
+import ScreenGlow from '../../components/shared/icons/ScreenGlow';
+import WordmarkHero from './components/WordmarkHero';
+import GoogleSignInSection from './components/GoogleSignInSection';
 
 export default function AuthScreen() {
-  const {t} = useTranslation();
-  const dispatch = useAppDispatch();
-  const auth = useAppSelector(selectAuth);
-
-  const handleGoogleSignIn = () => {
-    dispatch(clearError());
-    dispatch(signInWithGoogle());
-  };
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Typography variant="h1" align="center" style={styles.title}>
-          {t('auth.title')}
-        </Typography>
-        <Typography variant="body" color="secondary" align="center">
-          {t('auth.subtitle')}
-        </Typography>
-        {auth.error ? (
-          <Typography variant="caption" color="secondary" align="center">
-            {auth.error}
-          </Typography>
-        ) : null}
-        <Button
-          title={t('auth.googleSignIn')}
-          onPress={handleGoogleSignIn}
-          loading={auth.loading}
-          fullWidth
-          style={styles.button}
-        />
+    <View style={styles.container}>
+      <ScreenGlow
+        style={StyleSheet.absoluteFillObject}
+        stops={[
+          {id: 'authGlowTop', cx: '50%', cy: '0%', rx: '70%', ry: '45%', opacity: 0.09},
+          {
+            id: 'authGlowBottom',
+            cx: '50%',
+            cy: '100%',
+            rx: '60%',
+            ry: '30%',
+            opacity: 0.05,
+            fadeOffset: '60%',
+          },
+        ]}
+      />
+
+      <WordmarkHero />
+
+      <View style={[styles.lowerSection, {paddingBottom: 64 + insets.bottom}]}>
+        <GoogleSignInSection />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -49,16 +41,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+  lowerSection: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 28,
     gap: 16,
-  },
-  title: {
-    marginBottom: 8,
-  },
-  button: {
-    marginTop: 24,
   },
 });

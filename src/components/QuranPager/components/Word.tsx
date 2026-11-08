@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     writingDirection: 'rtl',
-    color: colors.text.primary,
+    color: colors.mushafText,
   },
   wordHighlighted: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.rangeHighlight,
   },
 });
 

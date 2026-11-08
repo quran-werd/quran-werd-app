@@ -3,6 +3,7 @@ import type {RootState} from '../../store';
 import {slicesNames} from '../../store/constants';
 import {
   signInWithGoogle,
+  signInWithMock,
   signOut,
   restoreSession,
   fetchCurrentUser,
@@ -57,6 +58,21 @@ export const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signInWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = (action.payload as string | null) ?? null;
+      })
+      .addCase(signInWithMock.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signInWithMock.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(signInWithMock.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string | null) ?? null;
       })

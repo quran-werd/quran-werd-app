@@ -1,15 +1,12 @@
-import React, {useMemo} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  Pressable,
-  ScrollView,
-} from 'react-native';
-import {Icon, Button} from '@ui-kitten/components';
+import React, {useEffect, useMemo, useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import Svg, {Path} from 'react-native-svg';
+import BottomSheet from '../../shared/BottomSheet';
+import Button from '../../shared/Button';
+import Typography from '../../shared/Typography';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
 import {Verse} from '../../../types/quran-pager.types';
 import {
   MemorizedRange,
@@ -19,12 +16,12 @@ import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
   selectRanges,
   removeRange,
+  clearRanges,
 } from '../../../features/Memorization/memorizationSelectionSlice';
 import {
   parseVerseKey,
   getVerseTextFromWords,
   calculateRangeStats,
-  formatNumberWithCommas,
 } from '../utils/verseSelection.utils';
 import {getSurahNameArabic} from '../../../content';
 import MemorizedRangeItem from '../../MemorizedRangeItem';
@@ -34,20 +31,29 @@ interface MemorizationSelectionSheetProps {
   visible: boolean;
   onClose: () => void;
   onSave: (ranges: SaveMemorizationRange[]) => void | Promise<void>;
-  verses: Verse[]; // All verses from current page(s) for text extraction // TODO: continue here <---- verses are being passed wrong.
+  onSaved?: () => void;
+  verses: Verse[]; // All verses from current page(s) for text extraction
 }
-
-const CloseIcon = (props: any) => <Icon {...props} name="close-outline" />;
 
 /**
  * Bottom sheet component for displaying and managing selected memorization ranges
  */
 export const MemorizationSelectionSheet: React.FC<
   MemorizationSelectionSheetProps
-> = ({visible, onClose, onSave, verses}) => {
+> = ({visible, onClose, onSave, onSaved, verses}) => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const ranges = useAppSelector(selectRanges);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSucceeded, setSaveSucceeded] = useState(false);
+
+  // Reset the success view whenever the sheet is dismissed, so reopening it
+  // for a new selection starts back on the ranges list.
+  useEffect(() => {
+    if (!visible) {
+      setSaveSucceeded(false);
+    }
+  }, [visible]);
 
   const handleRemoveRange = (rangeId: string) => {
     dispatch(removeRange(rangeId));
@@ -84,6 +90,17 @@ export const MemorizationSelectionSheet: React.FC<
     });
   }, [ranges, verses]);
 
+  // Group ranges by surah for display (docs/design.md §2.11)
+  const groupedRanges = useMemo(() => {
+    const groups = new Map<number, MemorizedRange[]>();
+    memorizedRanges.forEach(range => {
+      const group = groups.get(range.chapterNumber) ?? [];
+      group.push(range);
+      groups.set(range.chapterNumber, group);
+    });
+    return Array.from(groups.entries()).sort(([a], [b]) => a - b);
+  }, [memorizedRanges]);
+
   // Calculate summary stats
   const totalStats = useMemo(() => {
     return memorizedRanges.reduce(
@@ -100,181 +117,172 @@ export const MemorizationSelectionSheet: React.FC<
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       await onSave(
         mapMemorizedRangesToSaveMemorizationRequest(memorizedRanges),
       );
-      onClose();
+      dispatch(clearRanges());
+      setSaveSucceeded(true);
     } catch (error) {
       // Save failed, don't close the sheet
       console.error('Failed to save memorization ranges:', error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <Pressable style={styles.overlayPressable} onPress={onClose} />
-        <View style={styles.container}>
-          {/* Handle bar */}
-          <View style={styles.handleBar} />
+  // Close this sheet's Modal first and only navigate once it has finished
+  // dismissing — closing a Modal and unmounting the screen in the same tick
+  // (e.g. via navigation.goBack) can freeze the app.
+  const handleSuccessConfirm = () => {
+    onClose();
+    setTimeout(() => onSaved?.(), 300);
+  };
 
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>
-              {t('memorization.selection.title')}
-            </Text>
+  return (
+    <BottomSheet visible={visible} onClose={onClose} title={t('memorization.selection.title')}>
+      {saveSucceeded ? (
+        <View style={styles.successState}>
+          <View style={styles.successIconCircle}>
+            <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M5 13l4 4L19 7"
+                stroke={colors.primary}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+          </View>
+          <Typography
+            variant="subtitle"
+            family="amiri"
+            weight="bold"
+            align="center"
+            style={styles.successTitle}>
+            {t('memorization.selection.successTitle')}
+          </Typography>
+          <Typography color="muted" align="center" variant="caption">
+            {t('memorization.selection.successMessage')}
+          </Typography>
+          <View style={styles.footer}>
             <Button
-              appearance="ghost"
-              status="basic"
-              accessoryLeft={CloseIcon}
-              onPress={onClose}
-              style={styles.closeButton}
-              size="small"
+              title={t('common.ok')}
+              onPress={handleSuccessConfirm}
+              fullWidth
             />
           </View>
-
-          {/* Summary */}
-          {memorizedRanges.length > 0 && (
+        </View>
+      ) : (
+        <>
+          {memorizedRanges.length > 0 ? (
             <View style={styles.summary}>
-              <Text style={styles.summaryText}>
-                {t('memorization.selection.summary', {
+              <Typography variant="caption" color="muted">
+                {t('memorization.selection.totalSummary', {
                   rangeCount: memorizedRanges.length,
-                  verseCount: formatNumberWithCommas(totalStats.verseCount),
-                  wordCount: formatNumberWithCommas(totalStats.wordCount),
+                  verseCount: totalStats.verseCount,
                 })}
-              </Text>
+              </Typography>
             </View>
-          )}
+          ) : null}
 
-          {/* Ranges list */}
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
             {memorizedRanges.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>
+                <Typography variant="body" color="muted" align="center">
                   {t('memorization.selection.emptyState')}
-                </Text>
+                </Typography>
               </View>
             ) : (
-              memorizedRanges.map(range => (
-                <MemorizedRangeItem
-                  key={range.id}
-                  range={range}
-                  surahNumber={range.chapterNumber}
-                  onDelete={() => handleDelete(range.id)}
-                  showDeleteButton={true}
-                />
+              groupedRanges.map(([chapterNumber, group]) => (
+                <View key={chapterNumber} style={styles.group}>
+                  <Typography variant="caption" family="amiriBold" style={styles.groupLabel}>
+                    {getSurahNameArabic(chapterNumber)}
+                  </Typography>
+                  <View style={styles.groupItems}>
+                    {group.map(range => (
+                      <MemorizedRangeItem
+                        key={range.id}
+                        range={range}
+                        surahNumber={range.chapterNumber}
+                        onDelete={() => handleDelete(range.id)}
+                        showDeleteButton
+                      />
+                    ))}
+                  </View>
+                </View>
               ))
             )}
           </ScrollView>
 
-          {/* Save button */}
-          {memorizedRanges.length > 0 && (
+          {memorizedRanges.length > 0 ? (
             <View style={styles.footer}>
-              <Pressable
+              <Button
+                title={t('memorization.selection.saveButton')}
                 onPress={handleSave}
-                style={styles.saveButton}
-                disabled={memorizedRanges.length === 0}>
-                <Text style={styles.saveButtonText}>{t('common.save')}</Text>
-              </Pressable>
+                loading={isSaving}
+                fullWidth
+              />
             </View>
-          )}
-        </View>
-      </View>
-    </Modal>
+          ) : null}
+        </>
+      )}
+    </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  overlayPressable: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '80%',
-    paddingBottom: 20,
-  },
-  handleBar: {
-    width: 40,
-    height: 4,
-    backgroundColor: colors.border,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  summary: {
     paddingHorizontal: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  closeButton: {
-    width: 32,
-    height: 32,
-  },
-  summary: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  summaryText: {
-    fontSize: 14,
-    color: colors.text.secondary,
+    borderBottomColor: colors.goldBorderFaint,
   },
   scrollView: {
-    flex: 1,
+    maxHeight: 380,
   },
   scrollContent: {
     padding: 16,
+    gap: 16,
   },
   emptyState: {
     padding: 32,
     alignItems: 'center',
   },
-  emptyStateText: {
-    fontSize: 14,
-    color: colors.text.light,
-    textAlign: 'center',
+  group: {
+    gap: 8,
+  },
+  groupLabel: {
+    paddingHorizontal: 4,
+  },
+  groupItems: {
+    gap: 8,
   },
   footer: {
     paddingHorizontal: 20,
     paddingTop: 12,
+    paddingBottom: 4,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.goldBorderFaint,
   },
-  saveButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 12,
-    paddingVertical: 14,
+  successState: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+  },
+  successIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(196,154,60,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(196,154,60,0.3)',
     alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 16,
   },
-  saveButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+  successTitle: {
+    marginBottom: 8,
   },
 });

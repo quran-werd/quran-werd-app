@@ -1,13 +1,20 @@
 import React, {useMemo, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import Card from '../shared/Card';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from 'react-native-reanimated';
+import {LinearGradient} from 'expo-linear-gradient';
 import Typography from '../shared/Typography';
+import AnimatedChevron from '../shared/icons/AnimatedChevron';
 import {colors} from '../../styles/colors';
+import {radius} from '../../styles/radius';
+import {shadows} from '../../styles/shadows';
 import {MemorizationVerseRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
 import SurahNumber from './components/SurahNumber';
-import ProgressInfo from './components/ProgressInfo';
 import {SURAHS_INFO} from '../../content';
 import {
   getMemorizedPercentageFromRanges,
@@ -40,44 +47,73 @@ export default function SurahProgressCard({
 
   const surahInfo = useMemo(() => SURAHS_INFO[surahNumber - 1], [surahNumber]);
 
-  const surahType =
-    surahInfo.place === 'Makkah'
-      ? t('memorization.surah.makkiyah')
-      : t('memorization.surah.madaniyah');
-
   return (
-    <Card style={styles.container} margin={8}>
-      <Card
-        onPress={() => setIsExpanded(!isExpanded)}
+    <Animated.View
+      layout={LinearTransition}
+      style={[
+        styles.container,
+        {
+          borderColor: isExpanded
+            ? colors.goldBorderStrong
+            : 'rgba(196,154,60,0.14)',
+        },
+        isExpanded ? shadows.surahCardExpanded : shadows.surahCardDefault,
+      ]}>
+      <LinearGradient
+        colors={[colors.elevatedCard, colors.card]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        style={StyleSheet.absoluteFillObject}
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(196,154,60,0.25)', 'transparent']}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        style={styles.hairline}
+      />
+      <Pressable
         style={styles.header}
-        padding={16}
-        margin={0}
-        shadow={false}>
-        <View style={styles.surahTypeContainer}>
-          <SurahNumber surahNumber={surahNumber} />
-          <View style={styles.surahInfo}>
-            <Typography variant="h3" style={styles.surahNameArabic}>
-              {surahInfo.arabic}
-            </Typography>
-            <Typography variant="small" color="light" style={styles.surahType}>
-              {surahType}
-            </Typography>
-          </View>
+        onPress={() => setIsExpanded(prev => !prev)}>
+        <SurahNumber surahNumber={surahNumber} />
+        <View style={styles.surahInfo}>
+          <Typography
+            variant="body"
+            family="amiriBold"
+            style={styles.surahName}>
+            {surahInfo.arabic}
+          </Typography>
+          <Typography family="cairo" style={styles.surahMeta}>
+            {t('memorization.surah.verseCount', {
+              memorized: memorizedVersesCount,
+              total: surahInfo.aya,
+            })}
+          </Typography>
         </View>
-        <ProgressInfo
-          progressPercentage={progressPercentage}
-          memorizedVerses={memorizedVersesCount}
+        <AnimatedChevron expanded={isExpanded} />
+      </Pressable>
+
+      <View style={styles.progressTrack}>
+        <LinearGradient
+          colors={
+            progressPercentage >= 90
+              ? [colors.primary, '#D4B86A']
+              : ['rgba(196,154,60,0.45)', 'rgba(196,154,60,0.75)']
+          }
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={[
+            styles.progressFill,
+            {width: `${Math.min(progressPercentage, 100)}%`},
+          ]}
         />
-        <Typography variant="small" color="light" style={styles.expandIcon}>
-          {isExpanded ? '▲' : '▼'}
-        </Typography>
-      </Card>
+      </View>
 
       {isExpanded && ranges.length > 0 && (
-        <View style={styles.expandedContent}>
-          <Typography variant="h3" style={styles.rangesTitle}>
-            {t('memorization.surah.memorizedRanges')}
-          </Typography>
+        <Animated.View
+          entering={FadeIn.duration(280)}
+          exiting={FadeOut.duration(200)}
+          style={styles.expandedContent}>
+          <View style={styles.expandedDivider} />
           {ranges.map(range => (
             <MemorizedRangeItem
               key={`${range.from}-${range.to}`}
@@ -96,35 +132,59 @@ export default function SurahProgressCard({
               onDelete={() => onDeleteRange?.(range)}
             />
           ))}
-        </View>
+        </Animated.View>
       )}
-    </Card>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {padding: 0},
+  container: {
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  hairline: {
+    height: 1,
+    width: '100%',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 16,
-  },
-  surahTypeContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    gap: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   surahInfo: {flex: 1},
-  surahNameArabic: {marginBottom: 2},
-  surahType: {marginBottom: 4},
-  expandIcon: {textAlign: 'center'},
-  expandedContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+  surahName: {
+    color: colors.foreground,
   },
-  rangesTitle: {marginBottom: 12, marginTop: 8},
+  surahMeta: {
+    fontSize: 11,
+    color: colors.mutedForeground,
+  },
+  progressTrack: {
+    height: 3,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(196,154,60,0.1)',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: radius.full,
+  },
+  expandedContent: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    gap: 8,
+    overflow: 'hidden',
+  },
+  expandedDivider: {
+    height: 1,
+    backgroundColor: colors.goldBorderFaint,
+    marginBottom: 4,
+  },
 });

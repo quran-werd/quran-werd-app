@@ -69,6 +69,53 @@ export function getSurahNameArabic(surahNumber: number): string {
 }
 
 /**
+ * Takes [surahNumber] and returns the Surah name in Arabic prefixed with "سورة "
+ */
+export function getSurahDisplayName(surahNumber: number): string {
+  return `سورة ${getSurahNameArabic(surahNumber)}`;
+}
+
+const JUZ_ORDINAL_WORDS: Record<number, string> = {
+  1: 'الأول',
+  2: 'الثاني',
+  3: 'الثالث',
+  4: 'الرابع',
+  5: 'الخامس',
+  6: 'السادس',
+  7: 'السابع',
+  8: 'الثامن',
+  9: 'التاسع',
+  10: 'العاشر',
+  11: 'الحادي عشر',
+  12: 'الثاني عشر',
+  13: 'الثالث عشر',
+  14: 'الرابع عشر',
+  15: 'الخامس عشر',
+  16: 'السادس عشر',
+  17: 'السابع عشر',
+  18: 'الثامن عشر',
+  19: 'التاسع عشر',
+  20: 'العشرون',
+  21: 'الحادي والعشرون',
+  22: 'الثاني والعشرون',
+  23: 'الثالث والعشرون',
+  24: 'الرابع والعشرون',
+  25: 'الخامس والعشرون',
+  26: 'السادس والعشرون',
+  27: 'السابع والعشرون',
+  28: 'الثامن والعشرون',
+  29: 'التاسع والعشرون',
+  30: 'الثلاثون',
+};
+
+/**
+ * Takes a juz number (1-30) and returns its Arabic ordinal word, e.g. 1 -> "الأول"
+ */
+export function getJuzOrdinalWord(juzNumber: number): string {
+  return JUZ_ORDINAL_WORDS[juzNumber] ?? String(juzNumber);
+}
+
+/**
  * Takes [surahNumber] and returns the count of total Verses in the Surah
  */
 export function getVerseCount(surahNumber: number): number {
@@ -87,6 +134,25 @@ export function getPageQCFontName(pageNumber: number): string {
   const fontName = `QCF_P${pageNumber.toString().padStart(3, '0')}`;
   console.log('fontName', fontName);
   return fontName;
+}
+
+/**
+ * Takes [surahNumber] & [verseNumber] and returns the Mushaf page number containing that verse
+ */
+export function getPageForVerse(surahNumber: number, verseNumber: number): number {
+  for (let page = 1; page <= totalPagesCount; page++) {
+    const items = getPageData(page);
+    const match = items.find(
+      item =>
+        item.surah === surahNumber &&
+        verseNumber >= item.start &&
+        verseNumber <= item.end,
+    );
+    if (match) {
+      return page;
+    }
+  }
+  return 1;
 }
 
 /**

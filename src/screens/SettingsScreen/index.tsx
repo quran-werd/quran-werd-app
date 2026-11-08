@@ -1,142 +1,102 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  Platform,
-  Pressable,
-} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
-import DateTimePicker, {
-  type DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
-import Typography from '../../components/shared/Typography';
-import Button from '../../components/shared/Button';
+import Svg, {Path} from 'react-native-svg';
+import ScreenTitle from '../../components/shared/ScreenTitle';
+import SegmentedControl from '../../components/shared/SegmentedControl';
 import {colors} from '../../styles/colors';
-import {
-  getDevNotificationTimeOverride,
-  DEV_NOTIFICATION_TIME,
-} from '../../services/config';
-import {rescheduleDailyWerdNotification} from '../../services/notifications.service';
-import {
-  loadNotificationTime,
-  type NotificationTime,
-} from '../../utils/storage/notification.storage';
+import {spacing} from '../../styles/spacing';
+import {useAppSelector, useAppDispatch} from '../../store/hooks';
+import {selectUser} from '../../features/Auth/authSlice';
+import {signOut} from '../../features/Auth/authAction';
+import SettingsCard from './components/SettingsCard';
+import SectionLabel from './components/SectionLabel';
+import Row from './components/Row';
+import UserCard from './components/UserCard';
+import NotificationSettingsCard from './components/NotificationSettingsCard';
+import AppInfoSection from './components/AppInfoSection';
 
-const timeToDate = (time: NotificationTime): Date => {
-  const date = new Date();
-  date.setHours(time.hour, time.minute, 0, 0);
-  return date;
-};
+type ThemeMode = 'light' | 'dark';
 
-const dateToTime = (date: Date): NotificationTime => ({
-  hour: date.getHours(),
-  minute: date.getMinutes(),
-});
-
-const formatTime = (time: NotificationTime): string => {
-  const hour = String(time.hour).padStart(2, '0');
-  const minute = String(time.minute).padStart(2, '0');
-  return `${hour}:${minute}`;
-};
+function SignOutIcon() {
+  return (
+    <Svg width={15} height={15} viewBox="0 0 16 16" fill="none">
+      <Path
+        d="M10.5 2H13a1 1 0 011 1v10a1 1 0 01-1 1h-2.5"
+        stroke={colors.destructiveSettings}
+        strokeWidth={1.3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M7 11l3.5-3L7 5M10.5 8H3"
+        stroke={colors.destructiveSettings}
+        strokeWidth={1.3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
 
 export default function SettingsScreen() {
   const {t} = useTranslation();
-  const [pickerDate, setPickerDate] = useState(() =>
-    timeToDate({hour: 8, minute: 0}),
-  );
-  const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+  const [themeMode, setThemeMode] = useState<ThemeMode>('dark');
+  const insets = useSafeAreaInsets();
 
-  const devOverride = getDevNotificationTimeOverride();
-
-  const loadSettings = useCallback(async () => {
-    const time = await loadNotificationTime();
-    setPickerDate(timeToDate(time));
-  }, []);
-
-  useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
-
-  const handleTimeChange = (event: DateTimePickerEvent, date?: Date) => {
-    // Android's dialog is modal and self-dismisses on OK/Cancel; iOS's inline
-    // spinner fires onChange continuously while scrolling, so only Android
-    // auto-closes here — iOS closes when the user taps the pill again.
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-    }
-    if (event.type === 'set' && date) {
-      setPickerDate(date);
-      setSaved(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    setSaved(false);
-    try {
-      const time = dateToTime(pickerDate);
-      await rescheduleDailyWerdNotification(time);
-      setSaved(true);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSignOut = () => {
+    dispatch(signOut());
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Typography variant="h1">{t('settings.title')}</Typography>
-        <Typography variant="body" color="secondary">
-          {t('settings.subtitle')}
-        </Typography>
-
-        <Typography variant="caption">
-          {t('settings.notificationTime')}
-        </Typography>
-
-        <Pressable
-          onPress={() => setShowPicker(prev => !prev)}
-          style={styles.pill}>
-          <Typography variant="body">
-            {formatTime(dateToTime(pickerDate))}
-          </Typography>
-        </Pressable>
-
-        {showPicker ? (
-          <DateTimePicker
-            value={pickerDate}
-            mode="time"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={handleTimeChange}
-            style={styles.picker}
-          />
-        ) : null}
-
-        {__DEV__ && devOverride ? (
-          <Typography variant="caption" color="secondary">
-            {t('settings.devOverride', {time: DEV_NOTIFICATION_TIME})}
-          </Typography>
-        ) : null}
-
-        <Button
-          title={t('settings.save')}
-          onPress={handleSave}
-          loading={loading}
-          fullWidth
-        />
-
-        {saved ? (
-          <Typography variant="caption" color="secondary" align="center">
-            {t('settings.saved')}
-          </Typography>
-        ) : null}
+    <View style={styles.container}>
+      <View style={[styles.header, {paddingTop: insets.top + spacing[12]}]}>
+        <ScreenTitle>{t('settings.title')}</ScreenTitle>
       </View>
-    </SafeAreaView>
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={styles.bodyContent}
+        showsVerticalScrollIndicator={false}>
+        <UserCard user={user} />
+
+        <SectionLabel>{t('settings.sections.customization')}</SectionLabel>
+        <SettingsCard>
+          <Row
+            label={t('settings.themeLabel')}
+            trailing={
+              <SegmentedControl
+                value={themeMode}
+                onChange={setThemeMode}
+                options={[
+                  {label: t('settings.theme.dark'), value: 'dark'},
+                  {label: t('settings.theme.light'), value: 'light'},
+                ]}
+              />
+            }
+          />
+        </SettingsCard>
+
+        <SectionLabel>{t('settings.sections.notifications')}</SectionLabel>
+        <NotificationSettingsCard />
+
+        <SectionLabel>{t('settings.sections.app')}</SectionLabel>
+        <AppInfoSection />
+
+        <View style={styles.signOutWrap}>
+          <SettingsCard>
+            <Row
+              label={t('settings.signOut')}
+              destructive
+              trailing={<SignOutIcon />}
+              onPress={handleSignOut}
+            />
+          </SettingsCard>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -145,20 +105,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  content: {
-    padding: 24,
-    gap: 12,
+  signOutWrap: {
+    marginTop: spacing[28],
   },
-  pill: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.white,
+  header: {
+    paddingBottom: spacing[10],
+    paddingHorizontal: spacing[20],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.goldTintSubtle,
   },
-  picker: {
-    alignSelf: 'stretch',
+  body: {
+    flex: 1,
+  },
+  bodyContent: {
+    paddingHorizontal: spacing[16],
+    paddingBottom: spacing[48],
   },
 });

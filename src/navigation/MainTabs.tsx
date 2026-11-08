@@ -1,101 +1,42 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Icon} from '@ui-kitten/components';
-import {useTranslation} from 'react-i18next';
-import {colors} from '../styles/colors';
+import {
+  createBottomTabNavigator,
+  BottomTabBarProps,
+} from '@react-navigation/bottom-tabs';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import BottomNav from '../components/shared/BottomNav';
 import HomeScreen from '../screens/HomeScreen';
 import MemorizationStack from './MemorizationStack';
 import PlanScreen from '../screens/PlanScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import {colors} from '../styles/colors';
 
 const Tab = createBottomTabNavigator();
 
-const tabIconColor = (focused: boolean) =>
-  focused ? colors.primary : colors.text.light;
-
-const HomeIcon = ({focused}: {focused: boolean}) => (
-  <Icon
-    name="home-outline"
-    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
-  />
-);
-
-const MemIcon = ({focused}: {focused: boolean}) => (
-  <Icon
-    name="bar-chart-2-outline"
-    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
-  />
-);
-
-const PlanIcon = ({focused}: {focused: boolean}) => (
-  <Icon
-    name="clipboard-outline"
-    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
-  />
-);
-
-const SettingsIcon = ({focused}: {focused: boolean}) => (
-  <Icon
-    name="settings-2-outline"
-    style={{width: 24, height: 24, tintColor: tabIconColor(focused)}}
-  />
-);
+// MemorizationScreen (the full-screen QuranViewer) is nested inside the
+// MemorizationStack tab, so React Navigation keeps this tab's bar mounted
+// by default — hide it explicitly to match design.md's "no BottomNav on
+// QuranViewer" requirement.
+const renderTabBar = (props: BottomTabBarProps) => {
+  const activeRoute = props.state.routes[props.state.index];
+  const focusedRouteName =
+    getFocusedRouteNameFromRoute(activeRoute) ?? activeRoute.name;
+  if (focusedRouteName === 'MemorizationScreen') {
+    return null;
+  }
+  return <BottomNav {...props} />;
+};
 
 export default function MainTabs() {
-  const {t} = useTranslation();
-
   return (
     <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.text.light,
-      }}>
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: t('tabs.home'),
-          tabBarIcon: HomeIcon,
-        }}
-      />
-      <Tab.Screen
-        name="MemorizationStack"
-        component={MemorizationStack}
-        options={{
-          title: t('tabs.memorization'),
-          tabBarIcon: MemIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Plan"
-        component={PlanScreen}
-        options={{
-          title: t('tabs.plan'),
-          tabBarIcon: PlanIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          title: t('tabs.settings'),
-          tabBarIcon: SettingsIcon,
-        }}
-      />
+      screenOptions={{headerShown: false}}
+      sceneContainerStyle={{backgroundColor: colors.background}}
+      tabBar={renderTabBar}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="MemorizationStack" component={MemorizationStack} />
+      <Tab.Screen name="Plan" component={PlanScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    height: 60,
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-});

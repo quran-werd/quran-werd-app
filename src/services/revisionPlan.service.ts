@@ -7,11 +7,14 @@ export type Werd = {
   range: {from: number; to: number};
 };
 
+export type CompletedWerd = Werd & {completedAt: string};
+
 export type RevisionPlan = {
   _id: string;
   userId: string;
   dailyCapacity: number;
-  awrad: Werd[];
+  incompleteAwrad: Werd[];
+  completedAwrad: CompletedWerd[];
 };
 
 export const getRevisionPlan = () =>
@@ -27,4 +30,27 @@ export const updatePlanCapacity = (dailyCapacity: number) =>
   werdApiRequest<RevisionPlan>('/revision-plan/capacity', {
     method: 'PUT',
     data: {dailyCapacity},
+  });
+
+export type PlanStatus = 'active' | 'finished' | 'no-plan';
+
+export type CurrentWerdResponse = {
+  current: {werd: Werd | CompletedWerd; isCompleted: boolean} | null;
+  next: Werd | null;
+  planStatus: PlanStatus;
+};
+
+export type CompleteWerdResponse = {
+  werd: Werd | CompletedWerd;
+  status: 'completed';
+  alreadyCompleted: boolean;
+};
+
+export const getCurrentWerd = () =>
+  werdApiRequest<CurrentWerdResponse>('/revision-plan/current');
+
+export const completeWerd = (werdId: string) =>
+  werdApiRequest<CompleteWerdResponse>('/revision-plan/complete', {
+    method: 'POST',
+    data: {werdId},
   });

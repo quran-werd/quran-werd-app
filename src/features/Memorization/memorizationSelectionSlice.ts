@@ -3,6 +3,7 @@ import type {RootState} from '../../store';
 import {VerseRange} from '../../types/quran-pager.types';
 import {
   splitRangeBySurah,
+  orderVerseKeys,
   parseVerseKey,
   getAllSelectedVerseKeys,
   mergeOverlappingRanges,
@@ -20,6 +21,7 @@ interface MemorizationSelectionState {
     ranges: VerseRange[];
     pendingStartVerse: string | null;
   }>; // Future stack for redo
+  mergeEvent: {id: number} | null; // Transient flag consumed by the merge-success toast (docs/design.md §2.13)
 }
 
 const initialState: MemorizationSelectionState = {
@@ -27,6 +29,7 @@ const initialState: MemorizationSelectionState = {
   pendingStartVerse: null,
   history: [],
   future: [],
+  mergeEvent: null,
 };
 
 // Helper function to save current state to history before mutation
@@ -63,7 +66,11 @@ export const memorizationSelectionSlice = createSlice({
       action: PayloadAction<{startKey: string; endKey: string}>,
     ) => {
       saveToHistory(state);
-      const {startKey, endKey} = action.payload;
+      // The user may tap the end verse first; store ranges start-first
+      const [startKey, endKey] = orderVerseKeys(
+        action.payload.startKey,
+        action.payload.endKey,
+      );
       const splitRanges = splitRangeBySurah(startKey, endKey);
       const startParsed = parseVerseKey(startKey);
 
@@ -86,11 +93,26 @@ export const memorizationSelectionSlice = createSlice({
         });
       });
 
+      const countBeforeMerge = state.ranges.length;
+
       // Merge overlapping and adjacent ranges
       state.ranges = mergeOverlappingRanges(state.ranges);
 
+      if (state.ranges.length < countBeforeMerge) {
+        state.mergeEvent = {id: Date.now()};
+      }
+
       // Clear pending start after range is created
       state.pendingStartVerse = null;
+    },
+    clearMergeEvent: state => {
+      state.mergeEvent = null;
+    },
+    clearRanges: state => {
+      state.ranges = [];
+      state.pendingStartVerse = null;
+      state.history = [];
+      state.future = [];
     },
     removeRange: (state, action: PayloadAction<string>) => {
       saveToHistory(state);
@@ -135,6 +157,8 @@ export const {
   removeRange,
   undo,
   redo,
+  clearMergeEvent,
+  clearRanges,
 } = memorizationSelectionSlice.actions;
 
 // Selectors
@@ -143,6 +167,9 @@ export const selectRanges = (state: RootState) =>
 
 export const selectPendingStartVerse = (state: RootState) =>
   state.memorizationSelection.pendingStartVerse;
+
+export const selectMergeEvent = (state: RootState) =>
+  state.memorizationSelection.mergeEvent;
 
 // Memoized selector that only recomputes when ranges change
 // This prevents unnecessary re-renders by returning the same Set reference

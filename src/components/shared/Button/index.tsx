@@ -1,18 +1,23 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import {LinearGradient} from 'expo-linear-gradient';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
+import {shadows} from '../../../styles/shadows';
 import Typography from '../Typography';
+
+type Variant = 'primary' | 'secondary' | 'ghost' | 'ghostActive';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: Variant;
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
@@ -30,84 +35,126 @@ export default function Button({
   textStyle,
   fullWidth = false,
 }: ButtonProps) {
-  const getButtonStyle = () => {
-    const baseStyle = [styles.button, fullWidth && styles.fullWidth];
-    
-    if (disabled || loading) {
-      return [...baseStyle, styles.buttonDisabled];
-    }
+  const isDisabled = disabled || loading;
 
-    switch (variant) {
-      case 'primary':
-        return [...baseStyle, styles.buttonPrimary];
-      case 'secondary':
-        return [...baseStyle, styles.buttonSecondary];
-      case 'outline':
-        return [...baseStyle, styles.buttonOutline];
-      default:
-        return [...baseStyle, styles.buttonPrimary];
-    }
-  };
+  const content = loading ? (
+    <ActivityIndicator
+      color={variant === 'primary' && !isDisabled ? colors.background : colors.primary}
+    />
+  ) : (
+    <Typography
+      variant="body"
+      family="cairo"
+      weight="semibold"
+      color="primary"
+      style={[
+        variant === 'primary' && !isDisabled && styles.primaryText,
+        (variant === 'ghost' || variant === 'ghostActive') && styles.ghostText,
+        variant === 'ghostActive' && styles.ghostActiveText,
+        textStyle,
+      ]}>
+      {title}
+    </Typography>
+  );
 
-  const getTextColor = () => {
-    if (disabled || loading) {
-      return 'light';
-    }
-    if (variant === 'outline') {
-      return 'primary';
-    }
-    return 'white';
-  };
+  if (variant === 'primary' && !isDisabled) {
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        style={({pressed}) => [
+          fullWidth && styles.fullWidth,
+          pressed && styles.pressed,
+          style,
+        ]}>
+        <LinearGradient
+          colors={[colors.primaryHighlight, colors.primary, colors.primaryShadow]}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 1}}
+          style={[styles.button, styles.primaryGradient, shadows.primaryCta]}>
+          {content}
+        </LinearGradient>
+      </Pressable>
+    );
+  }
 
   return (
-    <TouchableOpacity
-      style={[...getButtonStyle(), style]}
+    <Pressable
       onPress={onPress}
-      disabled={disabled || loading}
-      activeOpacity={0.8}>
-      {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? colors.primary : colors.white}
-        />
-      ) : (
-        <Typography
-          variant="body"
-          color={getTextColor()}
-          weight="semibold"
-          style={textStyle}>
-          {title}
-        </Typography>
-      )}
-    </TouchableOpacity>
+      disabled={isDisabled}
+      style={({pressed}) => [
+        styles.button,
+        fullWidth && styles.fullWidth,
+        variantStyle(variant, isDisabled),
+        pressed && !isDisabled && styles.pressed,
+        style,
+      ]}>
+      {content}
+    </Pressable>
   );
+}
+
+function variantStyle(variant: Variant, isDisabled: boolean): ViewStyle {
+  if (isDisabled) {
+    return styles.buttonDisabled;
+  }
+  switch (variant) {
+    case 'secondary':
+      return styles.buttonSecondary;
+    case 'ghostActive':
+      return styles.buttonGhostActive;
+    case 'ghost':
+    default:
+      return styles.buttonGhost;
+  }
 }
 
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 48,
+    flexDirection: 'row',
+    gap: 6,
+    minHeight: 44,
   },
   fullWidth: {
     width: '100%',
   },
-  buttonPrimary: {
-    backgroundColor: colors.primary,
+  pressed: {
+    transform: [{scale: 0.97}],
+  },
+  primaryGradient: {
+    borderRadius: radius.xl2,
+    paddingVertical: 16,
+  },
+  primaryText: {
+    color: colors.background,
   },
   buttonSecondary: {
-    backgroundColor: colors.secondary,
-  },
-  buttonOutline: {
-    backgroundColor: 'transparent',
+    backgroundColor: colors.goldTintMedium,
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: colors.goldBorderStrong,
+  },
+  buttonGhost: {
+    backgroundColor: colors.mutedTintSubtle,
+    borderWidth: 1,
+    borderColor: colors.mutedBorderMedium,
+  },
+  buttonGhostActive: {
+    backgroundColor: colors.goldTintMedium,
+    borderWidth: 1,
+    borderColor: colors.goldBorderStrong,
+  },
+  ghostText: {
+    color: colors.mutedForeground,
+  },
+  ghostActiveText: {
+    color: colors.primary,
   },
   buttonDisabled: {
-    backgroundColor: colors.light,
-    opacity: 0.6,
+    backgroundColor: colors.mutedTintMedium,
   },
 });
-

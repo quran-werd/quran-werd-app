@@ -7,6 +7,8 @@
 import axios, {AxiosInstance, AxiosError} from 'axios';
 import {QURAN_CDN_API_CONFIG, QURAN_CDN_DEFAULT_VERSES_PARAMS} from '../config';
 import {getVerseTextFromWords} from '../../components/QuranPager/utils/verseSelection.utils';
+import {transformApiWord} from '../transformers';
+import {ApiChaptersResponse} from '../../types/api-response.types';
 
 /**
  * Create axios instance with default configuration for Quran CDN
@@ -139,6 +141,17 @@ export const fetchPageVerses = async (pageNumber: number) => {
   return response.data;
 };
 
+/**
+ * Fetches the surah/chapter list (Arabic name, ayah count, page range) for
+ * mushaf locator data. See ApiChapter.
+ */
+export const fetchChapters = async () => {
+  const response = await quranCdnClient.get<ApiChaptersResponse>('/chapters', {
+    params: {language: 'ar'},
+  });
+  return response.data.chapters;
+};
+
 export const fetchAyahByKey = async (
   chapterNumber: number,
   verseNumber: number,
@@ -151,7 +164,9 @@ export const fetchAyahByKey = async (
   };
 
   const response = await quranCdnClient.get(path, {params});
-  const words = response.data.verse.words;
+  const words = response.data.verse.words.map((apiWord: any) =>
+    transformApiWord(apiWord, ayahKey),
+  );
   const verseText = getVerseTextFromWords(words);
   return verseText;
 };
