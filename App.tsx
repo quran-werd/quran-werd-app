@@ -7,7 +7,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {DarkTheme, NavigationContainer, Theme} from '@react-navigation/native';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StatusBar} from 'expo-status-bar';
 import notifee from '@notifee/react-native';
@@ -21,6 +21,7 @@ import {
 import {Amiri_400Regular, Amiri_700Bold} from '@expo-google-fonts/amiri';
 import {AmiriQuran_400Regular} from '@expo-google-fonts/amiri-quran';
 import RootNavigator, {linking} from './src/navigation';
+import SplashGate from './src/screens/SplashScreen/SplashGate';
 import {navigationRef} from './src/navigation/navigationRef';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
@@ -92,15 +93,15 @@ function AppContent(): React.JSX.Element {
     return notifee.onForegroundEvent(handleNotificationEvent);
   }, [isLoading]);
 
-  if (isLoading || (!fontsLoaded && !fontError)) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+  if (!fontsLoaded && !fontError) {
+    return <View style={styles.loadingContainer} />;
   }
 
-  return <RootNavigator />;
+  return (
+    <SplashGate appReady={!isLoading}>
+      <RootNavigator />
+    </SplashGate>
+  );
 }
 
 const navigationTheme: Theme = {
@@ -136,8 +137,6 @@ function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: colors.background,
   },
 });

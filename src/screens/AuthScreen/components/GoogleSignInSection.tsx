@@ -12,8 +12,12 @@ import Typography from '../../../components/shared/Typography';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
 import {clearError, selectAuth} from '../../../features/Auth/authSlice';
-import {signInWithGoogle} from '../../../features/Auth/authAction';
+import {
+  signInWithGoogle,
+  signInWithMock,
+} from '../../../features/Auth/authAction';
 import {useAppDispatch, useAppSelector} from '../../../store/hooks';
+import {AUTH_MOCK_LOGIN} from '../../../services/config';
 
 const EASE_OUT_EXPO = Easing.bezier(0.16, 1, 0.3, 1).factory();
 
@@ -48,6 +52,11 @@ export default function GoogleSignInSection() {
   const handleGoogleSignIn = () => {
     dispatch(clearError());
     dispatch(signInWithGoogle());
+  };
+
+  const handleMockSignIn = () => {
+    dispatch(clearError());
+    dispatch(signInWithMock());
   };
 
   return (
@@ -97,6 +106,17 @@ export default function GoogleSignInSection() {
           {t('auth.legalNote')}
         </Typography>
       </Animated.View>
+
+      {AUTH_MOCK_LOGIN ? (
+        <Pressable
+          onPress={handleMockSignIn}
+          disabled={auth.loading}
+          style={styles.mockButton}>
+          <Typography family="cairo" weight="semibold" style={styles.mockButtonLabel}>
+            Mock Sign In (Dev)
+          </Typography>
+        </Pressable>
+      ) : null}
     </>
   );
 }
@@ -145,5 +165,18 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: 'rgba(138,154,184,0.75)',
     lineHeight: 11 * 1.6,
+  },
+  mockButton: {
+    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: radius.xl,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(138,154,184,0.35)',
+    alignItems: 'center',
+  },
+  mockButtonLabel: {
+    fontSize: 13,
+    color: 'rgba(138,154,184,0.85)',
   },
 });

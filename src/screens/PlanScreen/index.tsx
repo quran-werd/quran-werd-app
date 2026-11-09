@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -20,6 +20,7 @@ import {
 import {selectTodayWerd} from '../../features/RevisionLog/revisionLogSlice';
 import {toArabicNumerals} from '../../content';
 import EmptyState from './components/EmptyState';
+import LoadingState from './components/LoadingState';
 import CapacityGoalCard from './components/CapacityGoalCard';
 import WerdCard from './components/WerdCard';
 import {DEFAULT_CAPACITY} from './hooks/usePlanCapacity';
@@ -31,20 +32,34 @@ export default function PlanScreen() {
   const loading = useAppSelector(selectRevisionPlanLoading);
   const today = useAppSelector(selectTodayWerd);
   const insets = useSafeAreaInsets();
+  const [initializing, setInitializing] = useState(true);
 
   const loadPlan = useCallback(() => {
     dispatch(fetchRevisionPlan());
   }, [dispatch]);
 
   useEffect(() => {
-    loadPlan();
-  }, [loadPlan]);
+    dispatch(fetchRevisionPlan()).finally(() => setInitializing(false));
+  }, [dispatch]);
 
   const handleGenerate = () => {
     dispatch(generatePlan(DEFAULT_CAPACITY));
   };
 
   const awrad = plan?.awrad ?? [];
+
+  if (initializing) {
+    return (
+      <View style={styles.container}>
+        <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
+          <View style={styles.headerRow}>
+            <ScreenTitle>{t('plan.title')}</ScreenTitle>
+          </View>
+        </View>
+        <LoadingState />
+      </View>
+    );
+  }
 
   if (!plan) {
     return (

@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback, useState} from 'react';
 import {View, StyleSheet, RefreshControl, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -18,6 +18,7 @@ export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectRevisionLogLoading);
   const insets = useSafeAreaInsets();
+  const [initializing, setInitializing] = useState(true);
 
   const loadHome = useCallback(() => {
     dispatch(fetchTodayWerd());
@@ -25,8 +26,11 @@ export default function HomeScreen() {
   }, [dispatch]);
 
   useEffect(() => {
-    loadHome();
-  }, [loadHome]);
+    Promise.all([
+      dispatch(fetchTodayWerd()),
+      dispatch(fetchRevisionPlan()),
+    ]).finally(() => setInitializing(false));
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -49,7 +53,7 @@ export default function HomeScreen() {
           {t('home.title')}
         </Typography>
 
-        <TodayWerdCard />
+        <TodayWerdCard loading={initializing} />
       </ScrollView>
     </View>
   );

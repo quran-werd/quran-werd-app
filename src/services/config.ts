@@ -47,6 +47,15 @@ export const getDevNotificationTimeOverride = (): NotificationTime | null => {
   return parseNotificationTime(DEV_NOTIFICATION_TIME);
 };
 
+// Dev-only mock sign-in, mirrors the server's AUTH_MOCK_GOOGLE bypass so the
+// app can be tested without a real Google account. See
+// quran-werd-server/src/services/googleAuth.service.ts.
+export const AUTH_MOCK_LOGIN: boolean =
+  __DEV__ && extra.authMockLogin === 'true';
+export const AUTH_MOCK_EMAIL: string = extra.authMockEmail ?? '';
+export const AUTH_MOCK_NAME: string = extra.authMockName ?? '';
+export const AUTH_MOCK_GOOGLE_ID: string = extra.authMockGoogleId ?? '';
+
 export const QURAN_CDN_API_CONFIG = {
   BASE_URL: 'https://api.qurancdn.com/api/qdc',
 };

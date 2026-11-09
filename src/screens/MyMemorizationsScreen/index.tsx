@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, ScrollView, View, Pressable} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -21,6 +21,7 @@ import {
 import {MemorizationVerseRange} from '../../types/memorization.types';
 import {computeMemorizationTotals} from '../../utils/helpers.utils';
 import {toArabicNumerals} from '../../content';
+import LoadingState from './components/LoadingState';
 
 function PlusIcon() {
   return (
@@ -61,9 +62,10 @@ export default function MyMemorizationsScreen() {
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    dispatch(fetchMemorizations());
+    dispatch(fetchMemorizations()).finally(() => setInitializing(false));
   }, [dispatch]);
 
   const handleDeleteRange = (surah: number, range: MemorizationVerseRange) => {
@@ -118,7 +120,9 @@ export default function MyMemorizationsScreen() {
       </View>
       <View style={styles.divider} />
 
-      {hasRanges ? (
+      {initializing ? (
+        <LoadingState />
+      ) : hasRanges ? (
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollViewContent}

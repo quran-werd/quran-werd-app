@@ -7,6 +7,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Animated, {FadeIn, ZoomIn} from 'react-native-reanimated';
 import Typography from '../../../components/shared/Typography';
 import Button from '../../../components/shared/Button';
+import Skeleton from '../../../components/shared/Skeleton';
 import GeometricStar from '../../../components/shared/icons/GeometricStar';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
@@ -35,11 +36,36 @@ function CheckIcon({
   );
 }
 
-export default function TodayWerdCard() {
+interface TodayWerdCardProps {
+  loading?: boolean;
+}
+
+export default function TodayWerdCard({loading}: TodayWerdCardProps) {
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
   const {werd, status, isCompleted, ayahCount, juzNumber, pageNumber, formatNumber} =
     useTodayWerdSummary();
+
+  if (loading) {
+    return (
+      <View style={styles.wardCardWrap}>
+        <View style={[styles.wardCard, styles.skeletonCard, shadows.homeWardCard]}>
+          <Skeleton width={90} height={22} borderRadius={radius.full} />
+          <Skeleton width={140} height={28} style={styles.skeletonGap} />
+          <Skeleton width={180} height={16} style={styles.skeletonGap} />
+          <View style={styles.innerDivider} />
+          <View style={styles.statsRow}>
+            <Skeleton width={60} height={32} />
+            <View style={styles.statDivider} />
+            <Skeleton width={60} height={32} />
+            <View style={styles.statDivider} />
+            <Skeleton width={60} height={32} />
+          </View>
+        </View>
+        <Skeleton width="100%" height={48} borderRadius={radius.md} />
+      </View>
+    );
+  }
 
   if (!werd) {
     return (
@@ -318,6 +344,12 @@ const styles = StyleSheet.create({
     borderColor: colors.goldBorderIntense,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  skeletonCard: {
+    padding: spacing[24],
+  },
+  skeletonGap: {
+    marginTop: spacing[12],
   },
   emptyWrap: {
     paddingHorizontal: spacing[24],

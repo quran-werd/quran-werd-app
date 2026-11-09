@@ -14,6 +14,9 @@ import {
 import {
   GOOGLE_IOS_CLIENT_ID,
   GOOGLE_WEB_CLIENT_ID,
+  AUTH_MOCK_EMAIL,
+  AUTH_MOCK_NAME,
+  AUTH_MOCK_GOOGLE_ID,
 } from '../../services/config';
 import {
   setAuthToken,
@@ -21,6 +24,7 @@ import {
   getApiErrorMessage,
 } from '../../services/werdApi';
 import axios from 'axios';
+import {Buffer} from 'buffer';
 import {saveAuthData, clearAuthData} from '../../utils/storage/auth.storage';
 
 GoogleSignin.configure({
@@ -85,6 +89,39 @@ export const signInWithGoogle = createAsyncThunk(
         return rejectWithValue(getApiErrorMessage(error));
       }
       return rejectWithValue(googleMessage);
+    }
+  },
+);
+
+export const signInWithMock = createAsyncThunk(
+  `${slicesNames.auth}/signInWithMock`,
+  async (_, {rejectWithValue}) => {
+    try {
+      const payload = Buffer.from(
+        JSON.stringify({
+          googleId: AUTH_MOCK_GOOGLE_ID,
+          email: AUTH_MOCK_EMAIL,
+          name: AUTH_MOCK_NAME,
+        }),
+        'utf8',
+      ).toString('base64');
+
+      const response = await googleLogin(`mock:${payload}`);
+
+      await saveAuthData({
+        token: response.token,
+        user: response.user,
+        isAuthenticated: true,
+      });
+
+      return response;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(getApiErrorMessage(error));
+      }
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Mock sign-in failed',
+      );
     }
   },
 );
