@@ -1,19 +1,32 @@
 import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from '../../../store/hooks';
-import {selectTodayWerd} from '../../../features/RevisionLog/revisionLogSlice';
-import {getJuzNumber, getPageForVerse, toArabicNumerals} from '../../../content';
+import {
+  selectRevisionSessionCurrent,
+  selectRevisionSessionNext,
+  selectRevisionSessionPlanStatus,
+} from '../../../features/RevisionSession/revisionSessionSlice';
+import {
+  getJuzNumber,
+  getJuzOrdinalWord,
+  getPageForVerse,
+  toArabicNumerals,
+} from '../../../content';
 
 export function useTodayWerdSummary() {
   const {i18n} = useTranslation();
-  const today = useAppSelector(selectTodayWerd);
+  const current = useAppSelector(selectRevisionSessionCurrent);
+  const nextWerd = useAppSelector(selectRevisionSessionNext);
+  const planStatus = useAppSelector(selectRevisionSessionPlanStatus);
 
-  const werd = today?.werd;
-  const status = today?.status || 'pending';
-  const isCompleted = status === 'completed';
+  const werd = current?.werd ?? null;
+  const isCompleted = current?.isCompleted ?? false;
+  const isFinished = planStatus === 'finished' && current !== null;
+  const isPlanComplete = planStatus === 'finished' && current === null;
 
   const ayahCount = werd ? werd.range.to - werd.range.from + 1 : 0;
   const juzNumber = werd ? getJuzNumber(werd.surah, werd.range.from) : 0;
+  const juzOrdinal = getJuzOrdinalWord(juzNumber);
   const pageNumber = werd ? getPageForVerse(werd.surah, werd.range.from) : 0;
 
   const formatNumber = useCallback(
@@ -24,11 +37,14 @@ export function useTodayWerdSummary() {
 
   return {
     werd,
-    status,
     isCompleted,
+    isFinished,
+    isPlanComplete,
     ayahCount,
     juzNumber,
+    juzOrdinal,
     pageNumber,
+    nextWerd,
     formatNumber,
   };
 }

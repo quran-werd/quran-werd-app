@@ -10,23 +10,30 @@
     "subtitle": "رافقك في رحلة حفظ القرآن ومراجعته يوماً بيوم",
     "journeyLabel": "ابدأ رحلتك",
     "googleSignIn": "تسجيل الدخول بحساب Google",
-    "legalNote": "بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية"
+    "mockSignIn": "المتابعة كمستخدم تجريبي",
+    "legalNote": "بالمتابعة فإنك توافق على شروط الاستخدام وسياسة الخصوصية",
+    "networkError": "تعذّر الاتصال بالخادم. تحقق من اتصالك بالإنترنت وحاول مرة أخرى."
   },
   "home": {
-    "title": "ورد اليوم",
+    "title": "الورد الحالي",
     "greeting": "السلام عليكم",
     "range": "الآيات {{from}} — {{to}}",
     "status": "الحالة: {{status}}",
     "statusLabel": "الحالة",
     "statusPending": "لم يبدأ",
     "statusCompleted": "مكتمل",
-    "statusSkipped": "تم التخطي",
+    "statusFinished": "اكتملت الدورة",
     "startRevision": "ابدأ المراجعة",
     "hint": "يُستحسن التسميع في وقت الصباح",
     "noWerd": "لا يوجد ورد اليوم. أضف حفظاً أو أنشئ خطة.",
     "addMemorization": "إضافة حفظ",
-    "completed": "أتممت ورد اليوم",
-    "completedSubMessage": "بارك الله فيك 🤲",
+    "completedMessage": "أتممت ورد اليوم · بارك الله فيك",
+    "finishedMessage": "أتممت هذه الدورة · تقبل الله منك",
+    "viewPlan": "عرض الخطة",
+    "nextWerdLabel": "الورد التالي",
+    "planCompleteTitle": "اكتملت الخطة!",
+    "planCompleteMessage": "أتممت جميع أوراد خطتك · تقبل الله منك",
+    "generateNewPlan": "إنشاء خطة جديدة",
     "stats": {
       "ayahCount": "عدد الآيات",
       "juz": "الجزء",
@@ -34,8 +41,7 @@
     }
   },
   "revision": {
-    "complete": "إتمام",
-    "skip": "تخطي"
+    "complete": "إتمام"
   },
   "plan": {
     "title": "خطة المراجعة",
@@ -46,15 +52,16 @@
     "emptyTitle": "لم يتم توليد خطة بعد",
     "emptyBodyLine1": "أضف محفوظاتك أولاً من شاشة المحفوظات",
     "emptyBodyLine2": "ثم قم بتوليد خطة المراجعة",
+    "loadErrorTitle": "تعذر تحميل خطتك",
+    "loadErrorBody": "تحقق من اتصالك بالإنترنت",
+    "retry": "إعادة المحاولة",
     "werdOrder": "الورد {{order}}",
     "today": "اليوم",
     "modeDaily": "صفحة / يوم",
     "modeWeekly": "صفحة / أسبوع",
     "dayLabels": ["س", "ح", "ن", "ث", "ر", "خ", "ج"],
     "sectionLabel": "قائمة الأوراد",
-    "verseLabelSingle": "الآية",
-    "verseLabelFrom": "من",
-    "verseLabelTo": "إلى",
+    "completedSectionLabel": "مكتمل",
     "verseRange": "الآيات {{from}} – {{to}} · {{n}} آية",
     "summaryDays": "ستُنهي كل محفوظاتك خلال {{n}} يوم بهذه الخطة"
   },
@@ -62,6 +69,12 @@
     "juz": "الجزء {{number}}",
     "ayahCountShort": "{{value}} آية",
     "pageShort": "ص {{page}}"
+  },
+  "mushafStore": {
+    "title": "جاري تجهيز المصحف",
+    "downloading": "جاري تحميل بيانات الصفحات… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} صفحة",
+    "error": "تعذّر تحميل بيانات المصحف. تحقق من الاتصال وحاول مرة أخرى."
   },
   "memorization": {
     "screenTitle": "محفوظاتي",
@@ -87,10 +100,7 @@
       "verseRange": "آية {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} كلمة",
       "verseCountShort": "{{count}} آية",
-      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ",
-      "from": "من",
-      "to": "إلى",
-      "single": "الآية"
+      "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ"
     },
     "selection": {
       "title": "نطاقات الحفظ",
@@ -102,6 +112,8 @@
       "pendingToastTitle": "حدد نهاية النطاق",
       "mergeToastTitle": "تم دمج النطاقات",
       "saveButton": "حفظ المحفوظات",
+      "successTitle": "تم الحفظ بنجاح",
+      "successMessage": "تم حفظ نطاقات الحفظ الخاصة بك.",
       "totalSummary": "{{rangeCount}} نطاق • {{verseCount}} آية",
       "jump": "انتقل",
       "jumpTitle": "الانتقال إلى صفحة أو سورة",
@@ -115,6 +127,9 @@
     }
   },
   "common": {
+    "from": "من",
+    "to": "إلى",
+    "single": "الآية",
     "loading": "جاري التحميل...",
     "error": "حدث خطأ",
     "retry": "إعادة المحاولة",

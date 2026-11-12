@@ -1,10 +1,12 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import Svg, {Path} from 'react-native-svg';
 import BottomSheet from '../../shared/BottomSheet';
 import Button from '../../shared/Button';
 import Typography from '../../shared/Typography';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
 import {Verse} from '../../../types/quran-pager.types';
 import {
   MemorizedRange,
@@ -14,6 +16,7 @@ import {useAppSelector, useAppDispatch} from '../../../store/hooks';
 import {
   selectRanges,
   removeRange,
+  clearRanges,
 } from '../../../features/Memorization/memorizationSelectionSlice';
 import {
   parseVerseKey,
@@ -28,6 +31,7 @@ interface MemorizationSelectionSheetProps {
   visible: boolean;
   onClose: () => void;
   onSave: (ranges: SaveMemorizationRange[]) => void | Promise<void>;
+  onSaved?: () => void;
   verses: Verse[]; // All verses from current page(s) for text extraction
 }
 
@@ -36,10 +40,20 @@ interface MemorizationSelectionSheetProps {
  */
 export const MemorizationSelectionSheet: React.FC<
   MemorizationSelectionSheetProps
-> = ({visible, onClose, onSave, verses}) => {
+> = ({visible, onClose, onSave, onSaved, verses}) => {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
   const ranges = useAppSelector(selectRanges);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSucceeded, setSaveSucceeded] = useState(false);
+
+  // Reset the success view whenever the sheet is dismissed, so reopening it
+  // for a new selection starts back on the ranges list.
+  useEffect(() => {
+    if (!visible) {
+      setSaveSucceeded(false);
+    }
+  }, [visible]);
 
   const handleRemoveRange = (rangeId: string) => {
     dispatch(removeRange(rangeId));
@@ -103,68 +117,117 @@ export const MemorizationSelectionSheet: React.FC<
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       await onSave(
         mapMemorizedRangesToSaveMemorizationRequest(memorizedRanges),
       );
-      onClose();
+      dispatch(clearRanges());
+      setSaveSucceeded(true);
     } catch (error) {
       // Save failed, don't close the sheet
       console.error('Failed to save memorization ranges:', error);
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  // Close this sheet's Modal first and only navigate once it has finished
+  // dismissing — closing a Modal and unmounting the screen in the same tick
+  // (e.g. via navigation.goBack) can freeze the app.
+  const handleSuccessConfirm = () => {
+    onClose();
+    setTimeout(() => onSaved?.(), 300);
   };
 
   return (
     <BottomSheet visible={visible} onClose={onClose} title={t('memorization.selection.title')}>
-      {memorizedRanges.length > 0 ? (
-        <View style={styles.summary}>
-          <Typography variant="caption" color="muted">
-            {t('memorization.selection.totalSummary', {
-              rangeCount: memorizedRanges.length,
-              verseCount: totalStats.verseCount,
-            })}
-          </Typography>
-        </View>
-      ) : null}
-
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {memorizedRanges.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Typography variant="body" color="muted" align="center">
-              {t('memorization.selection.emptyState')}
-            </Typography>
+      {saveSucceeded ? (
+        <View style={styles.successState}>
+          <View style={styles.successIconCircle}>
+            <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M5 13l4 4L19 7"
+                stroke={colors.primary}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
           </View>
-        ) : (
-          groupedRanges.map(([chapterNumber, group]) => (
-            <View key={chapterNumber} style={styles.group}>
-              <Typography variant="caption" family="amiriBold" style={styles.groupLabel}>
-                {getSurahNameArabic(chapterNumber)}
-              </Typography>
-              <View style={styles.groupItems}>
-                {group.map(range => (
-                  <MemorizedRangeItem
-                    key={range.id}
-                    range={range}
-                    surahNumber={range.chapterNumber}
-                    onDelete={() => handleDelete(range.id)}
-                    showDeleteButton
-                  />
-                ))}
-              </View>
-            </View>
-          ))
-        )}
-      </ScrollView>
-
-      {memorizedRanges.length > 0 ? (
-        <View style={styles.footer}>
-          <Button
-            title={t('memorization.selection.saveButton')}
-            onPress={handleSave}
-            fullWidth
-          />
+          <Typography
+            variant="subtitle"
+            family="amiri"
+            weight="bold"
+            align="center"
+            style={styles.successTitle}>
+            {t('memorization.selection.successTitle')}
+          </Typography>
+          <Typography color="muted" align="center" variant="caption">
+            {t('memorization.selection.successMessage')}
+          </Typography>
+          <View style={styles.footer}>
+            <Button
+              title={t('common.ok')}
+              onPress={handleSuccessConfirm}
+              fullWidth
+            />
+          </View>
         </View>
-      ) : null}
+      ) : (
+        <>
+          {memorizedRanges.length > 0 ? (
+            <View style={styles.summary}>
+              <Typography variant="caption" color="muted">
+                {t('memorization.selection.totalSummary', {
+                  rangeCount: memorizedRanges.length,
+                  verseCount: totalStats.verseCount,
+                })}
+              </Typography>
+            </View>
+          ) : null}
+
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            {memorizedRanges.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Typography variant="body" color="muted" align="center">
+                  {t('memorization.selection.emptyState')}
+                </Typography>
+              </View>
+            ) : (
+              groupedRanges.map(([chapterNumber, group]) => (
+                <View key={chapterNumber} style={styles.group}>
+                  <Typography variant="caption" family="amiriBold" style={styles.groupLabel}>
+                    {getSurahNameArabic(chapterNumber)}
+                  </Typography>
+                  <View style={styles.groupItems}>
+                    {group.map(range => (
+                      <MemorizedRangeItem
+                        key={range.id}
+                        range={range}
+                        surahNumber={range.chapterNumber}
+                        onDelete={() => handleDelete(range.id)}
+                        showDeleteButton
+                      />
+                    ))}
+                  </View>
+                </View>
+              ))
+            )}
+          </ScrollView>
+
+          {memorizedRanges.length > 0 ? (
+            <View style={styles.footer}>
+              <Button
+                title={t('memorization.selection.saveButton')}
+                onPress={handleSave}
+                loading={isSaving}
+                fullWidth
+              />
+            </View>
+          ) : null}
+        </>
+      )}
     </BottomSheet>
   );
 };
@@ -202,5 +265,24 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     borderTopWidth: 1,
     borderTopColor: colors.goldBorderFaint,
+  },
+  successState: {
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+  },
+  successIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(196,154,60,0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(196,154,60,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  successTitle: {
+    marginBottom: 8,
   },
 });

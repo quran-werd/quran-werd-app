@@ -69,15 +69,10 @@ const Page: React.FC<PageProps> = ({
   }, [selectionMode, externalHighlightedLineKeys]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        selectionMode && styles.containerWithSelection,
-      ]}>
+    <View style={styles.container}>
       <View style={styles.versesContainer}>
         <View
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={[styles.linesContainer, {flexGrow: isSmallerPage ? 0.35 : 1}]}>
+          style={[styles.linesContainer, {flexGrow: isSmallerPage ? 0 : 0.3}]}>
           {lines.map(line => (
             <Line
               key={line.lineKey}
@@ -109,10 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     paddingHorizontal: 16,
-    gap: 8,
-  },
-  containerWithSelection: {
-    paddingBottom: 80, // Space for action buttons (48px buttons + 20px bottom + 12px gap)
+    gap: 2,
   },
   versesContainer: {
     flex: 1,
@@ -122,9 +114,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: 'center',
-    paddingVertical: 8,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(139,105,20,0.15)',
+    paddingVertical: 2,
   },
   footerText: {
     fontFamily: 'Cairo_400Regular',

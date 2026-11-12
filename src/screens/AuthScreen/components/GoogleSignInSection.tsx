@@ -17,7 +17,7 @@ import {
   signInWithMock,
 } from '../../../features/Auth/authAction';
 import {useAppDispatch, useAppSelector} from '../../../store/hooks';
-import {AUTH_MOCK_LOGIN} from '../../../services/config';
+import {MOCK_LOGIN_ENABLED} from '../../../services/config';
 
 const EASE_OUT_EXPO = Easing.bezier(0.16, 1, 0.3, 1).factory();
 
@@ -39,6 +39,26 @@ function GoogleLogo() {
       <Path
         fill="#EA4335"
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      />
+    </Svg>
+  );
+}
+
+function FlaskIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M9 2h6M10 2v6.5L4.8 18.3a1.8 1.8 0 0 0 1.58 2.7h11.24a1.8 1.8 0 0 0 1.58-2.7L14 8.5V2"
+        stroke="#1A1A1A"
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path
+        d="M7.5 14.5h9"
+        stroke="#1A1A1A"
+        strokeWidth={1.6}
+        strokeLinecap="round"
       />
     </Svg>
   );
@@ -90,15 +110,27 @@ export default function GoogleSignInSection() {
           .delay(600)
           .easing(EASE_OUT_EXPO)
           .withInitialValues({transform: [{translateY: 16}]})}>
-        <Pressable
-          onPress={handleGoogleSignIn}
-          disabled={auth.loading}
-          style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
-          <GoogleLogo />
-          <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
-            {t('auth.googleSignIn')}
-          </Typography>
-        </Pressable>
+        {MOCK_LOGIN_ENABLED ? (
+          <Pressable
+            onPress={handleMockSignIn}
+            disabled={auth.loading}
+            style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
+            <FlaskIcon />
+            <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
+              {t('auth.mockSignIn')}
+            </Typography>
+          </Pressable>
+        ) : (
+          <Pressable
+            onPress={handleGoogleSignIn}
+            disabled={auth.loading}
+            style={({pressed}) => [styles.googleButton, pressed && styles.googleButtonPressed]}>
+            <GoogleLogo />
+            <Typography family="cairo" weight="semibold" style={styles.googleButtonLabel}>
+              {t('auth.googleSignIn')}
+            </Typography>
+          </Pressable>
+        )}
       </Animated.View>
 
       <Animated.View entering={FadeIn.duration(400).delay(750)}>
@@ -106,17 +138,6 @@ export default function GoogleSignInSection() {
           {t('auth.legalNote')}
         </Typography>
       </Animated.View>
-
-      {AUTH_MOCK_LOGIN ? (
-        <Pressable
-          onPress={handleMockSignIn}
-          disabled={auth.loading}
-          style={styles.mockButton}>
-          <Typography family="cairo" weight="semibold" style={styles.mockButtonLabel}>
-            Mock Sign In (Dev)
-          </Typography>
-        </Pressable>
-      ) : null}
     </>
   );
 }
@@ -165,18 +186,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: 'rgba(138,154,184,0.75)',
     lineHeight: 11 * 1.6,
-  },
-  mockButton: {
-    marginTop: 8,
-    paddingVertical: 12,
-    borderRadius: radius.xl,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: 'rgba(138,154,184,0.35)',
-    alignItems: 'center',
-  },
-  mockButtonLabel: {
-    fontSize: 13,
-    color: 'rgba(138,154,184,0.85)',
   },
 });

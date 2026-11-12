@@ -10,23 +10,30 @@
     "subtitle": "Your companion on the journey of memorizing and reviewing the Quran, day by day",
     "journeyLabel": "Begin your journey",
     "googleSignIn": "Sign in with Google",
-    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy"
+    "mockSignIn": "Continue as Dev User",
+    "legalNote": "By continuing you agree to the Terms of Service and Privacy Policy",
+    "networkError": "Couldn't reach the server. Check your internet connection and try again."
   },
   "home": {
-    "title": "Today's Werd",
+    "title": "Current Werd",
     "greeting": "Peace be upon you",
     "range": "Ayahs {{from}} — {{to}}",
     "status": "Status: {{status}}",
     "statusLabel": "Status",
     "statusPending": "Not started",
     "statusCompleted": "Completed",
-    "statusSkipped": "Skipped",
+    "statusFinished": "Cycle complete",
     "startRevision": "Start Revision",
     "hint": "Recitation is best done in the morning",
     "noWerd": "No werd today. Add memorization or generate a plan.",
     "addMemorization": "Add Memorization",
-    "completed": "Today's werd is complete",
-    "completedSubMessage": "May Allah bless you 🤲",
+    "completedMessage": "Today's werd is complete · may Allah bless you",
+    "finishedMessage": "You've completed this cycle · may Allah accept it",
+    "viewPlan": "View Plan",
+    "nextWerdLabel": "Next Werd",
+    "planCompleteTitle": "Plan complete!",
+    "planCompleteMessage": "You've finished every werd in your plan · may Allah accept it",
+    "generateNewPlan": "Generate a New Plan",
     "stats": {
       "ayahCount": "Ayah count",
       "juz": "Juz",
@@ -34,8 +41,7 @@
     }
   },
   "revision": {
-    "complete": "Complete",
-    "skip": "Skip"
+    "complete": "Complete"
   },
   "plan": {
     "title": "Revision Plan",
@@ -46,15 +52,16 @@
     "emptyTitle": "No plan generated yet",
     "emptyBodyLine1": "Add your memorizations first from the Memorizations screen",
     "emptyBodyLine2": "then generate a revision plan",
+    "loadErrorTitle": "Couldn't load your plan",
+    "loadErrorBody": "Check your internet connection",
+    "retry": "Retry",
     "werdOrder": "Werd {{order}}",
     "today": "Today",
     "modeDaily": "pages / day",
     "modeWeekly": "pages / week",
     "dayLabels": ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"],
     "sectionLabel": "Werd List",
-    "verseLabelSingle": "Ayah",
-    "verseLabelFrom": "From",
-    "verseLabelTo": "To",
+    "completedSectionLabel": "Completed",
     "verseRange": "Ayahs {{from}} – {{to}} · {{n}} ayahs",
     "summaryDays": "You'll finish all your memorization in {{n}} days with this plan"
   },
@@ -62,6 +69,12 @@
     "juz": "Juz {{number}}",
     "ayahCountShort": "{{value}} ayahs",
     "pageShort": "p. {{page}}"
+  },
+  "mushafStore": {
+    "title": "Preparing the Mushaf",
+    "downloading": "Downloading page data… {{percent}}%",
+    "pagesCount": "{{completed}} / {{total}} pages",
+    "error": "Couldn't download the Mushaf data. Check your connection and try again."
   },
   "memorization": {
     "screenTitle": "My Memorizations",
@@ -87,10 +100,7 @@
       "verseRange": "Verses {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} words",
       "verseCountShort": "{{count}} verses",
-      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful",
-      "from": "From",
-      "to": "To",
-      "single": "Ayah"
+      "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful"
     },
     "selection": {
       "title": "Memorization Ranges",
@@ -102,6 +112,8 @@
       "pendingToastTitle": "Select the end of the range",
       "mergeToastTitle": "Ranges merged",
       "saveButton": "Save Memorization",
+      "successTitle": "Saved Successfully",
+      "successMessage": "Your memorization ranges have been saved.",
       "totalSummary": "{{rangeCount}} ranges • {{verseCount}} verses",
       "jump": "Jump",
       "jumpTitle": "Jump to Page or Chapter",
@@ -115,6 +127,9 @@
     }
   },
   "common": {
+    "from": "From",
+    "to": "To",
+    "single": "Ayah",
     "loading": "Loading...",
     "error": "An error occurred",
     "retry": "Retry",

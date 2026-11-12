@@ -25,6 +25,16 @@ export const GOOGLE_WEB_CLIENT_ID: string = extra.googleWebClientId ?? '';
 
 export const DEV_NOTIFICATION_TIME: string = extra.devNotificationTime ?? '';
 
+// Dev-only bypass for Google Sign-In: swaps the Google button for a "sign in
+// as mock user" button that hits the server's `mock:<base64 json>` idToken
+// path (requires the server's AUTH_MOCK_GOOGLE=true). Only ever active in dev
+// builds, regardless of the env value, so it can never end up in a release.
+export const MOCK_LOGIN_ENABLED: boolean =
+  __DEV__ && extra.authMockLogin === 'true';
+export const MOCK_LOGIN_EMAIL: string = extra.authMockEmail || 'dev@example.com';
+export const MOCK_LOGIN_NAME: string = extra.authMockName || 'Dev User';
+export const MOCK_LOGIN_GOOGLE_ID: string = extra.authMockGoogleId || 'dev-1';
+
 export const parseNotificationTime = (
   value: string,
 ): NotificationTime | null => {
@@ -47,14 +57,6 @@ export const getDevNotificationTimeOverride = (): NotificationTime | null => {
   return parseNotificationTime(DEV_NOTIFICATION_TIME);
 };
 
-// Dev-only mock sign-in, mirrors the server's AUTH_MOCK_GOOGLE bypass so the
-// app can be tested without a real Google account. See
-// quran-werd-server/src/services/googleAuth.service.ts.
-export const AUTH_MOCK_LOGIN: boolean =
-  __DEV__ && extra.authMockLogin === 'true';
-export const AUTH_MOCK_EMAIL: string = extra.authMockEmail ?? '';
-export const AUTH_MOCK_NAME: string = extra.authMockName ?? '';
-export const AUTH_MOCK_GOOGLE_ID: string = extra.authMockGoogleId ?? '';
 
 export const QURAN_CDN_API_CONFIG = {
   BASE_URL: 'https://api.qurancdn.com/api/qdc',

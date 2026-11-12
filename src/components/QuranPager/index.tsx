@@ -5,15 +5,15 @@ import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
 import {PageContainer} from './components';
-import {CloseIcon, UndoIcon, RedoIcon, IconButton} from './components/PagerIcons';
 import {
-  getJuzNumber,
-  getPageData,
-  getSurahNameArabic,
-  getSurahPages,
-  toArabicNumerals,
-  totalPagesCount,
-} from '../../content';
+  CloseIcon,
+  SearchIcon,
+  UndoIcon,
+  RedoIcon,
+  IconButton,
+} from './components/PagerIcons';
+import {getJuzNumber, toArabicNumerals, totalPagesCount} from '../../content';
+import {useMushafLocalStoreData} from '../../services/mushafLocalStore';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import Typography from '../shared/Typography';
@@ -74,6 +74,7 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const {t} = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const store = useMushafLocalStoreData();
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [jumpSheetVisible, setJumpSheetVisible] = useState(false);
@@ -104,11 +105,11 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   );
 
   // Get chapter and Juz information for the current page
-  const currentPageData = getPageData(currentPage);
-  const firstSurah = currentPageData[0].surah;
-  const firstVerse = currentPageData[0].start;
+  const currentPageSurahRanges = store.pageMap[currentPage] ?? [];
+  const firstSurah = currentPageSurahRanges[0]?.surah ?? 1;
+  const firstVerse = currentPageSurahRanges[0]?.start ?? 1;
   const juzNumber = getJuzNumber(firstSurah, firstVerse);
-  const surahNameArabic = getSurahNameArabic(firstSurah);
+  const surahNameArabic = store.surahMap[firstSurah]?.nameArabic ?? '';
 
   // Check if a page should be rendered (within window)
   const shouldRenderPage = useCallback(
@@ -170,16 +171,15 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   // Jump to chapter
   const handleJumpToChapter = useCallback(
     (chapterNumber: number) => {
-      const surahPages = getSurahPages(chapterNumber);
-      if (surahPages.length > 0) {
-        const targetPage = surahPages[0]; // Jump to first page of the surah
+      const targetPage = store.surahMap[chapterNumber]?.startPage;
+      if (targetPage) {
         pagerRef.current?.setPage(targetPage - 1);
         setCurrentPage(targetPage);
         onPageChange?.(targetPage);
         setJumpSheetVisible(false);
       }
     },
-    [onPageChange],
+    [onPageChange, store],
   );
 
   const handleOpenJumpSheet = useCallback(() => {
@@ -197,7 +197,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
     const pagesArray = [];
     for (let i = 1; i <= totalPagesCount; i++) {
       const isInWindow = shouldRenderPage(i);
-      const cachedData = pageCacheRef.current[i];
 
       pagesArray.push(
         <View key={i} style={styles.page}>
@@ -206,8 +205,6 @@ const QuranPager: React.FC<QuranPagerProps> = ({
               pageNumber={i}
               fontSize={fontSize}
               showPageFooter={true}
-              cachedVerses={cachedData?.verses}
-              cachedFontFamily={cachedData?.fontFamily}
               onDataLoaded={handlePageDataLoaded}
               selectionMode={selectionMode}
             />
@@ -224,36 +221,28 @@ const QuranPager: React.FC<QuranPagerProps> = ({
   const content = (
     <View style={[styles.container, !showHeader && {paddingTop: insets.top}]}>
       {showHeader && (
-        <View style={[styles.header, {paddingTop: insets.top + 8}]}>
-          <IconButton onPress={() => navigation.goBack()}>
+        <View style={[styles.topBar, {paddingTop: insets.top + 4}]}>
+          <IconButton onPress={() => navigation.goBack()} size={28}>
             <CloseIcon />
           </IconButton>
-          <View style={styles.headerCenter}>
-            <Typography variant="subtitle" family="amiriBold">
-              {surahNameArabic}
-            </Typography>
-            <Typography variant="caption" color="muted">
-              {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
-            </Typography>
-          </View>
-          {selectionMode ? (
-            <View style={styles.headerActions}>
-              <IconButton onPress={handleUndo} disabled={!canUndo} size={32}>
-                <UndoIcon disabled={!canUndo} />
-              </IconButton>
-              <IconButton onPress={handleRedo} disabled={!canRedo} size={32}>
-                <RedoIcon disabled={!canRedo} />
-              </IconButton>
-            </View>
-          ) : (
-            <View style={styles.headerActionsSpacer} />
-          )}
+          <Typography
+            variant="label"
+            family="amiriBold"
+            style={styles.topBarSurah}>
+            {surahNameArabic}
+          </Typography>
+          <Typography
+            variant="caption"
+            color="muted"
+            style={styles.topBarJuz}>
+            {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
+          </Typography>
         </View>
       )}
 
       {selectionMode ? (
         <View
-          style={[styles.notificationsLayer, {top: insets.top + 56}]}
+          style={[styles.notificationsLayer, {top: insets.top + 44}]}
           pointerEvents="box-none">
           <Toast
             visible={!!pendingStartVerse && !mergeEvent}
@@ -287,18 +276,29 @@ const QuranPager: React.FC<QuranPagerProps> = ({
           visible={bottomSheetVisible}
           onClose={() => setBottomSheetVisible(false)}
           onSave={onSave}
+          onSaved={() => navigation.goBack()}
           verses={allVerses}
         />
       )}
 
       {/* Bottom toolbar for selection mode */}
       {selectionMode && (
-        <View style={[styles.toolbar, {paddingBottom: 12 + insets.bottom}]}>
-          <Button
-            title={t('memorization.selection.jump')}
-            onPress={handleOpenJumpSheet}
-            variant="ghost"
-          />
+        <View
+          style={[
+            styles.toolbar,
+            {paddingTop: 12, paddingBottom: 4 + insets.bottom},
+          ]}>
+          <View style={styles.toolbarActionsGroup}>
+            <IconButton onPress={handleOpenJumpSheet} size={34}>
+              <SearchIcon />
+            </IconButton>
+            <IconButton onPress={handleUndo} disabled={!canUndo} size={34}>
+              <UndoIcon disabled={!canUndo} />
+            </IconButton>
+            <IconButton onPress={handleRedo} disabled={!canRedo} size={34}>
+              <RedoIcon disabled={!canRedo} />
+            </IconButton>
+          </View>
           <Button
             title={
               selectedVerseKeys.size > 0
@@ -309,6 +309,8 @@ const QuranPager: React.FC<QuranPagerProps> = ({
             }
             onPress={() => setBottomSheetVisible(!bottomSheetVisible)}
             variant={bottomSheetVisible ? 'ghostActive' : 'ghost'}
+            style={styles.toolbarShowSelectionButton}
+            textStyle={styles.toolbarShowSelectionText}
           />
         </View>
       )}
@@ -339,25 +341,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
+  topBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-    gap: 12,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerActions: {
-    flexDirection: 'row',
+    paddingBottom: 4,
     gap: 8,
   },
-  headerActionsSpacer: {
-    width: 36,
+  topBarSurah: {
+    marginStart: 4,
+  },
+  topBarJuz: {
+    marginStart: 'auto',
   },
   notificationsLayer: {
     position: 'absolute',
@@ -369,7 +364,7 @@ const styles = StyleSheet.create({
   pagerContainer: {
     flex: 1,
     marginHorizontal: 12,
-    marginVertical: 8,
+    marginVertical: 0,
     overflow: 'hidden',
   },
   pagerView: {
@@ -386,9 +381,22 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 2,
     gap: 8,
+  },
+  toolbarActionsGroup: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  toolbarShowSelectionButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minHeight: 34,
+  },
+  toolbarShowSelectionText: {
+    fontSize: 13,
   },
 });
 

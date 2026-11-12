@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     alignSelf: 'stretch',
+    color: 'white',
   },
   devOverride: {
     fontSize: 11,

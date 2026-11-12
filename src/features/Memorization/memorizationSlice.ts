@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../store';
 import {
   fetchMemorizations,
-  addMemorizationRange,
+  addMemorizationRanges,
   removeMemorizationRange,
   MemorizationRanges,
 } from './memorizationAction';
@@ -43,14 +43,14 @@ export const memorizationSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
-      .addCase(addMemorizationRange.pending, state => {
+      .addCase(addMemorizationRanges.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(addMemorizationRange.fulfilled, (state, action) => {
+      .addCase(addMemorizationRanges.fulfilled, (state, action) => {
         handleRangesFulfilled(state, action.payload);
       })
-      .addCase(addMemorizationRange.rejected, (state, action) => {
+      .addCase(addMemorizationRanges.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       })

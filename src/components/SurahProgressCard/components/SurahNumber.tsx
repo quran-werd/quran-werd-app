@@ -10,7 +10,7 @@ export default function SurahNumber({surahNumber}: {surahNumber: number}) {
       size={28}
       backgroundColor="rgba(196,154,60,0.1)"
       style={styles.surahNumber}>
-      <Typography family="cairo" weight="bold" color="primary" style={styles.text}>
+      <Typography family="cairo" color="primary" variant="caption">
         {toArabicNumerals(surahNumber)}
       </Typography>
     </Badge>
@@ -20,8 +20,5 @@ export default function SurahNumber({surahNumber}: {surahNumber: number}) {
 const styles = StyleSheet.create({
   surahNumber: {
     borderRadius: radius.full,
-  },
-  text: {
-    fontSize: 11,
   },
 });

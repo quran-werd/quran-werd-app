@@ -22,6 +22,7 @@ import {Amiri_400Regular, Amiri_700Bold} from '@expo-google-fonts/amiri';
 import {AmiriQuran_400Regular} from '@expo-google-fonts/amiri-quran';
 import RootNavigator, {linking} from './src/navigation';
 import SplashGate from './src/screens/SplashScreen/SplashGate';
+import MushafLocalStoreGate from './src/components/MushafLocalStoreGate';
 import {navigationRef} from './src/navigation/navigationRef';
 import {Provider} from 'react-redux';
 import {store} from './src/store';
@@ -99,7 +100,9 @@ function AppContent(): React.JSX.Element {
 
   return (
     <SplashGate appReady={!isLoading}>
-      <RootNavigator />
+      <MushafLocalStoreGate>
+        <RootNavigator />
+      </MushafLocalStoreGate>
     </SplashGate>
   );
 }

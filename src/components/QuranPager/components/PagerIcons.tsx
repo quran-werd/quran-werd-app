@@ -16,9 +16,23 @@ export function CloseIcon() {
   );
 }
 
-export function UndoIcon({disabled}: {disabled?: boolean}) {
+export function SearchIcon() {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM21 21l-4.35-4.35"
+        stroke={colors.foreground}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function UndoIcon({disabled}: {disabled?: boolean}) {
+  return (
+    <Svg width={16} height={16} viewBox="0 2.5 24 24" fill="none">
       <Path
         d="M9 7 4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1"
         stroke={disabled ? colors.mutedForeground : colors.foreground}
@@ -33,7 +47,7 @@ export function UndoIcon({disabled}: {disabled?: boolean}) {
 
 export function RedoIcon({disabled}: {disabled?: boolean}) {
   return (
-    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+    <Svg width={16} height={16} viewBox="0 2.5 24 24" fill="none">
       <Path
         d="M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h1"
         stroke={disabled ? colors.mutedForeground : colors.foreground}

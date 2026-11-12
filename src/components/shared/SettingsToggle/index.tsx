@@ -16,10 +16,14 @@ interface SettingsToggleProps {
 
 // Track is 46px wide with 3px padding on each side; thumb is 21px, so the
 // thumb travels (46 - 3*2 - 21) = 19px between its off/on positions.
-const THUMB_TRAVEL = 19;
+// -18 to support RTL
+const THUMB_TRAVEL = -18;
 
 // Settings on/off toggle — see docs/design.md §2.14.
-export default function SettingsToggle({value, onValueChange}: SettingsToggleProps) {
+export default function SettingsToggle({
+  value,
+  onValueChange,
+}: SettingsToggleProps) {
   const progress = useSharedValue(value ? 1 : 0);
 
   useEffect(() => {

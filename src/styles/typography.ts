@@ -35,7 +35,7 @@ export const typographyScale: Record<TypographyLevel, number> = {
 // glyphs. A Cairo-sized line box (~1.3-1.4x) clips them at the top; confirmed
 // on-device that 1.4x clips and 2.0x doesn't.
 const AMIRI_LINE_HEIGHT_RATIO = 1.6;
-const CAIRO_LINE_HEIGHT_RATIO = 1.375;
+const CAIRO_LINE_HEIGHT_RATIO = 1.8;
 
 export function getLineHeight(
   fontSize: number,

@@ -38,7 +38,7 @@ export default function BottomSheet({
       <View style={styles.sheet}>
         <View style={styles.handle} />
         {title ? (
-          <Typography family="amiriBold" style={styles.title} align="right">
+          <Typography family="amiriBold" style={styles.title} align="center">
             {title}
           </Typography>
         ) : null}

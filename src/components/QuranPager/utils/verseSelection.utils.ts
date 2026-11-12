@@ -21,76 +21,61 @@ export function parseVerseKey(verseKey: string): {
 }
 
 /**
- * Generate all verse keys between start and end (inclusive)
+ * Order two verse keys in mushaf order, so a range picked end-first
+ * (e.g. "2:3" then "1:7") is treated the same as one picked start-first
  */
-export function getVersesInRange(startKey: string, endKey: string): string[] {
-  const start = parseVerseKey(startKey);
-  const end = parseVerseKey(endKey);
-
-  const verses: string[] = [];
-
-  // If same surah
-  if (start.chapterId === end.chapterId) {
-    const minVerse = Math.min(start.verseNumber, end.verseNumber);
-    const maxVerse = Math.max(start.verseNumber, end.verseNumber);
-    for (let v = minVerse; v <= maxVerse; v++) {
-      verses.push(`${start.chapterId}:${v}`);
-    }
-  } else {
-    // Cross surah range - split into two parts
-    const startSurahLastVerse = getVerseCount(start.chapterId);
-    // Add verses from start surah
-    for (let v = start.verseNumber; v <= startSurahLastVerse; v++) {
-      verses.push(`${start.chapterId}:${v}`);
-    }
-    // Add verses from end surah
-    for (let v = 1; v <= end.verseNumber; v++) {
-      verses.push(`${end.chapterId}:${v}`);
-    }
-  }
-
-  return verses;
+export function orderVerseKeys(
+  keyA: string,
+  keyB: string,
+): [startKey: string, endKey: string] {
+  const a = parseVerseKey(keyA);
+  const b = parseVerseKey(keyB);
+  const aFirst =
+    a.chapterId < b.chapterId ||
+    (a.chapterId === b.chapterId && a.verseNumber <= b.verseNumber);
+  return aFirst ? [keyA, keyB] : [keyB, keyA];
 }
 
 /**
- * Split a range that crosses surah boundaries into multiple ranges
- * Returns array of ranges, each within a single surah
+ * Split a range into one range per surah it covers, in mushaf order.
+ * Surahs between the start and end surah are included in full.
  */
 export function splitRangeBySurah(
   startKey: string,
   endKey: string,
 ): Array<{startKey: string; endKey: string; surahId: number}> {
-  const start = parseVerseKey(startKey);
-  const end = parseVerseKey(endKey);
+  const [orderedStartKey, orderedEndKey] = orderVerseKeys(startKey, endKey);
+  const start = parseVerseKey(orderedStartKey);
+  const end = parseVerseKey(orderedEndKey);
 
-  // Same surah - return single range
-  if (start.chapterId === end.chapterId) {
-    return [
-      {
-        startKey,
-        endKey,
-        surahId: start.chapterId,
-      },
-    ];
+  const ranges: Array<{startKey: string; endKey: string; surahId: number}> =
+    [];
+  for (let surahId = start.chapterId; surahId <= end.chapterId; surahId++) {
+    const firstVerse = surahId === start.chapterId ? start.verseNumber : 1;
+    const lastVerse =
+      surahId === end.chapterId ? end.verseNumber : getVerseCount(surahId);
+    ranges.push({
+      startKey: `${surahId}:${firstVerse}`,
+      endKey: `${surahId}:${lastVerse}`,
+      surahId,
+    });
   }
+  return ranges;
+}
 
-  // Cross surah - split into two ranges
-  const startSurahLastVerse = getVerseCount(start.chapterId);
-  const startSurahLastKey = `${start.chapterId}:${startSurahLastVerse}`;
-  const endSurahFirstKey = `${end.chapterId}:1`;
-
-  return [
-    {
-      startKey,
-      endKey: startSurahLastKey,
-      surahId: start.chapterId,
-    },
-    {
-      startKey: endSurahFirstKey,
-      endKey,
-      surahId: end.chapterId,
-    },
-  ];
+/**
+ * Generate all verse keys between start and end (inclusive), in either order
+ */
+export function getVersesInRange(startKey: string, endKey: string): string[] {
+  const verses: string[] = [];
+  splitRangeBySurah(startKey, endKey).forEach(range => {
+    const first = parseVerseKey(range.startKey).verseNumber;
+    const last = parseVerseKey(range.endKey).verseNumber;
+    for (let v = first; v <= last; v++) {
+      verses.push(`${range.surahId}:${v}`);
+    }
+  });
+  return verses;
 }
 
 /**
@@ -237,14 +222,18 @@ export function mergeOverlappingRanges(ranges: VerseRange[]): VerseRange[] {
     return ranges;
   }
 
-  // Sort ranges by surah, then by start verse
+  // Sort ranges by surah, then by lowest verse (a range's keys may be stored
+  // end-first, so its start key isn't necessarily its lowest verse)
+  const lowestVerse = (range: VerseRange) =>
+    Math.min(
+      parseVerseKey(range.startVerseKey).verseNumber,
+      parseVerseKey(range.endVerseKey).verseNumber,
+    );
   const sorted = [...ranges].sort((a, b) => {
-    const aStart = parseVerseKey(a.startVerseKey);
-    const bStart = parseVerseKey(b.startVerseKey);
     if (a.surahId !== b.surahId) {
       return a.surahId - b.surahId;
     }
-    return aStart.verseNumber - bStart.verseNumber;
+    return lowestVerse(a) - lowestVerse(b);
   });
 
   const merged: VerseRange[] = [];

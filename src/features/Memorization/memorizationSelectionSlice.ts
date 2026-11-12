@@ -3,6 +3,7 @@ import type {RootState} from '../../store';
 import {VerseRange} from '../../types/quran-pager.types';
 import {
   splitRangeBySurah,
+  orderVerseKeys,
   parseVerseKey,
   getAllSelectedVerseKeys,
   mergeOverlappingRanges,
@@ -65,7 +66,11 @@ export const memorizationSelectionSlice = createSlice({
       action: PayloadAction<{startKey: string; endKey: string}>,
     ) => {
       saveToHistory(state);
-      const {startKey, endKey} = action.payload;
+      // The user may tap the end verse first; store ranges start-first
+      const [startKey, endKey] = orderVerseKeys(
+        action.payload.startKey,
+        action.payload.endKey,
+      );
       const splitRanges = splitRangeBySurah(startKey, endKey);
       const startParsed = parseVerseKey(startKey);
 
@@ -102,6 +107,12 @@ export const memorizationSelectionSlice = createSlice({
     },
     clearMergeEvent: state => {
       state.mergeEvent = null;
+    },
+    clearRanges: state => {
+      state.ranges = [];
+      state.pendingStartVerse = null;
+      state.history = [];
+      state.future = [];
     },
     removeRange: (state, action: PayloadAction<string>) => {
       saveToHistory(state);
@@ -147,6 +158,7 @@ export const {
   undo,
   redo,
   clearMergeEvent,
+  clearRanges,
 } = memorizationSelectionSlice.actions;
 
 // Selectors

@@ -1,6 +1,7 @@
 import axios, {AxiosInstance, AxiosError} from 'axios';
 import {API_BASE_URL} from './config';
 import {ApiError, ApiResponse} from '../types/api.types';
+import i18n from '../i18n';
 
 const werdApiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -39,14 +40,19 @@ werdApiClient.interceptors.response.use(
 
 export function getApiErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
-    if (
+    const isTimeout =
       error.code === 'ECONNABORTED' ||
-      error.message?.toLowerCase().includes('timeout')
-    ) {
-      return `Cannot reach the server at ${API_BASE_URL}. Make sure it is running and your device can access it.`;
-    }
-    if (error.message === 'Network Error') {
-      return `Network error connecting to ${API_BASE_URL}. Check API_BASE_URL in .env and rebuild the app.`;
+      error.message?.toLowerCase().includes('timeout');
+    const isNetworkError = error.message === 'Network Error';
+
+    if (isTimeout || isNetworkError) {
+      if (__DEV__) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[werdApi] ${isTimeout ? 'Timeout' : 'Network error'} connecting to ${API_BASE_URL}`,
+        );
+      }
+      return i18n.t('auth.networkError');
     }
   }
 

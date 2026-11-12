@@ -1,13 +1,20 @@
 import React, {useState, useMemo} from 'react';
-import {View, StyleSheet, Pressable, ScrollView, TextInput, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  TextInput,
+  Alert,
+} from 'react-native';
 import Svg, {Path, Circle} from 'react-native-svg';
 import {useTranslation} from 'react-i18next';
 import BottomSheet from '../../shared/BottomSheet';
 import Typography from '../../shared/Typography';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
-import {totalPagesCount, getSurahPages, toArabicNumerals} from '../../../content';
-import {SURAHS_INFO} from '../../../content/surah_data';
+import {totalPagesCount, toArabicNumerals} from '../../../content';
+import {useMushafLocalStoreData} from '../../../services/mushafLocalStore';
 
 interface JumpSheetProps {
   visible: boolean;
@@ -19,7 +26,13 @@ interface JumpSheetProps {
 function SearchIcon() {
   return (
     <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <Circle cx={11} cy={11} r={7} stroke={colors.mutedForeground} strokeWidth={1.5} />
+      <Circle
+        cx={11}
+        cy={11}
+        r={7}
+        stroke={colors.mutedForeground}
+        strokeWidth={1.5}
+      />
       <Path
         d="m20 20-3.5-3.5"
         stroke={colors.mutedForeground}
@@ -40,8 +53,14 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
   onJumpToPage,
 }) => {
   const {t} = useTranslation();
+  const store = useMushafLocalStoreData();
   const [pageInput, setPageInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const chapters = useMemo(
+    () => Object.values(store.surahMap).sort((a, b) => a.surah - b.surah),
+    [store],
+  );
 
   const handlePageJump = () => {
     const pageNum = parseInt(pageInput.trim(), 10);
@@ -64,15 +83,16 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
   // Filter chapters based on search query
   const filteredChapters = useMemo(() => {
     if (!searchQuery.trim()) {
-      return SURAHS_INFO;
+      return chapters;
     }
 
     const query = searchQuery.toLowerCase().trim();
-    return SURAHS_INFO.filter(
+    return chapters.filter(
       chapter =>
-        chapter.arabic.includes(query) || chapter.id.toString().includes(query),
+        chapter.nameArabic.includes(query) ||
+        chapter.surah.toString().includes(query),
     );
-  }, [searchQuery]);
+  }, [chapters, searchQuery]);
 
   return (
     <BottomSheet
@@ -94,7 +114,12 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             onSubmitEditing={handlePageJump}
           />
           <Pressable style={styles.goButton} onPress={handlePageJump}>
-            <Typography variant="caption" family="cairo" weight="bold" style={styles.goButtonText}>
+            <Typography
+              variant="caption"
+              family="cairo"
+              weight="bold"
+              align="center"
+              style={styles.goButtonText}>
               {t('memorization.selection.go')}
             </Typography>
           </Pressable>
@@ -103,7 +128,6 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
 
       <View style={styles.chaptersSection}>
         <View style={styles.searchInputContainer}>
-          <SearchIcon />
           <TextInput
             style={styles.searchInput}
             value={searchQuery}
@@ -111,34 +135,43 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             placeholder={t('memorization.selection.searchChapter')}
             placeholderTextColor={colors.mutedForeground}
           />
+          <SearchIcon />
         </View>
         <ScrollView
           style={styles.chaptersList}
           contentContainerStyle={styles.chaptersListContent}
           showsVerticalScrollIndicator={false}>
           {filteredChapters.map(chapter => {
-            const surahPages = getSurahPages(chapter.id);
-            const startPage = surahPages.length > 0 ? surahPages[0] : null;
+            const startPage = chapter.startPage;
 
             return (
               <Pressable
-                key={chapter.id}
+                key={chapter.surah}
                 style={styles.chapterItem}
-                onPress={() => handleChapterPress(chapter.id)}>
+                onPress={() => handleChapterPress(chapter.surah)}>
                 <View style={styles.chapterBadge}>
-                  <Typography variant="caption" family="cairo" weight="bold" color="primary">
-                    {chapter.id}
+                  <Typography
+                    variant="caption"
+                    family="cairo"
+                    weight="bold"
+                    color="primary"
+                    align="center">
+                    {chapter.surah}
                   </Typography>
                 </View>
                 <View style={styles.chapterInfo}>
                   <Typography variant="body" family="amiriBold">
-                    {chapter.arabic}
+                    {chapter.nameArabic}
                   </Typography>
                   {startPage ? (
                     <Typography variant="caption" color="muted">
-                      {t('quran.ayahCountShort', {value: toArabicNumerals(chapter.aya)})}
+                      {t('quran.ayahCountShort', {
+                        value: toArabicNumerals(chapter.ayahCount),
+                      })}
                       {' - '}
-                      {t('quran.pageShort', {page: toArabicNumerals(startPage)})}
+                      {t('quran.pageShort', {
+                        page: toArabicNumerals(startPage),
+                      })}
                     </Typography>
                   ) : null}
                 </View>
@@ -203,6 +236,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: colors.foreground,
+    textAlign: 'right',
   },
   chaptersList: {
     flexGrow: 0,
@@ -217,7 +251,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: radius.xl,
-    marginBottom: 8,
   },
   chapterBadge: {
     width: 32,
@@ -229,6 +262,5 @@ const styles = StyleSheet.create({
   },
   chapterInfo: {
     flex: 1,
-    gap: 2,
   },
 });

@@ -7,29 +7,24 @@ import ScreenGlow from '../../components/shared/icons/ScreenGlow';
 import {colors} from '../../styles/colors';
 import {spacing} from '../../styles/spacing';
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
-import {fetchTodayWerd} from '../../features/RevisionLog/revisionLogAction';
-import {selectRevisionLogLoading} from '../../features/RevisionLog/revisionLogSlice';
-import {fetchRevisionPlan} from '../../features/RevisionPlan/revisionPlanAction';
+import {fetchCurrentWerd} from '../../features/RevisionSession/revisionSessionAction';
+import {selectRevisionSessionLoading} from '../../features/RevisionSession/revisionSessionSlice';
 import GreetingHeader from './components/GreetingHeader';
 import TodayWerdCard from './components/TodayWerdCard';
 
 export default function HomeScreen() {
   const {t} = useTranslation();
   const dispatch = useAppDispatch();
-  const loading = useAppSelector(selectRevisionLogLoading);
+  const loading = useAppSelector(selectRevisionSessionLoading);
   const insets = useSafeAreaInsets();
   const [initializing, setInitializing] = useState(true);
 
   const loadHome = useCallback(() => {
-    dispatch(fetchTodayWerd());
-    dispatch(fetchRevisionPlan());
+    dispatch(fetchCurrentWerd());
   }, [dispatch]);
 
   useEffect(() => {
-    Promise.all([
-      dispatch(fetchTodayWerd()),
-      dispatch(fetchRevisionPlan()),
-    ]).finally(() => setInitializing(false));
+    dispatch(fetchCurrentWerd()).finally(() => setInitializing(false));
   }, [dispatch]);
 
   return (
