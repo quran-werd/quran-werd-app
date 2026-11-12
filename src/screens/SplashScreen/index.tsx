@@ -19,10 +19,12 @@ import LoadingDots from './components/LoadingDots';
 import SplashBackdrop from './components/SplashBackdrop';
 import {LOGIN_BRAND_MARK_TOP} from './splashHandoff';
 
-const WORDMARK = 'حافظ';
+const WORDMARK = 'وِرد';
 const TAGLINE = 'راجع • احفظ • تذكّر';
 
 const WORDMARK_SIZE = 56;
+const WORDMARK_LINE_HEIGHT = getLineHeight(WORDMARK_SIZE, 'amiriBold');
+const WORDMARK_BLEED = (WORDMARK_LINE_HEIGHT - WORDMARK_SIZE) / 2;
 const GOLD_CLEAR = 'rgba(196,154,60,0)';
 
 const EASE_OUT_QUINT = Easing.bezier(0.22, 1, 0.36, 1);
@@ -162,17 +164,18 @@ const styles = StyleSheet.create({
     height: 96,
     marginBottom: 28,
   },
+  // Negative margins keep the spec's 56px line box; the views stay full height
+  // because Android clips overflowing children while a view's opacity is animating.
   textGroup: {
     alignItems: 'center',
+    marginTop: -WORDMARK_BLEED,
   },
-  // Keeps the spec's 56px line box while the glyphs get a line height Amiri doesn't clip at.
   wordmarkBox: {
-    height: WORDMARK_SIZE,
-    justifyContent: 'center',
+    marginBottom: -WORDMARK_BLEED,
   },
   wordmark: {
     fontSize: WORDMARK_SIZE,
-    lineHeight: getLineHeight(WORDMARK_SIZE, 'amiriBold'),
+    lineHeight: WORDMARK_LINE_HEIGHT,
     letterSpacing: 0.01 * WORDMARK_SIZE,
   },
   underline: {

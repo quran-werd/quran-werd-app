@@ -7,12 +7,15 @@ const iosUrlScheme = GOOGLE_IOS_CLIENT_ID
     }`
   : undefined;
 
+const APP_DISPLAY_NAME = 'وِرد';
+
 const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-asset',
   ['expo-font', {fonts: ['./assets/fonts/qcf/v1']}],
   '@react-native-community/datetimepicker',
   ['expo-build-properties', {android: {usesCleartextTraffic: true}}],
   './plugins/withNotifeeAndroidMavenRepo',
+  ['./plugins/withAndroidAppName', APP_DISPLAY_NAME],
 ];
 
 if (iosUrlScheme) {
@@ -37,6 +40,7 @@ const config: ExpoConfig = {
   ios: {
     bundleIdentifier: 'com.quranwerd.app',
     infoPlist: {
+      CFBundleDisplayName: APP_DISPLAY_NAME,
       CFBundleLocalizations: ['ar', 'en'],
       NSAppTransportSecurity: {
         NSAllowsArbitraryLoads: false,
@@ -50,7 +54,7 @@ const config: ExpoConfig = {
     allowBackup: false,
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
-      foregroundImage: './assets/icon.png',
+      foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#0C1220',
     },
   },
