@@ -13,7 +13,11 @@ import Animated, {
 import {LinearGradient} from 'expo-linear-gradient';
 import Typography from '../../../components/shared/Typography';
 import BasmalaSvg from '../../../components/shared/icons/BasmalaSvg';
-import AuthOrnament from '../../../components/shared/icons/AuthOrnament';
+import BrandMark from '../../../components/shared/BrandMark';
+import {
+  LOGIN_BRAND_MARK_TOP,
+  useBrandMarkHeldBySplash,
+} from '../../SplashScreen/splashHandoff';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
 import {getLineHeight} from '../../../styles/typography';
@@ -22,6 +26,7 @@ const EASE_OUT_EXPO = Easing.bezier(0.16, 1, 0.3, 1).factory();
 
 export default function WordmarkHero() {
   const {t} = useTranslation();
+  const isBrandMarkHeld = useBrandMarkHeldBySplash();
 
   const underlineProgress = useSharedValue(0);
   const basmalaOpacity = useSharedValue(0);
@@ -44,10 +49,8 @@ export default function WordmarkHero() {
           .easing(EASE_OUT_EXPO)
           .withInitialValues({transform: [{scale: 0.85}]})}
         style={styles.ornamentContainer}>
-        <View style={styles.ornamentGlowHalo} />
-        <View style={styles.ornamentRingBorder} />
-        <View style={styles.ornamentDisc}>
-          <AuthOrnament size={96} />
+        <View style={isBrandMarkHeld && styles.ornamentHidden}>
+          <BrandMark />
         </View>
       </Animated.View>
 
@@ -93,7 +96,7 @@ export default function WordmarkHero() {
 
 const styles = StyleSheet.create({
   upperSection: {
-    marginTop: 120,
+    marginTop: LOGIN_BRAND_MARK_TOP,
     alignItems: 'center',
   },
   ornamentContainer: {
@@ -103,38 +106,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 28,
   },
-  ornamentGlowHalo: {
-    position: 'absolute',
-    top: -10,
-    left: -10,
-    right: -10,
-    bottom: -10,
-    borderRadius: radius.full,
-    backgroundColor: 'rgba(196,154,60,0.12)',
-  },
-  ornamentRingBorder: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(196,154,60,0.22)',
-  },
-  ornamentDisc: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    right: 10,
-    bottom: 10,
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(196,154,60,0.3)',
-    backgroundColor: 'rgba(196,154,60,0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+  ornamentHidden: {
+    opacity: 0,
   },
   appName: {
     fontSize: 42,

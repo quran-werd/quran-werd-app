@@ -57,6 +57,7 @@ export const getDevNotificationTimeOverride = (): NotificationTime | null => {
   return parseNotificationTime(DEV_NOTIFICATION_TIME);
 };
 
+
 export const QURAN_CDN_API_CONFIG = {
   BASE_URL: 'https://api.qurancdn.com/api/qdc',
 };

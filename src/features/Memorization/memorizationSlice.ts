@@ -70,5 +70,7 @@ export const memorizationSlice = createSlice({
 
 export const selectMemorizationRanges = (state: RootState) =>
   state.memorization.ranges;
+export const selectMemorizationLoading = (state: RootState) =>
+  state.memorization.isLoading;
 
 export default memorizationSlice.reducer;
