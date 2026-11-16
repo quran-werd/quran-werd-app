@@ -7,6 +7,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Animated from 'react-native-reanimated';
 import Typography from '../../../components/shared/Typography';
 import Button from '../../../components/shared/Button';
+import Skeleton from '../../../components/shared/Skeleton';
 import GeometricStar from '../../../components/shared/icons/GeometricStar';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
@@ -59,7 +60,11 @@ function ChevronIcon({size = 16}: {size?: number}) {
   );
 }
 
-export default function TodayWerdCard() {
+interface TodayWerdCardProps {
+  loading?: boolean;
+}
+
+export default function TodayWerdCard({loading}: TodayWerdCardProps) {
   const {t} = useTranslation();
   const navigation = useNavigation<any>();
   const {
@@ -89,6 +94,27 @@ export default function TodayWerdCard() {
           fullWidth
           style={styles.emptyButton}
         />
+      </View>
+    );
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.wardCardWrap}>
+        <View style={[styles.wardCard, styles.skeletonCard, shadows.homeWardCard]}>
+          <Skeleton width={90} height={22} borderRadius={radius.full} />
+          <Skeleton width={140} height={28} style={styles.skeletonGap} />
+          <Skeleton width={180} height={16} style={styles.skeletonGap} />
+          <View style={styles.innerDivider} />
+          <View style={styles.statsRow}>
+            <Skeleton width={60} height={32} />
+            <View style={styles.statDivider} />
+            <Skeleton width={60} height={32} />
+            <View style={styles.statDivider} />
+            <Skeleton width={60} height={32} />
+          </View>
+        </View>
+        <Skeleton width="100%" height={48} borderRadius={radius.md} />
       </View>
     );
   }
@@ -502,6 +528,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: 'rgba(138,154,184,0.7)',
     marginTop: 2,
+  },
+  skeletonCard: {
+    padding: spacing[24],
+  },
+  skeletonGap: {
+    marginTop: spacing[12],
   },
   emptyWrap: {
     paddingHorizontal: spacing[24],

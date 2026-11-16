@@ -29,6 +29,15 @@ export function usePlanCapacity() {
     }
   }, [plan?.dailyCapacity]);
 
+  // The "done" confirmation is transient; revert to the update button.
+  useEffect(() => {
+    if (!justSaved) {
+      return;
+    }
+    const timer = setTimeout(() => setJustSaved(false), 2000);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
+
   const dailyCapacityValue = parseInt(capacity, 10) || 0;
   const displayValue =
     mode === 'daily' ? dailyCapacityValue : dailyCapacityValue * 7;

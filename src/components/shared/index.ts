@@ -9,6 +9,7 @@ export {default as DeleteConfirmationModal} from './DeleteConfirmationModal';
 export {default as Toast} from './Toast';
 export {default as SettingsToggle} from './SettingsToggle';
 export {default as SegmentedControl} from './SegmentedControl';
+export {default as Skeleton} from './Skeleton';
 export * from './icons/NavIcons';
 export {default as BasmalaSvg} from './icons/BasmalaSvg';
 export {default as GeometricStar} from './icons/GeometricStar';

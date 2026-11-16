@@ -8,4 +8,5 @@ export {MUSHAF_DATA_VERSION, MUSHAF_TOTAL_PAGES} from './constants';
 export {
   MushafLocalStoreProvider,
   useMushafLocalStoreData,
+  useOptionalMushafLocalStoreData,
 } from './MushafLocalStoreContext';

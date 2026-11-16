@@ -299,6 +299,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   updateButtonSaved: {
+    // The base button's Android elevation/shadow shows through a translucent
+    // fill as a dark inner box, so the saved state drops it.
+    elevation: 0,
+    shadowOpacity: 0,
     backgroundColor: 'rgba(61,166,90,0.12)',
     borderWidth: 1,
     borderColor: 'rgba(61,166,90,0.35)',

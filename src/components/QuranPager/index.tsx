@@ -13,7 +13,10 @@ import {
   IconButton,
 } from './components/PagerIcons';
 import {getJuzNumber, toArabicNumerals, totalPagesCount} from '../../content';
-import {useMushafLocalStoreData} from '../../services/mushafLocalStore';
+import {
+  useMushafLocalStoreData,
+  useOptionalMushafLocalStoreData,
+} from '../../services/mushafLocalStore';
 import {colors} from '../../styles/colors';
 import {radius} from '../../styles/radius';
 import Typography from '../shared/Typography';
@@ -63,7 +66,7 @@ interface PageCache {
  * - Clean header with chapter name and Juz information
  * - Optimized rendering with windowed pages
  */
-const QuranPager: React.FC<QuranPagerProps> = ({
+const QuranPagerContent: React.FC<QuranPagerProps> = ({
   initialPage = 1,
   fontSize,
   showHeader = true,
@@ -337,6 +340,10 @@ const QuranPager: React.FC<QuranPagerProps> = ({
 };
 
 const styles = StyleSheet.create({
+  waiting: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -399,5 +406,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 });
+
+/**
+ * The pages may still be downloading (e.g. a notification opened the
+ * Revision screen right after login). The download modal covers the app
+ * then, so render an empty background until the store is ready.
+ */
+const QuranPager: React.FC<QuranPagerProps> = props => {
+  const store = useOptionalMushafLocalStoreData();
+  if (!store) {
+    return <View style={styles.waiting} />;
+  }
+  return <QuranPagerContent {...props} />;
+};
 
 export default QuranPager;
