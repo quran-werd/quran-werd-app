@@ -9,29 +9,24 @@ import Typography from '../shared/Typography';
 import Button from '../shared/Button';
 import {useMushafLocalStore} from '../../hooks/useMushafLocalStore';
 import {MushafLocalStoreProvider} from '../../services/mushafLocalStore';
+import {useAppSelector} from '../../store/hooks';
+import {selectIsAuthenticated} from '../../features/Auth/authSlice';
 
 interface MushafLocalStoreGateProps {
   children: React.ReactNode;
 }
 
 /**
- * Blocks app content behind a loading popup while the Mushaf Local Store is
- * being built (first launch, a resumed interrupted build, or a rebuild
- * triggered by a Mushaf data version bump). Once ready, renders children
- * with nothing further shown — this only gates first readiness, it doesn't
- * wrap the app permanently.
+ * Builds the Mushaf Local Store in the background as soon as the app starts
+ * (first launch, a resumed interrupted build, or a rebuild after a Mushaf
+ * data version bump). The app is always rendered: on the login page the
+ * download runs silently, and only once the user is signed in does a
+ * progress popup cover the app until the pages are ready.
  */
 export default function MushafLocalStoreGate({children}: MushafLocalStoreGateProps) {
   const {t} = useTranslation();
   const {store, isReady, progress, error, retry} = useMushafLocalStore();
-
-  if (isReady && store) {
-    return (
-      <MushafLocalStoreProvider store={store}>
-        {children}
-      </MushafLocalStoreProvider>
-    );
-  }
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   const totalPages = progress?.totalPages ?? 0;
   const pagesCompleted = progress?.pagesCompleted ?? 0;
@@ -39,52 +34,58 @@ export default function MushafLocalStoreGate({children}: MushafLocalStoreGatePro
     totalPages > 0 ? Math.round((pagesCompleted / totalPages) * 100) : 0;
 
   return (
-    <Modal visible transparent animationType="fade">
-      <View style={styles.backdrop}>
-        <BlurView intensity={12} tint="dark" style={StyleSheet.absoluteFill} />
-      </View>
-      <View style={styles.centerWrap} pointerEvents="box-none">
-        <View style={[styles.card, shadows.deleteModal]}>
-          <Typography
-            variant="subtitle"
-            family="amiri"
-            weight="bold"
-            align="center"
-            style={styles.title}>
-            {t('mushafStore.title')}
-          </Typography>
-
-          {error ? (
-            <>
-              <Typography color="muted" align="center" style={styles.message}>
-                {t('mushafStore.error')}
-              </Typography>
-              <Button
-                title={t('common.retry')}
-                onPress={retry}
-                style={styles.retryButton}
-                fullWidth
-              />
-            </>
-          ) : (
-            <>
-              <Typography color="muted" align="center" style={styles.message}>
-                {t('mushafStore.downloading', {percent})}
-              </Typography>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, {width: `${percent}%`}]} />
-              </View>
-              <Typography variant="label" color="dimmed" align="center">
-                {t('mushafStore.pagesCount', {
-                  completed: pagesCompleted,
-                  total: totalPages,
-                })}
-              </Typography>
-            </>
-          )}
+    <MushafLocalStoreProvider store={store}>
+      {children}
+      <Modal
+        visible={isAuthenticated && !isReady}
+        transparent
+        animationType="fade">
+        <View style={styles.backdrop}>
+          <BlurView intensity={12} tint="dark" style={StyleSheet.absoluteFill} />
         </View>
-      </View>
-    </Modal>
+        <View style={styles.centerWrap} pointerEvents="box-none">
+          <View style={[styles.card, shadows.deleteModal]}>
+            <Typography
+              variant="subtitle"
+              family="amiri"
+              weight="bold"
+              align="center"
+              style={styles.title}>
+              {t('mushafStore.title')}
+            </Typography>
+
+            {error ? (
+              <>
+                <Typography color="muted" align="center" style={styles.message}>
+                  {t('mushafStore.error')}
+                </Typography>
+                <Button
+                  title={t('common.retry')}
+                  onPress={retry}
+                  style={styles.retryButton}
+                  fullWidth
+                />
+              </>
+            ) : (
+              <>
+                <Typography color="muted" align="center" style={styles.message}>
+                  {t('mushafStore.downloading', {percent})}
+                </Typography>
+                <View style={styles.progressTrack}>
+                  <View style={[styles.progressFill, {width: `${percent}%`}]} />
+                </View>
+                <Typography variant="label" color="dimmed" align="center">
+                  {t('mushafStore.pagesCount', {
+                    completed: pagesCompleted,
+                    total: totalPages,
+                  })}
+                </Typography>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </MushafLocalStoreProvider>
   );
 }
 
@@ -100,10 +101,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   card: {
-    width: '100%',
-    maxWidth: 360,
+    width: '80%',
+    maxWidth: 320,
     borderRadius: radius.xl,
     backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.goldBorderStrong,
     padding: 24,
     alignItems: 'center',
   },

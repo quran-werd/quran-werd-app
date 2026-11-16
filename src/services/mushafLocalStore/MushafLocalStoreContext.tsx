@@ -4,7 +4,7 @@ import {MushafLocalStoreData} from '../../types/mushaf-local-store.types';
 const MushafLocalStoreContext = createContext<MushafLocalStoreData | null>(null);
 
 interface MushafLocalStoreProviderProps {
-  store: MushafLocalStoreData;
+  store: MushafLocalStoreData | null;
   children: React.ReactNode;
 }
 
@@ -18,10 +18,17 @@ export const MushafLocalStoreProvider: React.FC<MushafLocalStoreProviderProps> =
 );
 
 /**
- * Reads the built Mushaf Local Store. Must be used under
- * MushafLocalStoreProvider — in practice, anywhere under
- * MushafLocalStoreGate once it's finished loading, since the gate doesn't
- * render its children until the store is ready.
+ * Reads the Mushaf Local Store, or null while it is still being built. The
+ * gate renders the app before the store is ready (the build runs in the
+ * background on the login page), so screens can mount before it exists.
+ */
+export const useOptionalMushafLocalStoreData =
+  (): MushafLocalStoreData | null => useContext(MushafLocalStoreContext);
+
+/**
+ * Reads the built Mushaf Local Store. Throws if it isn't ready yet — only
+ * use it below a component that has checked
+ * useOptionalMushafLocalStoreData first.
  */
 export const useMushafLocalStoreData = (): MushafLocalStoreData => {
   const store = useContext(MushafLocalStoreContext);
