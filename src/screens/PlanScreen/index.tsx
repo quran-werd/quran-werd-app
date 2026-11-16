@@ -92,7 +92,13 @@ export default function PlanScreen() {
     );
   }
 
-  if (!plan) {
+  // A plan document with no awrad at all (e.g. every memorization was deleted
+  // after it was generated) has nothing to show — treat it like no plan so
+  // the user is pointed at adding memorizations and regenerating.
+  const planIsEmpty =
+    !plan || (completedAwrad.length === 0 && incompleteAwrad.length === 0);
+
+  if (planIsEmpty) {
     return (
       <View style={styles.container}>
         <View style={[styles.header, {paddingTop: insets.top + spacing[16]}]}>
