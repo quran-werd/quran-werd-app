@@ -104,6 +104,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     paddingHorizontal: 16,
+    // Breathing room so the first line doesn't hug the card's top edge.
+    paddingTop: 14,
     gap: 2,
   },
   versesContainer: {
