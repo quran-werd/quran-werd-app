@@ -59,7 +59,15 @@
     "today": "اليوم",
     "modeDaily": "صفحة / يوم",
     "modeWeekly": "صفحة / أسبوع",
-    "dayLabels": ["س", "ح", "ن", "ث", "ر", "خ", "ج"],
+    "dayLabels": [
+      "س",
+      "ح",
+      "ن",
+      "ث",
+      "ر",
+      "خ",
+      "ج"
+    ],
     "sectionLabel": "قائمة الأوراد",
     "completedSectionLabel": "مكتمل",
     "verseRange": "الآيات {{from}} – {{to}} · {{n}} آية",
@@ -178,5 +186,13 @@
       "versionLabel": "نسخة التطبيق"
     },
     "signOut": "تسجيل الخروج"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "nameLabel": "الاسم",
+    "namePlaceholder": "اكتب اسمك",
+    "emailLabel": "البريد الإلكتروني",
+    "save": "حفظ",
+    "nameRequired": "الاسم مطلوب"
   }
 }

@@ -11,6 +11,7 @@ import {
   googleLogin,
   logout as logoutApi,
   getMe,
+  updateMe,
 } from '../../services/auth.service';
 import {
   GOOGLE_IOS_CLIENT_ID,
@@ -25,7 +26,11 @@ import {
   getApiErrorMessage,
 } from '../../services/werdApi';
 import axios from 'axios';
-import {saveAuthData, clearAuthData} from '../../utils/storage/auth.storage';
+import {
+  saveAuthData,
+  clearAuthData,
+  saveStoredUser,
+} from '../../utils/storage/auth.storage';
 
 GoogleSignin.configure({
   iosClientId: GOOGLE_IOS_CLIENT_ID,
@@ -170,6 +175,19 @@ export const restoreSession = createAsyncThunk(
     } catch (error: unknown) {
       clearAuthToken();
       await clearAuthData();
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);
+
+export const updateUserName = createAsyncThunk(
+  `${slicesNames.auth}/updateUserName`,
+  async (name: string, {rejectWithValue}) => {
+    try {
+      const user = await updateMe(name.trim());
+      await saveStoredUser(user);
+      return user;
+    } catch (error: unknown) {
       return rejectWithValue(getApiErrorMessage(error));
     }
   },

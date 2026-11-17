@@ -59,7 +59,15 @@
     "today": "Today",
     "modeDaily": "pages / day",
     "modeWeekly": "pages / week",
-    "dayLabels": ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"],
+    "dayLabels": [
+      "Sa",
+      "Su",
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr"
+    ],
     "sectionLabel": "Werd List",
     "completedSectionLabel": "Completed",
     "verseRange": "Ayahs {{from}} – {{to}} · {{n}} ayahs",
@@ -189,5 +197,13 @@
     "resendOTP": "Resend OTP",
     "resendOTPWithTimer": "Resend OTP ({{seconds}}s)",
     "didntReceive": "Didn't receive the code?"
+  },
+  "profile": {
+    "title": "Profile",
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter your name",
+    "emailLabel": "Email",
+    "save": "Save",
+    "nameRequired": "Name is required"
   }
 }

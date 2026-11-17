@@ -7,6 +7,7 @@ import {
   signOut,
   restoreSession,
   fetchCurrentUser,
+  updateUserName,
 } from './authAction';
 import {User} from '../../services/auth.service';
 import {setAuthToken, clearAuthToken} from '../../services/werdApi';
@@ -92,6 +93,9 @@ export const authSlice = createSlice({
         state.user = null;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(updateUserName.fulfilled, (state, action) => {
         state.user = action.payload;
       })
       .addCase(signOut.fulfilled, state => {

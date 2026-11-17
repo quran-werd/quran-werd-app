@@ -32,3 +32,7 @@ export const logout = async (): Promise<void> => {
 export const getMe = async (): Promise<User> => {
   return werdApiRequest<User>('/auth/me');
 };
+
+export const updateMe = async (name: string): Promise<User> => {
+  return werdApiRequest<User>('/auth/me', {method: 'PATCH', data: {name}});
+};

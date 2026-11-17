@@ -66,7 +66,7 @@ export function getApiErrorMessage(error: unknown): string {
 export async function werdApiRequest<T>(
   url: string,
   options?: {
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
     data?: unknown;
   },
 ): Promise<T> {

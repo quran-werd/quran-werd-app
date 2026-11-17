@@ -1,6 +1,9 @@
 import React from 'react';
 import {View, Pressable, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
+import {useNavigation} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../../../navigation';
 import {LinearGradient} from 'expo-linear-gradient';
 import Svg, {Path} from 'react-native-svg';
 import Typography from '../../../components/shared/Typography';
@@ -30,11 +33,15 @@ interface UserCardProps {
 
 export default function UserCard({user}: UserCardProps) {
   const {t} = useTranslation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const initial = user?.name?.trim()?.[0] ?? 'و';
 
   return (
     <SettingsCard style={styles.userCard}>
-      <Pressable style={styles.userRow}>
+      <Pressable
+        onPress={() => navigation.navigate('Profile')}
+        style={styles.userRow}>
         <LinearGradient
           colors={['rgba(196,154,60,0.25)', 'rgba(196,154,60,0.08)']}
           start={{x: 0, y: 0}}
