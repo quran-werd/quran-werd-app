@@ -5,6 +5,7 @@ import Animated, {
   Easing,
   FadeIn,
   FadeInDown,
+  LinearTransition,
 } from 'react-native-reanimated';
 import {LinearGradient} from 'expo-linear-gradient';
 import Svg, {Path} from 'react-native-svg';
@@ -81,7 +82,10 @@ export default function GoogleSignInSection() {
 
   return (
     <>
-      <Animated.View entering={FadeIn.duration(500).delay(500)} style={styles.dividerRow}>
+      <Animated.View
+        entering={FadeIn.duration(500).delay(500)}
+        layout={LinearTransition}
+        style={styles.dividerRow}>
         <LinearGradient
           colors={['transparent', colors.goldWashStrong]}
           start={{x: 0, y: 0}}
@@ -99,17 +103,12 @@ export default function GoogleSignInSection() {
         />
       </Animated.View>
 
-      {auth.error ? (
-        <Typography variant="caption" color="destructive" align="center">
-          {auth.error}
-        </Typography>
-      ) : null}
-
       <Animated.View
         entering={FadeInDown.duration(550)
           .delay(600)
           .easing(EASE_OUT_EXPO)
-          .withInitialValues({transform: [{translateY: 16}]})}>
+          .withInitialValues({transform: [{translateY: 16}]})}
+        layout={LinearTransition}>
         {MOCK_LOGIN_ENABLED ? (
           <Pressable
             onPress={handleMockSignIn}
@@ -131,9 +130,20 @@ export default function GoogleSignInSection() {
             </Typography>
           </Pressable>
         )}
+        {auth.error ? (
+          <Typography
+            variant="caption"
+            color="destructive"
+            align="center"
+            style={styles.errorText}>
+            {auth.error}
+          </Typography>
+        ) : null}
       </Animated.View>
 
-      <Animated.View entering={FadeIn.duration(400).delay(750)}>
+      <Animated.View
+        entering={FadeIn.duration(400).delay(750)}
+        layout={LinearTransition}>
         <Typography family="cairo" align="center" style={styles.legalNote}>
           {t('auth.legalNote')}
         </Typography>
@@ -181,6 +191,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     letterSpacing: 0.01 * 15,
     color: '#1A1A1A',
+  },
+  errorText: {
+    marginTop: 12,
   },
   legalNote: {
     fontSize: 11,
