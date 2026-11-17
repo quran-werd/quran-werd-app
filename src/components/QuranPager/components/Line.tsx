@@ -3,7 +3,6 @@ import {View, StyleSheet, Pressable} from 'react-native';
 import {colors} from '../../../styles/colors';
 import {Word} from '../../../types/quran-pager.types';
 import BasmalaSvg from '../../shared/icons/BasmalaSvg';
-import {getSurahNameArabic} from '../../../content';
 import SurahHeader from './SurahHeader';
 import WordComponent from './Word';
 import PendingDot from './PendingDot';
@@ -77,11 +76,6 @@ const Line: React.FC<LineProps> = ({
     words[0].verseNumber,
     words[0].position,
     words[0].chapterId,
-  );
-
-  const chapterName = useMemo(
-    () => getSurahNameArabic(words[0].chapterId),
-    [words],
   );
 
   // Group words by verse for verse-level selection
@@ -197,7 +191,7 @@ const Line: React.FC<LineProps> = ({
     <React.Fragment key={lineKey}>
       {isSurahStart && (
         <View style={styles.bismillahContainer}>
-          <SurahHeader name={chapterName} />
+          <SurahHeader chapterId={words[0].chapterId} />
           {isShowBismillah && (
             <BasmalaSvg color={colors.mushafBrownDeep} />
           )}

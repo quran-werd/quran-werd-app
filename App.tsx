@@ -55,6 +55,9 @@ function AppContent(): React.JSX.Element {
     Amiri_400Regular,
     Amiri_700Bold,
     AmiriQuran_400Regular,
+    // Mushaf surah header frame + surah-name glyphs (from QUL, qul.tarteel.ai).
+    SurahHeaderFrame: require('./assets/fonts/surah-header/quran-common.ttf'),
+    SurahNames: require('./assets/fonts/surah-header/surah-name-v4.ttf'),
   });
 
   useEffect(() => {
