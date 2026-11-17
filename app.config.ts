@@ -35,7 +35,7 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'automatic',
   splash: {
     backgroundColor: '#0C1220',
-    image: './assets/icon.png',
+    image: './assets/splash-icon.png',
     resizeMode: 'contain',
   },
   ios: {
@@ -56,7 +56,8 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#0C1220',
+      backgroundImage: './assets/adaptive-icon-background.png',
+      backgroundColor: '#1B2A47',
     },
   },
   plugins,
