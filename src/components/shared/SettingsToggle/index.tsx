@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Pressable, StyleSheet} from 'react-native';
+import {I18nManager, Pressable, StyleSheet} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,10 +14,10 @@ interface SettingsToggleProps {
   onValueChange: (value: boolean) => void;
 }
 
-// Track is 46px wide with 3px padding on each side; thumb is 21px, so the
-// thumb travels (46 - 3*2 - 21) = 19px between its off/on positions.
-// -18 to support RTL
-const THUMB_TRAVEL = -18;
+// Track is 46px wide with a 1px border and 3px padding on each side; thumb is
+// 21px, so the thumb travels (46 - 1*2 - 3*2 - 21) = 17px between its off/on
+// positions. translateX isn't mirrored in RTL, so flip the direction there.
+const THUMB_TRAVEL = I18nManager.isRTL ? -17 : 17;
 
 // Settings on/off toggle — see docs/design.md §2.14.
 export default function SettingsToggle({
