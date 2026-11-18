@@ -192,9 +192,7 @@ const Line: React.FC<LineProps> = ({
       {isSurahStart && (
         <View style={styles.bismillahContainer}>
           <SurahHeader chapterId={words[0].chapterId} />
-          {isShowBismillah && (
-            <BasmalaSvg color={colors.mushafBrownDeep} />
-          )}
+          {isShowBismillah && <BasmalaSvg color={colors.mushafBrownDeep} />}
         </View>
       )}
       {selectionMode ? (
@@ -224,8 +222,6 @@ const Line: React.FC<LineProps> = ({
                     {versePending && isVerseStartLine ? <PendingDot /> : null}
                     {verseWords.map((word, wordIndex) => {
                       const shouldHighlight = isWordHighlighted(word);
-                      const isFirstWordInVerse = wordIndex === 0;
-                      const isFirstVerse = verseIndex === 0;
 
                       return (
                         <WordComponent
@@ -234,11 +230,10 @@ const Line: React.FC<LineProps> = ({
                           fontFamily={fontFamily}
                           fontSize={fontSize}
                           isHighlighted={shouldHighlight}
-                          showSpaceBefore={
-                            isFirstWordInVerse
-                              ? isFirstVerse === false
-                              : wordIndex > 0
-                          }
+                          // One normal space between words and between verses
+                          // (verse boxes have no side padding), except before
+                          // the line's first word.
+                          showSpaceBefore={wordIndex > 0 || verseIndex > 0}
                         />
                       );
                     })}
@@ -346,7 +341,9 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
     alignItems: 'center',
     paddingVertical: 1,
-    paddingHorizontal: 4,
+    // Tiny side padding so highlighted verses keep a hairline gap; verses are
+    // otherwise separated by a normal word space.
+    paddingHorizontal: 1,
     borderRadius: 4,
   },
   verseHighlighted: {
