@@ -355,9 +355,11 @@ const styles = StyleSheet.create({
   versePending: {
     backgroundColor: 'rgba(196,154,60,0.08)',
   },
+  // Marks where the range starts. Use start (not right): React Native swaps
+  // left/right in RTL, which put the bar at the end of the line.
   versePendingStart: {
-    borderRightWidth: 3,
-    borderRightColor: 'rgba(196,154,60,0.7)',
+    borderStartWidth: 3,
+    borderStartColor: 'rgba(196,154,60,0.7)',
   },
   wordsContainer: {
     flexDirection: 'row',
