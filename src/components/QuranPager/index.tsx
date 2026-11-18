@@ -245,7 +245,12 @@ const QuranPagerContent: React.FC<QuranPagerProps> = ({
 
       {selectionMode ? (
         <View
-          style={[styles.notificationsLayer, {top: insets.top + 44}]}
+          style={[
+            styles.notificationsLayer,
+            // Inside the bottom of the page card, just above the page number:
+            // the gap between the last line and the number fits the pill.
+            {bottom: insets.bottom + 87},
+          ]}
           pointerEvents="box-none">
           <Toast
             visible={!!pendingStartVerse && !mergeEvent}
@@ -363,9 +368,8 @@ const styles = StyleSheet.create({
   },
   notificationsLayer: {
     position: 'absolute',
-    top: 56,
-    left: 12,
-    right: 12,
+    left: 56,
+    right: 56,
     zIndex: 40,
   },
   pagerContainer: {
