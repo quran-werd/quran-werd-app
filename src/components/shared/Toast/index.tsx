@@ -122,6 +122,9 @@ const styles = StyleSheet.create({
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
+    // The pill's padding is weighted to the bottom to fit the low Cairo
+    // glyphs, so nudge the icon down to line up with the text's visual centre.
+    marginTop: 4,
   },
   pulseRing: {
     position: 'absolute',
