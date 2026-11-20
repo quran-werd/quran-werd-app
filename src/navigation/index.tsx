@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthScreen from '../screens/AuthScreen';
 import MainTabs from './MainTabs';
 import RevisionScreen from '../screens/RevisionScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import {useAppSelector} from '../store/hooks';
 import {selectIsAuthenticated} from '../features/Auth/authSlice';
 
@@ -10,6 +11,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   Revision: {werdId?: string};
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,6 +45,7 @@ export default function RootNavigator() {
         <>
           <Stack.Screen name="Main" component={MainTabs} />
           <Stack.Screen name="Revision" component={RevisionScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
         </>
       )}
     </Stack.Navigator>

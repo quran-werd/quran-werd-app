@@ -67,3 +67,15 @@ export interface ApiVersesResponse {
     };
   };
 }
+
+export interface ApiChapter {
+  id: number;
+  name_arabic: string;
+  verses_count: number;
+  revelation_place: 'makkah' | 'madinah';
+  pages: [number, number];
+}
+
+export interface ApiChaptersResponse {
+  chapters: ApiChapter[];
+}

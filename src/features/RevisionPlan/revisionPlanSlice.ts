@@ -22,7 +22,10 @@ export const revisionPlanSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    const setPlan = (state: typeof initialState, plan: RevisionPlan) => {
+    const setPlan = (
+      state: typeof initialState,
+      plan: RevisionPlan | null,
+    ) => {
       state.isLoading = false;
       state.plan = plan;
       state.error = null;

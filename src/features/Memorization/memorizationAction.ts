@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {
   getMemorizations,
-  addRange,
+  addRanges,
   deleteRange,
   MemorizationData,
 } from '../../services/memorizations.service';
@@ -21,18 +21,18 @@ export const fetchMemorizations = createAsyncThunk(
   },
 );
 
-export const addMemorizationRange = createAsyncThunk(
-  'memorization/addRange',
+export const addMemorizationRanges = createAsyncThunk(
+  'memorization/addRanges',
   async (
-    {surah, from, to}: {surah: number; from: number; to: number},
+    ranges: {surah: number; from: number; to: number}[],
     {rejectWithValue},
   ) => {
     try {
-      const data = await addRange(surah, from, to);
+      const data = await addRanges(ranges);
       return data.ranges;
     } catch (error) {
       const message =
-        error instanceof ApiError ? error.message : 'Failed to add range';
+        error instanceof ApiError ? error.message : 'Failed to add ranges';
       return rejectWithValue(message);
     }
   },
