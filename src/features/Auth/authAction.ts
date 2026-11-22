@@ -1,4 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
+import {Buffer} from 'buffer';
 import {
   GoogleSignin,
   statusCodes,
@@ -10,10 +11,14 @@ import {
   googleLogin,
   logout as logoutApi,
   getMe,
+  updateMe,
 } from '../../services/auth.service';
 import {
   GOOGLE_IOS_CLIENT_ID,
   GOOGLE_WEB_CLIENT_ID,
+  MOCK_LOGIN_EMAIL,
+  MOCK_LOGIN_NAME,
+  MOCK_LOGIN_GOOGLE_ID,
 } from '../../services/config';
 import {
   setAuthToken,
@@ -21,7 +26,11 @@ import {
   getApiErrorMessage,
 } from '../../services/werdApi';
 import axios from 'axios';
-import {saveAuthData, clearAuthData} from '../../utils/storage/auth.storage';
+import {
+  saveAuthData,
+  clearAuthData,
+  saveStoredUser,
+} from '../../utils/storage/auth.storage';
 
 GoogleSignin.configure({
   iosClientId: GOOGLE_IOS_CLIENT_ID,
@@ -89,6 +98,40 @@ export const signInWithGoogle = createAsyncThunk(
   },
 );
 
+// Dev-only sign-in that bypasses the Google SDK entirely, matching the
+// server's `mock:<base64 json>` idToken bypass (requires AUTH_MOCK_GOOGLE=true
+// on the server). Only wired up behind __DEV__ in the UI.
+export const signInWithMock = createAsyncThunk(
+  `${slicesNames.auth}/signInWithMock`,
+  async (_, {rejectWithValue}) => {
+    try {
+      const payload = {
+        googleId: MOCK_LOGIN_GOOGLE_ID,
+        email: MOCK_LOGIN_EMAIL,
+        name: MOCK_LOGIN_NAME,
+      };
+      const idToken = `mock:${Buffer.from(JSON.stringify(payload)).toString('base64')}`;
+
+      const response = await googleLogin(idToken);
+
+      await saveAuthData({
+        token: response.token,
+        user: response.user,
+        isAuthenticated: true,
+      });
+
+      return response;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(getApiErrorMessage(error));
+      }
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Mock sign-in failed',
+      );
+    }
+  },
+);
+
 export const fetchCurrentUser = createAsyncThunk(
   `${slicesNames.auth}/fetchCurrentUser`,
   async (_, {rejectWithValue}) => {
@@ -132,6 +175,19 @@ export const restoreSession = createAsyncThunk(
     } catch (error: unknown) {
       clearAuthToken();
       await clearAuthData();
+      return rejectWithValue(getApiErrorMessage(error));
+    }
+  },
+);
+
+export const updateUserName = createAsyncThunk(
+  `${slicesNames.auth}/updateUserName`,
+  async (name: string, {rejectWithValue}) => {
+    try {
+      const user = await updateMe(name.trim());
+      await saveStoredUser(user);
+      return user;
+    } catch (error: unknown) {
       return rejectWithValue(getApiErrorMessage(error));
     }
   },

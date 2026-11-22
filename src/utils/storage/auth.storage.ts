@@ -25,6 +25,14 @@ export const saveAuthData = async (authData: StoredAuthData): Promise<void> => {
   );
 };
 
+// Replace the cached user (e.g. after a profile edit) without touching the JWT.
+export const saveStoredUser = async (user: User): Promise<void> => {
+  await AsyncStorage.setItem(
+    AUTH_USER_KEY,
+    JSON.stringify({user, isAuthenticated: true}),
+  );
+};
+
 export const loadAuthData = async (): Promise<StoredAuthData | null> => {
   try {
     const credentials = await Keychain.getGenericPassword({

@@ -1,10 +1,10 @@
-import React from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
-import {Icon} from '@ui-kitten/components';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {colors} from '../../styles/colors';
-import {SectionHeader} from '../SectionHeader';
+import DeleteConfirmationModal from '../shared/DeleteConfirmationModal';
 import SurahProgressCard from '../SurahProgressCard';
+import Typography from '../shared/Typography';
+import {getSurahNameArabic, toArabicNumerals} from '../../content';
 import {
   MemorizationVerseRange,
   ServerMemorizationRanges,
@@ -22,33 +22,20 @@ export const SurahDetailsList: React.FC<SurahDetailsListProps> = ({
   style,
 }) => {
   const {t} = useTranslation();
+  const [pendingDelete, setPendingDelete] = useState<{
+    surah: number;
+    range: MemorizationVerseRange;
+  } | null>(null);
 
-  const handleDelete = (surah: number, range: MemorizationVerseRange) => {
-    Alert.alert(
-      t('memorization.delete.title'),
-      t('memorization.delete.message'),
-      [
-        {text: t('common.cancel'), style: 'cancel'},
-        {
-          text: t('common.delete'),
-          style: 'destructive',
-          onPress: () => onDeleteRange?.(surah, range),
-        },
-      ],
-    );
+  const handleConfirmDelete = () => {
+    if (pendingDelete) {
+      onDeleteRange?.(pendingDelete.surah, pendingDelete.range);
+    }
+    setPendingDelete(null);
   };
 
   return (
     <View style={[styles.section, style]}>
-      <SectionHeader
-        icon={
-          <Icon
-            name="book-open-outline"
-            style={{width: 22, height: 22, tintColor: colors.primary}}
-          />
-        }
-        title={t('memorization.progress.surahDetails')}
-      />
       {Object.keys(surahs).map(surahNumber => {
         const ranges = surahs[surahNumber] || [];
         return (
@@ -58,12 +45,35 @@ export const SurahDetailsList: React.FC<SurahDetailsListProps> = ({
             ranges={ranges}
             onDeleteRange={
               onDeleteRange
-                ? range => handleDelete(Number(surahNumber), range)
+                ? range => setPendingDelete({surah: Number(surahNumber), range})
                 : undefined
             }
           />
         );
       })}
+
+      <DeleteConfirmationModal
+        visible={!!pendingDelete}
+        title={t('memorization.delete.title')}
+        message={
+          pendingDelete ? (
+            <>
+              {t('memorization.delete.messagePrefix')}
+              <Typography weight="semibold" color="primary">
+                {' '}
+                {toArabicNumerals(pendingDelete.range.from)} — {toArabicNumerals(pendingDelete.range.to)}{' '}
+              </Typography>
+              {t('memorization.delete.messageSuffix', {
+                surah: getSurahNameArabic(pendingDelete.surah),
+              })}
+            </>
+          ) : null
+        }
+        cancelLabel={t('memorization.delete.cancel')}
+        confirmLabel={t('common.delete')}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </View>
   );
 };

@@ -7,11 +7,15 @@ const iosUrlScheme = GOOGLE_IOS_CLIENT_ID
     }`
   : undefined;
 
+const APP_DISPLAY_NAME = 'وِرد';
+
 const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-asset',
   ['expo-font', {fonts: ['./assets/fonts/qcf/v1']}],
   '@react-native-community/datetimepicker',
   ['expo-build-properties', {android: {usesCleartextTraffic: true}}],
+  './plugins/withNotifeeAndroidMavenRepo',
+  ['./plugins/withAndroidAppName', APP_DISPLAY_NAME],
 ];
 
 if (iosUrlScheme) {
@@ -25,17 +29,19 @@ const config: ExpoConfig = {
   name: 'QuranWerd',
   slug: 'quranwerd',
   version: '1.0.0',
+  scheme: 'quranwerd',
   orientation: 'default',
   icon: './assets/icon.png',
   userInterfaceStyle: 'automatic',
   splash: {
     backgroundColor: '#0C1220',
-    image: './assets/icon.png',
+    image: './assets/splash-icon.png',
     resizeMode: 'contain',
   },
   ios: {
     bundleIdentifier: 'com.quranwerd.app',
     infoPlist: {
+      CFBundleDisplayName: APP_DISPLAY_NAME,
       CFBundleLocalizations: ['ar', 'en'],
       NSAppTransportSecurity: {
         NSAllowsArbitraryLoads: false,
@@ -47,9 +53,11 @@ const config: ExpoConfig = {
   android: {
     package: 'com.quranwerd',
     allowBackup: false,
+    edgeToEdgeEnabled: true,
     adaptiveIcon: {
-      foregroundImage: './assets/icon.png',
-      backgroundColor: '#0C1220',
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundImage: './assets/adaptive-icon-background.png',
+      backgroundColor: '#1B2A47',
     },
   },
   plugins,
@@ -58,6 +66,10 @@ const config: ExpoConfig = {
     googleIosClientId: GOOGLE_IOS_CLIENT_ID,
     googleWebClientId: process.env.GOOGLE_WEB_CLIENT_ID,
     devNotificationTime: process.env.DEV_NOTIFICATION_TIME,
+    authMockLogin: process.env.AUTH_MOCK_LOGIN,
+    authMockEmail: process.env.AUTH_MOCK_EMAIL,
+    authMockName: process.env.AUTH_MOCK_NAME,
+    authMockGoogleId: process.env.AUTH_MOCK_GOOGLE_ID,
     eas: {
       projectId: 'e5d14982-53b5-4aff-91e8-1997cef3235d',
     },

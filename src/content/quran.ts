@@ -15,28 +15,44 @@ export function getPageData(pageNumber: number): PageDataItem[] {
   return pageData[pageNumber - 1];
 }
 
+// Western digit -> the Arabic-Indic digit (U+0660..U+0669) the app shows
+// everywhere.
+const ARABIC_DIGITS: Record<string, string> = {
+  '0': '٠',
+  '1': '١',
+  '2': '٢',
+  '3': '٣',
+  '4': '٤',
+  '5': '٥',
+  '6': '٦',
+  '7': '٧',
+  '8': '٨',
+  '9': '٩',
+};
+
+/**
+ * Replaces every Western digit in [text] with its Arabic numeral, leaving
+ * everything else as is (e.g. a formatted date).
+ */
+export const toArabicDigits = (text: string): string =>
+  text.replace(/[0-9]/g, digit => ARABIC_DIGITS[digit]);
+
 /**
  * Takes [num] and returns the Arabic numerals
  */
-export const toArabicNumerals = (num: number): string => {
-  const arabicNumbers: Record<string, string> = {
-    '0': '٠',
-    '1': '۱',
-    '2': '۲',
-    '3': '۳',
-    '4': '٤',
-    '5': '٥',
-    '6': '٦',
-    '7': '۷',
-    '8': '۸',
-    '9': '۹',
-  };
-  return num
-    .toString()
-    .split('')
-    .map(digit => arabicNumbers[digit])
-    .join('');
-};
+export const toArabicNumerals = (num: number): string =>
+  toArabicDigits(num.toString());
+
+/**
+ * Turns any Arabic-Indic or Persian digits in [text] back into Western
+ * digits, so typed numbers can be parsed whichever keyboard was used.
+ */
+export const toWesternDigits = (text: string): string =>
+  text.replace(/[٠-٩۰-۹]/g, digit => {
+    const code = digit.charCodeAt(0);
+    // U+0660..U+0669 are Arabic-Indic digits, U+06F0..U+06F9 Persian ones.
+    return String(code - (code >= 0x06f0 ? 0x06f0 : 0x0660));
+  });
 
 /**
  * The most standard and common copy of Arabic only Quran total pages count
@@ -69,6 +85,53 @@ export function getSurahNameArabic(surahNumber: number): string {
 }
 
 /**
+ * Takes [surahNumber] and returns the Surah name in Arabic prefixed with "سورة "
+ */
+export function getSurahDisplayName(surahNumber: number): string {
+  return `سورة ${getSurahNameArabic(surahNumber)}`;
+}
+
+const JUZ_ORDINAL_WORDS: Record<number, string> = {
+  1: 'الأول',
+  2: 'الثاني',
+  3: 'الثالث',
+  4: 'الرابع',
+  5: 'الخامس',
+  6: 'السادس',
+  7: 'السابع',
+  8: 'الثامن',
+  9: 'التاسع',
+  10: 'العاشر',
+  11: 'الحادي عشر',
+  12: 'الثاني عشر',
+  13: 'الثالث عشر',
+  14: 'الرابع عشر',
+  15: 'الخامس عشر',
+  16: 'السادس عشر',
+  17: 'السابع عشر',
+  18: 'الثامن عشر',
+  19: 'التاسع عشر',
+  20: 'العشرون',
+  21: 'الحادي والعشرون',
+  22: 'الثاني والعشرون',
+  23: 'الثالث والعشرون',
+  24: 'الرابع والعشرون',
+  25: 'الخامس والعشرون',
+  26: 'السادس والعشرون',
+  27: 'السابع والعشرون',
+  28: 'الثامن والعشرون',
+  29: 'التاسع والعشرون',
+  30: 'الثلاثون',
+};
+
+/**
+ * Takes a juz number (1-30) and returns its Arabic ordinal word, e.g. 1 -> "الأول"
+ */
+export function getJuzOrdinalWord(juzNumber: number): string {
+  return JUZ_ORDINAL_WORDS[juzNumber] ?? String(juzNumber);
+}
+
+/**
  * Takes [surahNumber] and returns the count of total Verses in the Surah
  */
 export function getVerseCount(surahNumber: number): number {
@@ -87,6 +150,28 @@ export function getPageQCFontName(pageNumber: number): string {
   const fontName = `QCF_P${pageNumber.toString().padStart(3, '0')}`;
   console.log('fontName', fontName);
   return fontName;
+}
+
+/**
+ * Takes [surahNumber] & [verseNumber] and returns the Mushaf page number containing that verse
+ */
+export function getPageForVerse(
+  surahNumber: number,
+  verseNumber: number,
+): number {
+  for (let page = 1; page <= totalPagesCount; page++) {
+    const items = getPageData(page);
+    const match = items.find(
+      item =>
+        item.surah === surahNumber &&
+        verseNumber >= item.start &&
+        verseNumber <= item.end,
+    );
+    if (match) {
+      return page;
+    }
+  }
+  return 1;
 }
 
 /**

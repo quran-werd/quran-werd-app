@@ -1,106 +1,60 @@
 import React from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
+import {View, Text, ViewStyle, TextStyle} from 'react-native';
 import {colors} from '../../../styles/colors';
+import {radius} from '../../../styles/radius';
+import {fontFamilies} from '../../../styles/typography';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'light';
-  size?: 'small' | 'medium' | 'large';
-  style?: ViewStyle;
+  size?: number;
+  backgroundColor?: string;
+  borderColor?: string;
   textColor?: string;
+  fontSize?: number;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
+// Thin circular/pill container — each consumer supplies its exact
+// design.md recipe (surah number badge, verse number badge, range circle,
+// today-werd label pill, etc.) via props/style rather than a variant enum.
 export default function Badge({
   children,
-  variant = 'light',
-  size = 'medium',
+  size = 24,
+  backgroundColor = colors.goldTintMedium,
+  borderColor,
+  textColor = colors.primary,
+  fontSize = 11,
   style,
-  textColor,
+  textStyle,
 }: BadgeProps) {
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: colors.primary,
-          textColor: colors.white,
-        };
-      case 'secondary':
-        return {
-          backgroundColor: colors.secondary,
-          textColor: colors.white,
-        };
-      case 'light':
-      default:
-        return {
-          backgroundColor: colors.light,
-          textColor: colors.primary,
-        };
-    }
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          paddingHorizontal: 6,
-          paddingVertical: 3,
-          fontSize: 10,
-          borderRadius: 4,
-        };
-      case 'large':
-        return {
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          fontSize: 14,
-          borderRadius: 10,
-        };
-      case 'medium':
-      default:
-        return {
-          paddingHorizontal: 10,
-          paddingVertical: 6,
-          fontSize: 12,
-          borderRadius: 8,
-        };
-    }
-  };
-
-  const variantStyles = getVariantStyles();
-  const sizeStyles = getSizeStyles();
-
   return (
     <View
       style={[
-        styles.container,
         {
-          backgroundColor: variantStyles.backgroundColor,
-          paddingHorizontal: sizeStyles.paddingHorizontal,
-          paddingVertical: sizeStyles.paddingVertical,
-          borderRadius: sizeStyles.borderRadius,
+          width: size,
+          height: size,
+          borderRadius: radius.full,
+          backgroundColor,
+          borderWidth: borderColor ? 1 : 0,
+          borderColor,
+          alignItems: 'center',
+          justifyContent: 'center',
         },
         style,
       ]}>
       <Text
         style={[
-          styles.text,
           {
-            fontSize: sizeStyles.fontSize,
-            color: textColor || variantStyles.textColor,
+            fontFamily: fontFamilies.cairo.bold,
+            fontSize,
+            color: textColor,
+            textAlign: 'center',
           },
+          textStyle,
         ]}>
         {children}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-});
