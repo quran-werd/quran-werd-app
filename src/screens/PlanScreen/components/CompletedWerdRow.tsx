@@ -7,6 +7,7 @@ import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
 import {spacing} from '../../../styles/spacing';
 import {getSurahNameArabic, toArabicNumerals} from '../../../content';
+import {formatCount} from '../../../utils/count.utils';
 import type {CompletedWerd} from '../../../services/revisionPlan.service';
 
 function verseCount(werd: CompletedWerd) {
@@ -49,7 +50,7 @@ export default function CompletedWerdRow({werd}: CompletedWerdRowProps) {
           {t('plan.verseRange', {
             from: toArabicNumerals(werd.range.from),
             to: toArabicNumerals(werd.range.to),
-            n: toArabicNumerals(verseCount(werd)),
+            verses: formatCount(t, 'verses', verseCount(werd)),
           })}
         </Typography>
       </View>
@@ -71,8 +72,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mutedTintFaint,
   },
   orderBadge: {
-    width: 24,
-    height: 24,
+    width: 28,
+    height: 28,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',

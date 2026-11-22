@@ -6,6 +6,7 @@ import ScreenTitle from '../../../components/shared/ScreenTitle';
 import {spacing} from '../../../styles/spacing';
 import {useAppSelector} from '../../../store/hooks';
 import {selectUser} from '../../../features/Auth/authSlice';
+import {toArabicDigits} from '../../../content';
 
 export default function GreetingHeader() {
   const {t} = useTranslation();
@@ -13,11 +14,13 @@ export default function GreetingHeader() {
 
   const todayDate = useMemo(
     () =>
-      new Intl.DateTimeFormat('ar', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-      }).format(new Date()),
+      toArabicDigits(
+        new Intl.DateTimeFormat('ar', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+        }).format(new Date()),
+      ),
     [],
   );
 
@@ -42,7 +45,7 @@ export default function GreetingHeader() {
 
 const styles = StyleSheet.create({
   greetingBlock: {
-    paddingHorizontal: spacing[28],
+    paddingHorizontal: spacing[20],
     paddingTop: spacing[24],
     paddingBottom: spacing[8],
   },

@@ -17,6 +17,7 @@ import {spacing} from '../../../styles/spacing';
 import {shadows} from '../../../styles/shadows';
 import {getSurahNameArabic, toArabicNumerals} from '../../../content';
 import {fetchAyahByKey} from '../../../services/clients/quranCdnClient';
+import {formatCount} from '../../../utils/count.utils';
 import type {Werd} from '../../../services/revisionPlan.service';
 
 function verseCount(werd: Werd) {
@@ -137,7 +138,7 @@ export default function WerdCard({
               {t('plan.verseRange', {
                 from: toArabicNumerals(werd.range.from),
                 to: toArabicNumerals(werd.range.to),
-                n: toArabicNumerals(verseCount(werd)),
+                verses: formatCount(t, 'verses', verseCount(werd)),
               })}
             </Typography>
           </View>
@@ -188,8 +189,8 @@ const styles = StyleSheet.create({
     padding: spacing[12],
   },
   werdBadge: {
-    width: 36,
-    height: 36,
+    width: 28,
+    height: 28,
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
@@ -235,17 +236,18 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.goldBorderFaint,
   },
+  // A light wash rather than a dark inset: a navy inset over the brown
+  // today card turned muddy.
   werdInnerCard: {
     marginTop: spacing[10],
     borderRadius: radius.tiny,
     overflow: 'hidden',
-    backgroundColor: 'rgba(12,18,32,0.6)',
+    backgroundColor: 'rgba(237,231,220,0.03)',
     borderWidth: 1,
-    borderColor: colors.goldBorderFaint,
+    borderColor: colors.goldBorderSubtle,
   },
   versePreviewBlock: {
     padding: spacing[10],
     gap: spacing[8],
-    backgroundColor: 'rgba(15,12,8,0.45)',
   },
 });

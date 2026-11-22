@@ -45,7 +45,6 @@
   },
   "plan": {
     "title": "Revision Plan",
-    "werdCount": "{{n}} awrad",
     "generate": "Generate Plan",
     "updateCapacity": "Update Plan",
     "updated": "✓ Saved",
@@ -70,12 +69,11 @@
     ],
     "sectionLabel": "Werd List",
     "completedSectionLabel": "Completed",
-    "verseRange": "Ayahs {{from}} – {{to}} · {{n}} ayahs",
-    "summaryDays": "You'll finish all your memorization in {{n}} days with this plan"
+    "verseRange": "Ayahs {{from}} – {{to}} · {{verses}}",
+    "summaryDays": "You'll finish all your memorization in {{days}} with this plan"
   },
   "quran": {
     "juz": "Juz {{number}}",
-    "ayahCountShort": "{{value}} ayahs",
     "pageShort": "p. {{page}}"
   },
   "mushafStore": {
@@ -87,7 +85,7 @@
   "memorization": {
     "screenTitle": "My Memorizations",
     "addButton": "Add",
-    "subtitle": "{{verses}} ayahs · {{surahs}} surahs",
+    "subtitle": "{{verses}} · {{surahs}}",
     "emptyTitle": "You haven't added memorizations yet",
     "emptyBodyLine1": "Start by selecting the ayahs you memorize",
     "emptyBodyLine2": "directly from the Mushaf pages",
@@ -107,12 +105,11 @@
       "rangesSummary": "Total ranges: {{rangeCount}} • Memorized {{memorized}} of {{total}} verses",
       "verseRange": "Verses {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} words",
-      "verseCountShort": "{{count}} verses",
       "bismillah": "In the name of Allah, the Most Gracious, the Most Merciful"
     },
     "selection": {
       "title": "Memorization Ranges",
-      "emptyState": "No ranges selected. Tap verses to create ranges.",
+      "emptyState": "Tap the first ayah, then the last one, to select a range",
       "summary": "{{rangeCount}} range{{rangeCount, plural, one {} other {s}}} • {{verseCount}} verses • {{wordCount}} words",
       "showSelection": "Show Selection",
       "showSelectionCount": "Show Selection ({{count}})",
@@ -122,13 +119,12 @@
       "saveButton": "Save Memorization",
       "successTitle": "Saved Successfully",
       "successMessage": "Your memorization ranges have been saved.",
-      "totalSummary": "{{rangeCount}} ranges • {{verseCount}} verses",
+      "totalSummary": "{{ranges}} • {{verses}}",
       "jump": "Jump",
       "jumpTitle": "Jump to Page or Chapter",
-      "jumpToPage": "Jump to Page",
       "jumpPagePlaceholder": "Enter page number",
       "selectChapter": "Select Chapter",
-      "searchChapter": "Search chapters...",
+      "searchChapter": "Search surahs",
       "go": "Go",
       "jumpInvalid": "Invalid input",
       "jumpInvalidMessage": "Please enter a valid page number"
@@ -205,5 +201,47 @@
     "emailLabel": "Email",
     "save": "Save",
     "nameRequired": "Name is required"
+  },
+  "counts": {
+    "verses": {
+      "zero": "{{n}} ayahs",
+      "one": "1 ayah",
+      "two": "{{n}} ayahs",
+      "few": "{{n}} ayahs",
+      "many": "{{n}} ayahs",
+      "other": "{{n}} ayahs"
+    },
+    "surahs": {
+      "zero": "{{n}} surahs",
+      "one": "1 surah",
+      "two": "{{n}} surahs",
+      "few": "{{n}} surahs",
+      "many": "{{n}} surahs",
+      "other": "{{n}} surahs"
+    },
+    "ranges": {
+      "zero": "{{n}} ranges",
+      "one": "1 range",
+      "two": "{{n}} ranges",
+      "few": "{{n}} ranges",
+      "many": "{{n}} ranges",
+      "other": "{{n}} ranges"
+    },
+    "awrad": {
+      "zero": "{{n}} awrad",
+      "one": "1 werd",
+      "two": "{{n}} awrad",
+      "few": "{{n}} awrad",
+      "many": "{{n}} awrad",
+      "other": "{{n}} awrad"
+    },
+    "days": {
+      "zero": "{{n}} days",
+      "one": "1 day",
+      "two": "{{n}} days",
+      "few": "{{n}} days",
+      "many": "{{n}} days",
+      "other": "{{n}} days"
+    }
   }
 }

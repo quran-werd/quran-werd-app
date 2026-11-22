@@ -13,6 +13,7 @@ import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
 import {spacing} from '../../../styles/spacing';
 import {usePlanCapacity} from '../hooks/usePlanCapacity';
+import {toArabicNumerals} from '../../../content';
 
 const DAY_INDEXES = [6, 0, 1, 2, 3, 4, 5]; // Sat..Fri, matching س ح ن ث ر خ ج
 
@@ -91,7 +92,7 @@ export default function CapacityGoalCard() {
             ]}>
             <TextInput
               style={styles.capacityInput}
-              value={String(displayValue)}
+              value={toArabicNumerals(displayValue)}
               onChangeText={handleCapacityChange}
               keyboardType="number-pad"
             />

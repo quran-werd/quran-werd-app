@@ -15,7 +15,7 @@ import {shadows} from '../../styles/shadows';
 import {MemorizationVerseRange} from '../../types/memorization.types';
 import MemorizedRangeItem from '../MemorizedRangeItem';
 import SurahNumber from './components/SurahNumber';
-import {SURAHS_INFO} from '../../content';
+import {SURAHS_INFO, toArabicNumerals} from '../../content';
 import {
   getMemorizedPercentageFromRanges,
   getMemorizedVersesCountFromRanges,
@@ -84,8 +84,8 @@ export default function SurahProgressCard({
           </Typography>
           <Typography family="cairo" style={styles.surahMeta}>
             {t('memorization.surah.verseCount', {
-              memorized: memorizedVersesCount,
-              total: surahInfo.aya,
+              memorized: toArabicNumerals(memorizedVersesCount),
+              total: toArabicNumerals(surahInfo.aya),
             })}
           </Typography>
         </View>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
   },
   expandedContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingBottom: 12,
     gap: 8,
     overflow: 'hidden',

@@ -11,6 +11,7 @@ import {useMushafLocalStore} from '../../hooks/useMushafLocalStore';
 import {MushafLocalStoreProvider} from '../../services/mushafLocalStore';
 import {useAppSelector} from '../../store/hooks';
 import {selectIsAuthenticated} from '../../features/Auth/authSlice';
+import {toArabicNumerals} from '../../content';
 
 interface MushafLocalStoreGateProps {
   children: React.ReactNode;
@@ -23,7 +24,9 @@ interface MushafLocalStoreGateProps {
  * download runs silently, and only once the user is signed in does a
  * progress popup cover the app until the pages are ready.
  */
-export default function MushafLocalStoreGate({children}: MushafLocalStoreGateProps) {
+export default function MushafLocalStoreGate({
+  children,
+}: MushafLocalStoreGateProps) {
   const {t} = useTranslation();
   const {store, isReady, progress, error, retry} = useMushafLocalStore();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
@@ -41,7 +44,11 @@ export default function MushafLocalStoreGate({children}: MushafLocalStoreGatePro
         transparent
         animationType="fade">
         <View style={styles.backdrop}>
-          <BlurView intensity={12} tint="dark" style={StyleSheet.absoluteFill} />
+          <BlurView
+            intensity={12}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
         </View>
         <View style={styles.centerWrap} pointerEvents="box-none">
           <View style={[styles.card, shadows.deleteModal]}>
@@ -76,8 +83,8 @@ export default function MushafLocalStoreGate({children}: MushafLocalStoreGatePro
                 </View>
                 <Typography variant="label" color="dimmed" align="center">
                   {t('mushafStore.pagesCount', {
-                    completed: pagesCompleted,
-                    total: totalPages,
+                    completed: toArabicNumerals(pagesCompleted),
+                    total: toArabicNumerals(totalPages),
                   })}
                 </Typography>
               </>

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[10],
     paddingHorizontal: spacing[20],
     borderBottomWidth: 1,
-    borderBottomColor: colors.goldTintSubtle,
+    borderBottomColor: colors.goldBorderSubtle,
   },
   body: {
     flex: 1,

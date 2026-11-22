@@ -39,7 +39,11 @@ export default function Button({
 
   const content = loading ? (
     <ActivityIndicator
-      color={variant === 'primary' && !isDisabled ? colors.background : colors.primary}
+      color={
+        variant === 'primary' && !isDisabled
+          ? colors.background
+          : colors.primary
+      }
     />
   ) : (
     <Typography
@@ -51,6 +55,7 @@ export default function Button({
         variant === 'primary' && !isDisabled && styles.primaryText,
         (variant === 'ghost' || variant === 'ghostActive') && styles.ghostText,
         variant === 'ghostActive' && styles.ghostActiveText,
+        isDisabled && styles.disabledText,
         textStyle,
       ]}>
       {title}
@@ -68,7 +73,11 @@ export default function Button({
           style,
         ]}>
         <LinearGradient
-          colors={[colors.primaryHighlight, colors.primary, colors.primaryShadow]}
+          colors={[
+            colors.primaryHighlight,
+            colors.primary,
+            colors.primaryShadow,
+          ]}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           style={[styles.button, styles.primaryGradient, shadows.primaryCta]}>
@@ -156,5 +165,8 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: colors.mutedTintMedium,
+  },
+  disabledText: {
+    color: colors.mutedForeground,
   },
 });

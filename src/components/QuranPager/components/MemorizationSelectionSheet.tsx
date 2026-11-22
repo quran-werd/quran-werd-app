@@ -24,6 +24,7 @@ import {
   calculateRangeStats,
 } from '../utils/verseSelection.utils';
 import {getSurahNameArabic} from '../../../content';
+import {formatCount} from '../../../utils/count.utils';
 import MemorizedRangeItem from '../../MemorizedRangeItem';
 import {mapMemorizedRangesToSaveMemorizationRequest} from '../../../utils/helpers.utils';
 
@@ -141,7 +142,10 @@ export const MemorizationSelectionSheet: React.FC<
   };
 
   return (
-    <BottomSheet visible={visible} onClose={onClose} title={t('memorization.selection.title')}>
+    <BottomSheet
+      visible={visible}
+      onClose={onClose}
+      title={t('memorization.selection.title')}>
       {saveSucceeded ? (
         <View style={styles.successState}>
           <View style={styles.successIconCircle}>
@@ -180,14 +184,16 @@ export const MemorizationSelectionSheet: React.FC<
             <View style={styles.summary}>
               <Typography variant="caption" color="muted">
                 {t('memorization.selection.totalSummary', {
-                  rangeCount: memorizedRanges.length,
-                  verseCount: totalStats.verseCount,
+                  ranges: formatCount(t, 'ranges', memorizedRanges.length),
+                  verses: formatCount(t, 'verses', totalStats.verseCount),
                 })}
               </Typography>
             </View>
           ) : null}
 
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}>
             {memorizedRanges.length === 0 ? (
               <View style={styles.emptyState}>
                 <Typography variant="body" color="muted" align="center">
@@ -197,7 +203,10 @@ export const MemorizationSelectionSheet: React.FC<
             ) : (
               groupedRanges.map(([chapterNumber, group]) => (
                 <View key={chapterNumber} style={styles.group}>
-                  <Typography variant="caption" family="amiriBold" style={styles.groupLabel}>
+                  <Typography
+                    variant="caption"
+                    family="amiriBold"
+                    style={styles.groupLabel}>
                     {getSurahNameArabic(chapterNumber)}
                   </Typography>
                   <View style={styles.groupItems}>
@@ -247,7 +256,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   emptyState: {
-    padding: 32,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
   group: {

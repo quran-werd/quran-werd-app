@@ -18,7 +18,7 @@ import {
   selectRevisionPlanLoading,
   selectRevisionPlanError,
 } from '../../features/RevisionPlan/revisionPlanSlice';
-import {toArabicNumerals} from '../../content';
+import {formatCount} from '../../utils/count.utils';
 import EmptyState from './components/EmptyState';
 import LoadingState from './components/LoadingState';
 import CapacityGoalCard from './components/CapacityGoalCard';
@@ -167,9 +167,7 @@ export default function PlanScreen() {
                     family="cairo"
                     color="muted"
                     style={styles.werdCountLabel}>
-                    {t('plan.werdCount', {
-                      n: toArabicNumerals(incompleteAwrad.length),
-                    })}
+                    {formatCount(t, 'awrad', incompleteAwrad.length)}
                   </Typography>
                 ) : null}
               </View>
@@ -212,7 +210,7 @@ export default function PlanScreen() {
                 align="center"
                 style={styles.summaryText}>
                 {t('plan.summaryDays', {
-                  n: toArabicNumerals(incompleteAwrad.length),
+                  days: formatCount(t, 'days', incompleteAwrad.length),
                 })}
               </Typography>
             </View>

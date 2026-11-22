@@ -45,7 +45,6 @@
   },
   "plan": {
     "title": "خطة المراجعة",
-    "werdCount": "{{n}} ورد",
     "generate": "توليد الخطة",
     "updateCapacity": "تحديث الخطة",
     "updated": "✓ تم",
@@ -70,12 +69,11 @@
     ],
     "sectionLabel": "قائمة الأوراد",
     "completedSectionLabel": "مكتمل",
-    "verseRange": "الآيات {{from}} – {{to}} · {{n}} آية",
-    "summaryDays": "ستُنهي كل محفوظاتك خلال {{n}} يوم بهذه الخطة"
+    "verseRange": "الآيات {{from}} – {{to}} · {{verses}}",
+    "summaryDays": "ستُنهي كل محفوظاتك خلال {{days}} بهذه الخطة"
   },
   "quran": {
     "juz": "الجزء {{number}}",
-    "ayahCountShort": "{{value}} آية",
     "pageShort": "ص {{page}}"
   },
   "mushafStore": {
@@ -87,7 +85,7 @@
   "memorization": {
     "screenTitle": "محفوظاتي",
     "addButton": "إضافة",
-    "subtitle": "{{verses}} آية · {{surahs}} سورة",
+    "subtitle": "{{verses}} · {{surahs}}",
     "emptyTitle": "لم تُضِف محفوظاتك بعد",
     "emptyBodyLine1": "ابدأ بتحديد الآيات التي تحفظها",
     "emptyBodyLine2": "مباشرة من صفحات المصحف",
@@ -107,12 +105,11 @@
       "rangesSummary": "مجموع النطاقات : {{rangeCount}} • آيات محفوظة {{memorized}} من {{total}}",
       "verseRange": "آية {{startVerse}}-{{endVerse}}",
       "wordCount": "{{count}} كلمة",
-      "verseCountShort": "{{count}} آية",
       "bismillah": "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ"
     },
     "selection": {
       "title": "نطاقات الحفظ",
-      "emptyState": "لم يتم تحديد نطاقات. انقر على الآيات لإنشاء نطاقات.",
+      "emptyState": "اضغط على أول آية ثم آخر آية لتحديد نطاق",
       "summary": "{{rangeCount}} نطاق • {{verseCount}} آية • {{wordCount}} كلمة",
       "showSelection": "إظهار التحديد",
       "showSelectionCount": "إظهار التحديد ({{count}})",
@@ -122,13 +119,12 @@
       "saveButton": "حفظ المحفوظات",
       "successTitle": "تم الحفظ بنجاح",
       "successMessage": "تم حفظ نطاقات الحفظ الخاصة بك.",
-      "totalSummary": "{{rangeCount}} نطاق • {{verseCount}} آية",
+      "totalSummary": "{{ranges}} • {{verses}}",
       "jump": "انتقل",
       "jumpTitle": "الانتقال إلى صفحة أو سورة",
-      "jumpToPage": "الانتقال إلى صفحة",
       "jumpPagePlaceholder": "أدخل رقم الصفحة",
       "selectChapter": "اختر سورة",
-      "searchChapter": "بحث في السور...",
+      "searchChapter": "ابحث عن سورة",
       "go": "انتقل",
       "jumpInvalid": "إدخال غير صحيح",
       "jumpInvalidMessage": "يرجى إدخال رقم صفحة صحيح"
@@ -194,5 +190,47 @@
     "emailLabel": "البريد الإلكتروني",
     "save": "حفظ",
     "nameRequired": "الاسم مطلوب"
+  },
+  "counts": {
+    "verses": {
+      "zero": "{{n}} آية",
+      "one": "آية واحدة",
+      "two": "آيتان",
+      "few": "{{n}} آيات",
+      "many": "{{n}} آية",
+      "other": "{{n}} آية"
+    },
+    "surahs": {
+      "zero": "{{n}} سورة",
+      "one": "سورة واحدة",
+      "two": "سورتان",
+      "few": "{{n}} سور",
+      "many": "{{n}} سورة",
+      "other": "{{n}} سورة"
+    },
+    "ranges": {
+      "zero": "{{n}} نطاق",
+      "one": "نطاق واحد",
+      "two": "نطاقان",
+      "few": "{{n}} نطاقات",
+      "many": "{{n}} نطاقًا",
+      "other": "{{n}} نطاق"
+    },
+    "awrad": {
+      "zero": "{{n}} ورد",
+      "one": "ورد واحد",
+      "two": "وردان",
+      "few": "{{n}} أوراد",
+      "many": "{{n}} وردًا",
+      "other": "{{n}} ورد"
+    },
+    "days": {
+      "zero": "{{n}} يوم",
+      "one": "يوم واحد",
+      "two": "يومين",
+      "few": "{{n}} أيام",
+      "many": "{{n}} يومًا",
+      "other": "{{n}} يوم"
+    }
   }
 }

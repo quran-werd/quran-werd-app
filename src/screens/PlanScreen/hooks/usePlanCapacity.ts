@@ -5,7 +5,7 @@ import {
   selectRevisionPlan,
   selectRevisionPlanError,
 } from '../../../features/RevisionPlan/revisionPlanSlice';
-import {toArabicNumerals} from '../../../content';
+import {toArabicNumerals, toWesternDigits} from '../../../content';
 
 export type CapacityMode = 'daily' | 'weekly';
 
@@ -42,7 +42,9 @@ export function usePlanCapacity() {
   const displayValue =
     mode === 'daily' ? dailyCapacityValue : dailyCapacityValue * 7;
 
-  const handleCapacityChange = (value: string) => {
+  const handleCapacityChange = (text: string) => {
+    // The field shows Arabic digits, so typed text may mix both systems.
+    const value = toWesternDigits(text).replace(/[^0-9]/g, '');
     setJustSaved(false);
     if (mode === 'daily') {
       setCapacity(value);

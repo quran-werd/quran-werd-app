@@ -234,10 +234,7 @@ const QuranPagerContent: React.FC<QuranPagerProps> = ({
             style={styles.topBarSurah}>
             {surahNameArabic}
           </Typography>
-          <Typography
-            variant="caption"
-            color="muted"
-            style={styles.topBarJuz}>
+          <Typography variant="caption" color="muted" style={styles.topBarJuz}>
             {t('quran.juz', {number: toArabicNumerals(juzNumber)})}
           </Typography>
         </View>
@@ -402,9 +399,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   toolbarShowSelectionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 0,
+    paddingHorizontal: 16,
     minHeight: 34,
+    height: 34,
+    borderRadius: radius.full,
   },
   toolbarShowSelectionText: {
     fontSize: 13,

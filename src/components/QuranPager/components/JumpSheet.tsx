@@ -13,7 +13,12 @@ import BottomSheet from '../../shared/BottomSheet';
 import Typography from '../../shared/Typography';
 import {colors} from '../../../styles/colors';
 import {radius} from '../../../styles/radius';
-import {totalPagesCount, toArabicNumerals} from '../../../content';
+import {
+  totalPagesCount,
+  toArabicNumerals,
+  toWesternDigits,
+} from '../../../content';
+import {formatCount} from '../../../utils/count.utils';
 import {useMushafLocalStoreData} from '../../../services/mushafLocalStore';
 
 interface JumpSheetProps {
@@ -63,7 +68,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
   );
 
   const handlePageJump = () => {
-    const pageNum = parseInt(pageInput.trim(), 10);
+    const pageNum = parseInt(toWesternDigits(pageInput.trim()), 10);
     if (isNaN(pageNum) || pageNum < 1 || pageNum > totalPagesCount) {
       Alert.alert(
         t('memorization.selection.jumpInvalid'),
@@ -76,6 +81,8 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
     setPageInput('');
   };
 
+  const hasPageInput = pageInput.trim().length > 0;
+
   const handleChapterPress = (chapterNumber: number) => {
     onJumpToChapter(chapterNumber);
   };
@@ -86,7 +93,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
       return chapters;
     }
 
-    const query = searchQuery.toLowerCase().trim();
+    const query = toWesternDigits(searchQuery.toLowerCase().trim());
     return chapters.filter(
       chapter =>
         chapter.nameArabic.includes(query) ||
@@ -100,9 +107,6 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
       onClose={onClose}
       title={t('memorization.selection.jumpTitle')}>
       <View style={styles.pageInputSection}>
-        <Typography variant="caption" color="muted" style={styles.sectionTitle}>
-          {t('memorization.selection.jumpToPage')}
-        </Typography>
         <View style={styles.pageInputRow}>
           <TextInput
             style={styles.pageInput}
@@ -113,13 +117,18 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
             keyboardType="number-pad"
             onSubmitEditing={handlePageJump}
           />
-          <Pressable style={styles.goButton} onPress={handlePageJump}>
+          <Pressable
+            style={[styles.goButton, !hasPageInput && styles.goButtonDisabled]}
+            disabled={!hasPageInput}
+            onPress={handlePageJump}>
             <Typography
               variant="caption"
               family="cairo"
               weight="bold"
               align="center"
-              style={styles.goButtonText}>
+              style={
+                hasPageInput ? styles.goButtonText : styles.goButtonTextDisabled
+              }>
               {t('memorization.selection.go')}
             </Typography>
           </Pressable>
@@ -156,7 +165,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                     weight="bold"
                     color="primary"
                     align="center">
-                    {chapter.surah}
+                    {toArabicNumerals(chapter.surah)}
                   </Typography>
                 </View>
                 <View style={styles.chapterInfo}>
@@ -165,9 +174,7 @@ export const JumpSheet: React.FC<JumpSheetProps> = ({
                   </Typography>
                   {startPage ? (
                     <Typography variant="caption" color="muted">
-                      {t('quran.ayahCountShort', {
-                        value: toArabicNumerals(chapter.ayahCount),
-                      })}
+                      {formatCount(t, 'verses', chapter.ayahCount)}
                       {' - '}
                       {t('quran.pageShort', {
                         page: toArabicNumerals(startPage),
@@ -189,9 +196,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
-  sectionTitle: {
-    marginBottom: 12,
-  },
   pageInputRow: {
     flexDirection: 'row',
     gap: 10,
@@ -210,11 +214,17 @@ const styles = StyleSheet.create({
   goButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: 24,
-    borderRadius: radius.xl,
+    borderRadius: radius.md,
     justifyContent: 'center',
+  },
+  goButtonDisabled: {
+    backgroundColor: colors.mutedTintMedium,
   },
   goButtonText: {
     color: colors.background,
+  },
+  goButtonTextDisabled: {
+    color: colors.mutedForeground,
   },
   chaptersSection: {
     paddingHorizontal: 20,
@@ -248,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: radius.xl,
   },

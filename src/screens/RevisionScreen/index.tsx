@@ -19,9 +19,9 @@ import {
 import {getPageForVerse} from '../../content';
 
 const ACTIONS_VERTICAL_PADDING = 12;
-// Rough estimate of the CTA button's rendered height, used only until the
-// first onLayout measurement lands, so the wrapper never starts at 0.
-const ESTIMATED_BUTTON_HEIGHT = 56;
+// The CTA button's rendered height: 16 padding on each side plus the 16px
+// label's 1.8 line height. Too small and the button overlaps the page.
+const ESTIMATED_BUTTON_HEIGHT = 61;
 
 export default function RevisionScreen() {
   const {t} = useTranslation();
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     position: 'absolute',
-    left: 16,
-    right: 16,
+    left: 12,
+    right: 12,
   },
 });

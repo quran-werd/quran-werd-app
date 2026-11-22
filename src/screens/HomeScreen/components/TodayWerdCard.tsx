@@ -82,7 +82,11 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
   if (isPlanComplete) {
     return (
       <View style={styles.emptyWrap}>
-        <Typography variant="subtitle" family="amiri" weight="bold" align="center">
+        <Typography
+          variant="subtitle"
+          family="amiri"
+          weight="bold"
+          align="center">
           {t('home.planCompleteTitle')}
         </Typography>
         <Typography variant="body" color="muted" align="center">
@@ -101,7 +105,8 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
   if (loading) {
     return (
       <View style={styles.wardCardWrap}>
-        <View style={[styles.wardCard, styles.skeletonCard, shadows.homeWardCard]}>
+        <View
+          style={[styles.wardCard, styles.skeletonCard, shadows.homeWardCard]}>
           <Skeleton width={90} height={22} borderRadius={radius.full} />
           <Skeleton width={140} height={28} style={styles.skeletonGap} />
           <Skeleton width={180} height={16} style={styles.skeletonGap} />
@@ -167,7 +172,9 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
             </Typography>
 
             <Animated.View
-              key={isFinished ? 'finished' : isCompleted ? 'completed' : 'pending'}
+              key={
+                isFinished ? 'finished' : isCompleted ? 'completed' : 'pending'
+              }
               entering={pillEnter}
               exiting={pillExit}
               style={[
@@ -263,7 +270,10 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
 
           <View style={styles.ctaDivider}>
             {!isCompleted && !isFinished ? (
-              <Animated.View key="pending" entering={ctaEnter} exiting={ctaExit}>
+              <Animated.View
+                key="pending"
+                entering={ctaEnter}
+                exiting={ctaExit}>
                 <Button
                   title={t('home.startRevision')}
                   onPress={() =>
@@ -287,7 +297,11 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
                 exiting={ctaExit}
                 style={styles.completionWrap}>
                 <View style={styles.completionBadge}>
-                  <CheckIcon size={12} color={colors.primary} strokeWidth={2.5} />
+                  <CheckIcon
+                    size={12}
+                    color={colors.primary}
+                    strokeWidth={2.5}
+                  />
                 </View>
                 <Typography
                   variant="label"
@@ -368,7 +382,7 @@ export default function TodayWerdCard({loading}: TodayWerdCardProps) {
 
 const styles = StyleSheet.create({
   wardCardWrap: {
-    paddingHorizontal: spacing[24],
+    paddingHorizontal: spacing[16],
   },
   wardCard: {
     borderRadius: radius.xl,
@@ -385,7 +399,9 @@ const styles = StyleSheet.create({
   },
   wardCardStarDecoration: {
     position: 'absolute',
-    right: -32,
+    // Flips to the left edge in RTL; -36 puts the diamond's top tip on the
+    // divider between the juz and page stats.
+    right: -36,
     bottom: -32,
     opacity: 0.6,
   },

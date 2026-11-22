@@ -32,7 +32,14 @@ export default function HomeScreen() {
       <ScreenGlow
         style={StyleSheet.absoluteFillObject}
         stops={[
-          {id: 'homeGlow', cx: '50%', cy: '0%', rx: '60%', ry: '50%', opacity: 0.07},
+          {
+            id: 'homeGlow',
+            cx: '50%',
+            cy: '0%',
+            rx: '60%',
+            ry: '50%',
+            opacity: 0.07,
+          },
         ]}
       />
       <ScrollView
@@ -59,13 +66,12 @@ const styles = StyleSheet.create({
   content: {paddingBottom: spacing[24]},
   divider: {
     height: 1,
-    backgroundColor: colors.border,
-    marginHorizontal: spacing[28],
+    backgroundColor: colors.goldBorderSubtle,
   },
   werdLabel: {
     fontSize: 14,
     letterSpacing: 0.08 * 14,
-    paddingHorizontal: spacing[28],
+    paddingHorizontal: spacing[20],
     marginTop: spacing[16],
     marginBottom: spacing[12],
   },

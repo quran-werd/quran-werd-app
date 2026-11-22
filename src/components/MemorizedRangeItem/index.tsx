@@ -8,6 +8,7 @@ import {MemorizedRange} from '../../types/memorization.types';
 import Typography from '../shared/Typography';
 import VerseRangeRow from '../shared/VerseRangeRow';
 import {fetchAyahByKey} from '../../services/clients/quranCdnClient';
+import {formatCount} from '../../utils/count.utils';
 
 interface MemorizedRangeItemProps {
   range: MemorizedRange;
@@ -71,9 +72,7 @@ export default function MemorizedRangeItem({
       {showDeleteButton && onDelete ? (
         <View style={styles.footer}>
           <Typography family="cairo" style={styles.verseCountLabel}>
-            {t('memorization.surah.verseCountShort', {
-              count: range.endVerse - range.startVerse + 1,
-            })}
+            {formatCount(t, 'verses', range.endVerse - range.startVerse + 1)}
           </Typography>
           <Pressable style={styles.deleteButton} onPress={onDelete}>
             <TrashIcon />

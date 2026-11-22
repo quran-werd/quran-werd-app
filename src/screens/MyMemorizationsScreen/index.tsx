@@ -20,7 +20,7 @@ import {
 } from '../../features/Memorization/memorizationAction';
 import {MemorizationVerseRange} from '../../types/memorization.types';
 import {computeMemorizationTotals} from '../../utils/helpers.utils';
-import {toArabicNumerals} from '../../content';
+import {formatCount} from '../../utils/count.utils';
 import LoadingState from './components/LoadingState';
 
 function PlusIcon() {
@@ -98,8 +98,8 @@ export default function MyMemorizationsScreen() {
           {hasRanges ? (
             <Typography family="cairo" style={styles.subtitle}>
               {t('memorization.subtitle', {
-                verses: toArabicNumerals(totals.totalMemorizedVerses),
-                surahs: toArabicNumerals(surahCount),
+                verses: formatCount(t, 'verses', totals.totalMemorizedVerses),
+                surahs: formatCount(t, 'surahs', surahCount),
               })}
             </Typography>
           ) : null}
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingHorizontal: spacing[24],
+    paddingHorizontal: spacing[20],
     paddingBottom: spacing[16],
   },
   headerTextWrap: {
@@ -206,12 +206,11 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    marginHorizontal: spacing[24],
-    backgroundColor: colors.border,
+    backgroundColor: colors.goldBorderSubtle,
   },
   scrollView: {flex: 1},
   scrollViewContent: {
-    paddingHorizontal: spacing[24],
+    paddingHorizontal: spacing[16],
     paddingBottom: spacing[8],
     paddingTop: spacing[24],
   },

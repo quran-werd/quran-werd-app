@@ -15,28 +15,44 @@ export function getPageData(pageNumber: number): PageDataItem[] {
   return pageData[pageNumber - 1];
 }
 
+// Western digit -> the Arabic-Indic digit (U+0660..U+0669) the app shows
+// everywhere.
+const ARABIC_DIGITS: Record<string, string> = {
+  '0': '٠',
+  '1': '١',
+  '2': '٢',
+  '3': '٣',
+  '4': '٤',
+  '5': '٥',
+  '6': '٦',
+  '7': '٧',
+  '8': '٨',
+  '9': '٩',
+};
+
+/**
+ * Replaces every Western digit in [text] with its Arabic numeral, leaving
+ * everything else as is (e.g. a formatted date).
+ */
+export const toArabicDigits = (text: string): string =>
+  text.replace(/[0-9]/g, digit => ARABIC_DIGITS[digit]);
+
 /**
  * Takes [num] and returns the Arabic numerals
  */
-export const toArabicNumerals = (num: number): string => {
-  const arabicNumbers: Record<string, string> = {
-    '0': '٠',
-    '1': '۱',
-    '2': '۲',
-    '3': '۳',
-    '4': '٤',
-    '5': '٥',
-    '6': '٦',
-    '7': '۷',
-    '8': '۸',
-    '9': '۹',
-  };
-  return num
-    .toString()
-    .split('')
-    .map(digit => arabicNumbers[digit])
-    .join('');
-};
+export const toArabicNumerals = (num: number): string =>
+  toArabicDigits(num.toString());
+
+/**
+ * Turns any Arabic-Indic or Persian digits in [text] back into Western
+ * digits, so typed numbers can be parsed whichever keyboard was used.
+ */
+export const toWesternDigits = (text: string): string =>
+  text.replace(/[٠-٩۰-۹]/g, digit => {
+    const code = digit.charCodeAt(0);
+    // U+0660..U+0669 are Arabic-Indic digits, U+06F0..U+06F9 Persian ones.
+    return String(code - (code >= 0x06f0 ? 0x06f0 : 0x0660));
+  });
 
 /**
  * The most standard and common copy of Arabic only Quran total pages count
@@ -139,7 +155,10 @@ export function getPageQCFontName(pageNumber: number): string {
 /**
  * Takes [surahNumber] & [verseNumber] and returns the Mushaf page number containing that verse
  */
-export function getPageForVerse(surahNumber: number, verseNumber: number): number {
+export function getPageForVerse(
+  surahNumber: number,
+  verseNumber: number,
+): number {
   for (let page = 1; page <= totalPagesCount; page++) {
     const items = getPageData(page);
     const match = items.find(
