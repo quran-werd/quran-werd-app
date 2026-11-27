@@ -16,6 +16,7 @@ import {
   writeJsonAtomic,
 } from './paths';
 import {buildMushafPage, MushafPageBuildResult} from './buildMushafPage';
+import {downloadAllPageFonts} from '../qcfFonts';
 import {
   MushafLocalStoreBuildProgress,
   MushafLocalStoreData,
@@ -30,7 +31,9 @@ const readMeta = async (): Promise<MushafLocalStoreMeta | null> => {
     return null;
   }
   try {
-    return await readJson<MushafLocalStoreMeta>(mushafLocalStorePaths.META_PATH);
+    return await readJson<MushafLocalStoreMeta>(
+      mushafLocalStorePaths.META_PATH,
+    );
   } catch {
     // Corrupt meta file — treat as if it never existed.
     return null;
@@ -59,7 +62,9 @@ export const getMushafLocalStoreStatus =
       return 'missing';
     }
 
-    const dataInfo = await FileSystem.getInfoAsync(mushafLocalStorePaths.DATA_PATH);
+    const dataInfo = await FileSystem.getInfoAsync(
+      mushafLocalStorePaths.DATA_PATH,
+    );
     return dataInfo.exists ? 'ready' : 'missing';
   };
 
@@ -93,7 +98,11 @@ const fetchPageWithRetry = async (
   pageNumber: number,
 ): Promise<MushafPageBuildResult> => {
   let lastError: unknown;
-  for (let attempt = 1; attempt <= MUSHAF_BUILD_PAGE_RETRY_ATTEMPTS; attempt++) {
+  for (
+    let attempt = 1;
+    attempt <= MUSHAF_BUILD_PAGE_RETRY_ATTEMPTS;
+    attempt++
+  ) {
     try {
       return await buildMushafPage(pageNumber);
     } catch (error) {
@@ -122,6 +131,32 @@ const runWithConcurrency = async <T>(
   await Promise.all(runners);
 };
 
+/**
+ * Downloads the per-page QCF fonts right after the page data, behind the same
+ * progress UI. Resumable (cached fonts are skipped). Failures are non-fatal:
+ * the data store is still returned and the pager fetches any missing font on
+ * demand (current page first), so an offline device that already has the
+ * data is never locked out of the app.
+ */
+const downloadFontsPhase = async (
+  report: (progress: MushafLocalStoreBuildProgress) => void,
+): Promise<void> => {
+  const base = {
+    pagesCompleted: MUSHAF_TOTAL_PAGES,
+    totalPages: MUSHAF_TOTAL_PAGES,
+  };
+  try {
+    await downloadAllPageFonts(({fontsCompleted, totalFonts}) =>
+      report({phase: 'downloading-fonts', ...base, fontsCompleted, totalFonts}),
+    );
+  } catch (error) {
+    console.warn(
+      'QCF font download incomplete; missing fonts will load on demand.',
+      error instanceof Error ? error.message : error,
+    );
+  }
+};
+
 export interface BuildMushafLocalStoreOptions {
   onProgress?: (progress: MushafLocalStoreBuildProgress) => void;
 }
@@ -133,7 +168,8 @@ export interface BuildMushafLocalStoreOptions {
  * returned immediately with no network activity. Otherwise this downloads
  * every page from the Quran.com CDN, resuming from whatever pages were
  * already fetched in a previous, interrupted attempt at the same data
- * version, then assembles and persists the final store.
+ * version, then assembles and persists the final store. Either way, it then
+ * downloads any per-page QCF fonts not cached on the device yet.
  */
 export const buildMushafLocalStore = async (
   options: BuildMushafLocalStoreOptions = {},
@@ -142,12 +178,17 @@ export const buildMushafLocalStore = async (
   const report = (progress: MushafLocalStoreBuildProgress) =>
     onProgress?.(progress);
 
-  report({phase: 'checking', pagesCompleted: 0, totalPages: MUSHAF_TOTAL_PAGES});
+  report({
+    phase: 'checking',
+    pagesCompleted: 0,
+    totalPages: MUSHAF_TOTAL_PAGES,
+  });
 
   const status = await getMushafLocalStoreStatus();
   if (status === 'ready') {
     const store = await loadMushafLocalStore();
     if (store) {
+      await downloadFontsPhase(report);
       report({
         phase: 'ready',
         pagesCompleted: MUSHAF_TOTAL_PAGES,
@@ -257,6 +298,8 @@ export const buildMushafLocalStore = async (
   await writeJsonAtomic(mushafLocalStorePaths.DATA_PATH, store);
   await writeMeta({version: MUSHAF_DATA_VERSION, complete: true});
   await clearDir(mushafLocalStorePaths.TMP_DIR);
+
+  await downloadFontsPhase(report);
 
   report({
     phase: 'ready',

@@ -80,6 +80,10 @@
     "title": "Preparing the Mushaf",
     "downloading": "Downloading page data… {{percent}}%",
     "pagesCount": "{{completed}} / {{total}} pages",
+    "downloadingFonts": "Downloading Mushaf fonts… {{percent}}%",
+    "fontsCount": "{{completed}} / {{total}} fonts",
+    "pageFontLoading": "Loading page font…",
+    "pageFontError": "Couldn't load the page font. Tap to retry.",
     "error": "Couldn't download the Mushaf data. Check your connection and try again."
   },
   "memorization": {

@@ -11,7 +11,8 @@ const APP_DISPLAY_NAME = 'وِرد';
 
 const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-asset',
-  ['expo-font', {fonts: ['./assets/fonts/qcf/v1']}],
+  // QCF v1 per-page fonts are not bundled; they are downloaded at runtime
+  // with the Mushaf Local Store (src/services/qcfFonts).
   '@react-native-community/datetimepicker',
   ['expo-build-properties', {android: {usesCleartextTraffic: true}}],
   './plugins/withNotifeeAndroidMavenRepo',
