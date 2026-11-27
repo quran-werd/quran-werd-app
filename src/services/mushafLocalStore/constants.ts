@@ -1,5 +1,6 @@
 /**
- * Bump only when the underlying mushaf data or bundled QCF v1 fonts change
+ * Bump only when the underlying mushaf page data changes (QCF fonts are
+ * versioned separately by QCF_FONTS_VERSION in src/services/qcfFonts)
  * (e.g. a glyph correction ships). Bumping wipes and rebuilds every
  * on-device Mushaf Local Store on next launch. See CONTEXT.md
  * ("Mushaf data version") and docs/adr/0001-mushaf-local-store-built-on-first-launch.md.

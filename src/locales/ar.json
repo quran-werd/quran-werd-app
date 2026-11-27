@@ -80,6 +80,10 @@
     "title": "جاري تجهيز المصحف",
     "downloading": "جاري تحميل بيانات الصفحات… {{percent}}%",
     "pagesCount": "{{completed}} / {{total}} صفحة",
+    "downloadingFonts": "جاري تحميل خطوط المصحف… {{percent}}%",
+    "fontsCount": "{{completed}} / {{total}} خط",
+    "pageFontLoading": "جاري تحميل خط الصفحة…",
+    "pageFontError": "تعذّر تحميل خط الصفحة. اضغط للمحاولة مرة أخرى.",
     "error": "تعذّر تحميل بيانات المصحف. تحقق من الاتصال وحاول مرة أخرى."
   },
   "memorization": {

@@ -12,6 +12,7 @@ import {MushafLocalStoreProvider} from '../../services/mushafLocalStore';
 import {useAppSelector} from '../../store/hooks';
 import {selectIsAuthenticated} from '../../features/Auth/authSlice';
 import {toArabicNumerals} from '../../content';
+import {QCF_TOTAL_PAGES} from '../../services/qcfFonts/constants';
 
 interface MushafLocalStoreGateProps {
   children: React.ReactNode;
@@ -33,8 +34,15 @@ export default function MushafLocalStoreGate({
 
   const totalPages = progress?.totalPages ?? 0;
   const pagesCompleted = progress?.pagesCompleted ?? 0;
+  // Fonts download right after the page data, so the bar covers both.
+  const totalFonts = progress?.totalFonts ?? QCF_TOTAL_PAGES;
+  const fontsCompleted = progress?.fontsCompleted ?? 0;
+  const isDownloadingFonts = progress?.phase === 'downloading-fonts';
+  const totalWork = totalPages + totalFonts;
   const percent =
-    totalPages > 0 ? Math.round((pagesCompleted / totalPages) * 100) : 0;
+    totalPages > 0
+      ? Math.round(((pagesCompleted + fontsCompleted) / totalWork) * 100)
+      : 0;
 
   return (
     <MushafLocalStoreProvider store={store}>
@@ -76,16 +84,26 @@ export default function MushafLocalStoreGate({
             ) : (
               <>
                 <Typography color="muted" align="center" style={styles.message}>
-                  {t('mushafStore.downloading', {percent})}
+                  {t(
+                    isDownloadingFonts
+                      ? 'mushafStore.downloadingFonts'
+                      : 'mushafStore.downloading',
+                    {percent},
+                  )}
                 </Typography>
                 <View style={styles.progressTrack}>
                   <View style={[styles.progressFill, {width: `${percent}%`}]} />
                 </View>
                 <Typography variant="label" color="dimmed" align="center">
-                  {t('mushafStore.pagesCount', {
-                    completed: toArabicNumerals(pagesCompleted),
-                    total: toArabicNumerals(totalPages),
-                  })}
+                  {isDownloadingFonts
+                    ? t('mushafStore.fontsCount', {
+                        completed: toArabicNumerals(fontsCompleted),
+                        total: toArabicNumerals(totalFonts),
+                      })
+                    : t('mushafStore.pagesCount', {
+                        completed: toArabicNumerals(pagesCompleted),
+                        total: toArabicNumerals(totalPages),
+                      })}
                 </Typography>
               </>
             )}

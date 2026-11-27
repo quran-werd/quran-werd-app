@@ -69,6 +69,7 @@ export type MushafLocalStoreBuildPhase =
   | 'downloading-chapters'
   | 'downloading-pages'
   | 'finalizing'
+  | 'downloading-fonts'
   | 'ready'
   | 'error';
 
@@ -76,5 +77,8 @@ export interface MushafLocalStoreBuildProgress {
   phase: MushafLocalStoreBuildPhase;
   pagesCompleted: number;
   totalPages: number;
+  /** Per-page QCF fonts on disk; only reported during 'downloading-fonts'. */
+  fontsCompleted?: number;
+  totalFonts?: number;
   error?: string;
 }

@@ -1,4 +1,3 @@
-import {Platform} from 'react-native';
 import {juz} from './juz_data';
 import {pageData, PageDataItem} from './page_data';
 import {SURAHS_INFO} from './surah_data';
@@ -141,15 +140,13 @@ export function getVerseCount(surahNumber: number): number {
   return SURAHS_INFO[surahNumber - 1].aya;
 }
 
+/**
+ * Font family a page's QCF v1 font is registered under. The fonts are
+ * downloaded at runtime and registered with expo-font under this name on
+ * both platforms (see src/services/qcfFonts).
+ */
 export function getPageQCFontName(pageNumber: number): string {
-  // iOS uses QCF_P001, QCF_P002 format
-  // Android uses p1, p2, p10, p100 format (matches filename)
-  if (Platform.OS === 'android') {
-    return `p${pageNumber}`;
-  }
-  const fontName = `QCF_P${pageNumber.toString().padStart(3, '0')}`;
-  console.log('fontName', fontName);
-  return fontName;
+  return `QCF_P${pageNumber.toString().padStart(3, '0')}`;
 }
 
 /**
